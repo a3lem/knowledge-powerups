@@ -21,7 +21,7 @@ Some engineers include the 'how' in their definition of a specification. These a
 
 ## Incremental Specs With Spec Deltas
 
-Once the software is built, specs serve as a reference. If the spec was adhered to, then the code should match the spec, and the spec, the code. Of course, the code will always be more expressive and unambiguous, for that is the whole reason why we use formal programming languages instead of natural language to write programs.
+Once the software is built, specs serve as a reference. If the spec was adhered to, the code and the spec should match. Of course, the code will always be more expressive and unambiguous, for that is the whole reason why we use formal programming languages instead of natural language to write programs.
 
 Spec-driven development hearkens back to the days of waterfall. Today, the lifecycle is entirely iterative. Software is never truly 'done'. Inevitably, features are added to a capability, or its described behavior changes. If specs are description and code is implementation, the two must evolve together. A spec that no longer matches the code is worse than no spec.
 
