@@ -35,7 +35,7 @@ is getting smarter across sessions by reusing knowledge it gained previously.
 
 ## Three pillars
 
-### 1. Structured Code Docs
+### 1. Conventional Code Docs
 
 AI agents make great assistants for software engineers. When working in a
 code base, these 'coding agents' are happy to write files to the documentation
