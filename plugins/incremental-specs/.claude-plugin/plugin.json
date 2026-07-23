@@ -1,0 +1,8 @@
+{
+  "name": "incremental-specs",
+  "version": "0.1.0",
+  "description": "Spec-driven development for iterative code bases: reference specs kept current through spec deltas",
+  "author": {
+    "name": "a3lem"
+  }
+}
