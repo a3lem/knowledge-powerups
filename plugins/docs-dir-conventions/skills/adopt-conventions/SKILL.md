@@ -1,11 +1,11 @@
 ---
-name: scaffold
-description: Sets up the structured-docs layout in a repository's docs/ directory. Use when the user asks to set up, initialize, or scaffold docs/, to adopt the structured-docs layout in an existing project, or to create a standard documentation structure for a new one.
+name: adopt-conventions
+description: Sets up the docs-dir-conventions layout in a repository's docs/ directory. Use when the user asks to set up, initialize, or scaffold docs/, to adopt the docs-dir-conventions layout in an existing project, or to create a standard documentation structure for a new one.
 ---
 
-# Scaffold docs/
+# Adopt the Conventions
 
-Set up a repository's `docs/` directory to follow the standard layout. The layout itself is defined in the `structured-docs` skill -- consult it there; it is not repeated here.
+Set up a repository's `docs/` directory to follow the standard layout. The layout itself is defined in the `using-docs` skill -- consult it there; it is not repeated here.
 
 ## Steps
 
@@ -14,7 +14,7 @@ Set up a repository's `docs/` directory to follow the standard layout. The layou
 2. **Greenfield** -- no `docs/`, or an empty one: run the companion script.
 
    ```sh
-   ${CLAUDE_PLUGIN_ROOT}/skills/scaffold/scripts/scaffold_docs.sh <repo-root>
+   ${CLAUDE_PLUGIN_ROOT}/skills/adopt-conventions/scripts/scaffold_docs.sh <repo-root>
    ```
 
    It creates the baseline (index.md, glossary.md, architecture.md, the `dev/` workspace) and nothing more: the optional reference dirs (explanation/, how-to-guides/, specs/, adrs/) are created on demand, when the first file needs one. The script is idempotent and never overwrites an existing file.

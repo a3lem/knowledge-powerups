@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Create the structured-docs baseline in a repository's docs/ directory.
+# Create the docs-dir-conventions baseline in a repository's docs/ directory.
 #
 # Usage: scaffold_docs.sh [repo-root]   (default: current directory)
 #
@@ -68,6 +68,11 @@ EOF
 )"
 
 make_file "$docs/glossary.md" "$(cat <<'EOF'
+---
+title: Glossary
+description: project-specific jargon, defined in one place
+---
+
 # Glossary
 
 <!-- Define project-specific jargon here. -->
@@ -75,6 +80,11 @@ EOF
 )"
 
 make_file "$docs/architecture.md" "$(cat <<'EOF'
+---
+title: Architecture
+description: high-level architecture of the project
+---
+
 # Architecture
 
 <!-- Describe the high-level architecture of the project. -->

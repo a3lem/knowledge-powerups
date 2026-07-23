@@ -1,20 +1,33 @@
 ---
-name: structured-docs
+name: using-docs
 description: A standard layout for the docs/ directory of a code base, where a file's path tells you its role (spec, ADR, how-to, work item) and its authority (whether it can be built on without re-verifying against the code). Use when creating, moving, or organizing documentation, when deciding where a new document belongs, or when judging whether an existing doc is trustworthy.
 ---
 
-# Structured Code Docs
+# Using docs/
 
 Always use the standard layout for `docs/` below, so that a file's role and authority can be inferred from its path in the file tree.
 
 - **'role'**: the kind of document -- e.g. a spec, ADR, how-to, work item, etc. -- and therefore whether it refers to state of affairs in the past or in the present. The path determines the role.
 - **'authority'**: Whether you can build on the file's content without re-verifying it against the code. Everything in docs/ outside docs/dev/ carries high authority.
 
-## Two regimes
+## Reference vs. workspace
 
 Everything in `docs/` outside `dev/` is reference material and may be built on without re-verification. Human and agent both take pains to keep it current: drift between docs and code is a bug and gets corrected, stale files are removed, and 'less is more' thinking is applied to avoid churn.
 
 `dev/` is the workspace for doing the work, e.g. decomposing a complex plan into multiple files, even multiple 'slices' (sub-plans). Files here make no authority promise. Finished work moves to `work/completed/`.
+
+## Frontmatter
+
+Reference `.md` files carry two frontmatter fields:
+
+```
+---
+title: Issue deletion
+description: What deleting an issue does and doesn't remove
+---
+```
+
+This lets index.md files be generated instead of maintained (see /index-md:index-md skill). Deliberately absent: `type` (the path already encodes a file's role) and dates (git records them).
 
 ## Standard layout for `docs/`
 
@@ -24,33 +37,35 @@ Everything in `docs/` outside `dev/` is reference material and may be built on w
   CONTRIBUTING.md  # how to get started contributing. brief!
   CHANGELOG.md  # all notable changes to the project (see /changelog-md skill)
   docs/
-    index.md  # directory listing (see /index-md skill)
+    index.md  # directory listing (see /index-md:index-md skill)
     glossary.md  # project-specific jargon must be defined here.
     architecture.md  # high-level architecture of the project (see /architecture-md skill)
-    ...  # further reference files, e.g. api.md
-    explanation/  # optional. Diataxis concept. focus: Understanding.
+    philosophy.md  # optional. design principles and high-level goals -- one-line claims, each linking to an explainer (e.g. in explanation/)
+    ...  # reference files, e.g. api.md. Succinctly describes the machinery. Should be austere. Reference material is consulted, not 'read'.
+    explanation/  # optional. Diataxis concept. focus: user understanding.
       <slug>.md  # e.g. why-x-does-it-this-way.md
-    how-to-guides/  # optional. Diataxis concept. focus: goal.
+    how-to-guides/  # optional. Diataxis concept. focus: user goal.
       <slug>.md  # e.g. how-to-setup-mcp-server.md
     specs/  # optional. specs describe capabilities.
       <slug>.md  # e.g. issue-deletion.md
     adrs/  # optional. decision records
       <NNNN>-<slug>.md  # e.g. 0001-no-soft-deletions.md
-    dev/  # developer workspace -- no authority promise (see 'Two regimes')
-      work/  # work items (mostly plans)
+    dev/  # developer workspace -- no authority promise (see 'Reference vs. workspace')
+      work/  # work items, e.g. plans, investigations 
         active/
           <slug>/  # e.g. fix-bad-exception-handling/. every file within is optional:
-            slices/  # split large work items over 'slices' (sub-plans)
+            slices/  # optional. split large work items into 'slices' (sub-items, same files)
               <slug>/
-            index.md  # in case of many files, directory listing: paths + descriptions.
-            proposal.md  # context, problem, the 'why'
-            design.md  # approach, verification
-            requirements.md  # acceptance criteria
+            index.md  # only needed in case of non-obvious files
+            plan.md  # goal + approach in one file, for simple work items only
+            goal.md  # problem context, desired outcome, success criteria -- the why and the what
+            approach.md  # the how: assumptions, decisions, verification
+            status.md  # snapshot: where are we now?
+            requirements.md  # only when acceptance criteria outgrow goal.md, or when no specs are in use
             research.md  # what the agent learns from web searches
             gotchas.md  # sharp edges encountered while working
-            progress.md  # a rough overview of progress. Not a to-do list!
             specs/  # if the work affects reference specs in docs/specs/
-              # Note: load /spec-driven-dev skill when working with specs.
+              # Note: load /incremental-specs:using-specs skill when working with specs.
               <spec-name>.delta.md  # 'delta' because only *difference* w.r.t. spec is described.
         completed/
           <iso-date>-<work-slug>/  # e.g. 2026-03-20-fix-bad-exception-handling/ (prepend date to previously active work slug)
@@ -60,6 +75,10 @@ Everything in `docs/` outside `dev/` is reference material and may be built on w
         generated/  # fetched and synthesized by agent
           <slug>.md  # e.g. db-schema.md
 ```
+
+## Work items
+
+The files listed under `<slug>/` are suggestions; a work item may contain any files. A work item has either plan.md or goal/approach/status, never both. Default to goal/approach/status; plan.md is for a simple item that can likely be completed in a single short session. If such an item grows beyond that, split plan.md into goal/approach/status and delete it. Use whatever section structure seems appropriate, unless the human has instructed you to use a particular template.
 
 ## Principles
 
