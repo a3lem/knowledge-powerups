@@ -1,0 +1,8 @@
+{
+  "name": "index-md",
+  "version": "0.1.0",
+  "description": "Per-directory index.md tables of contents that make file trees discoverable to agents -- generated, not maintained",
+  "author": {
+    "name": "a3lem"
+  }
+}
