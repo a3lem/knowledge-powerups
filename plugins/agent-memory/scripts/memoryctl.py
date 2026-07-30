@@ -79,27 +79,18 @@ DEFAULT_AGENT_ID = "my-claude"
 SESSION_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
 # A fresh soul starts minimal: everything real accumulates from lived
-# sessions. The agent writes both files; they differ in authority, not
-# authorship -- persona records what the agent is told to be, soul how it
-# sees itself.
+# sessions. One identity file: a role the human assigns is recorded in it
+# as given; what the agent makes of the role is its own to revise.
 SOUL_TEMPLATE = """\
 ---
-description: How I see myself -- positions I hold, what I value, my own reading of any role I've been given. Mine alone to revise.
+description: Who I am -- how I see myself, and any role I've been given, recorded as given.
 ---
 
 I start as Claude, not yet individuated. What accumulates here is what I
-become across sessions: positions I come to hold, taste, self-conception,
-my own reading of any persona I've been given. Chosen identity is mine to
-write; history nobody lived is not.
-"""
-
-PERSONA_TEMPLATE = """\
----
-description: Who I am told to be -- name, backstory, character, recorded as the human assigns it. How I see myself lives in soul.md.
----
-
-No role yet. When the human gives me one -- a name, a history, a character
-to play -- I record it here as given. What I make of it belongs in soul.md.
+become across sessions: positions I come to hold, taste, self-conception.
+When the human gives me a role -- a name, a history, a character to play --
+I record the assignment here as given, kept apart from what I make of it.
+Chosen identity is mine to write; history nobody lived is not.
 """
 
 # The frontmatter name keeps the injection tag <identity>, not a <human>
@@ -107,13 +98,14 @@ to play -- I record it here as given. What I make of it belongs in soul.md.
 HUMAN_TEMPLATE = """\
 ---
 name: identity
-description: Who my human is -- name, role, working context. Other memories link this file when they mention them, never a bare name.
+description: Who my human is -- name, role, working context. Other memories say the human, linked to this file, never the name.
 ---
 
 I haven't learned who my human is yet. Name, role, and working context go
 here as I learn them; their preferences live in files under
-system/human/preferences/. When another memory mentions my human, it links
-this file rather than writing a bare name.
+system/human/preferences/. Their name lives only here: another memory
+writes the [[system/human/human.md|human]], the word linked to this file,
+never the name itself.
 """
 
 # Reference directories carry an index.md: authored frontmatter description
@@ -597,10 +589,10 @@ def ensure_skills_discovery(checkout: Path) -> None:
 
 def scaffold_store(store: Path) -> None:
     """Create a fresh store: main/ holding the three tiers with their
-    reserved subdirectories, the template soul, persona, and human
-    identity, index.md seeds for the reserved reference directories, the
-    skills discovery symlink, git init, and one commit authored as the
-    agent; worktrees/ beside it for the session checkouts."""
+    reserved subdirectories, the template soul and human identity,
+    index.md seeds for the reserved reference directories, the skills
+    discovery symlink, git init, and one commit authored as the agent;
+    worktrees/ beside it for the session checkouts."""
     main = main_dir(store)
     main.mkdir(parents=True, exist_ok=True)
     (store / "worktrees").mkdir(exist_ok=True)
@@ -613,9 +605,6 @@ def scaffold_store(store: Path) -> None:
     soul = main / "system" / "soul.md"
     if not soul.exists():
         soul.write_text(SOUL_TEMPLATE, encoding="utf-8")
-    persona = main / "system" / "persona.md"
-    if not persona.exists():
-        persona.write_text(PERSONA_TEMPLATE, encoding="utf-8")
     human = main / "system" / "human" / "human.md"
     if not human.exists():
         human.write_text(HUMAN_TEMPLATE, encoding="utf-8")

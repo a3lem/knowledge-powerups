@@ -27,8 +27,9 @@ An agent's memory is a git repository of markdown files at
 - `system/human/human.md` is the human's identity file (who they are:
   name, role, working context); `system/human/preferences/` holds their
   preferences, one small file each. A memory that mentions the human
-  links `human.md` -- `[[system/human/human.md|name]]` -- instead of
-  writing a bare name, so every mention is one exact grep.
+  writes `the [[system/human/human.md|human]]`, never their name -- the
+  name lives only in `human.md`, and every mention of them is one exact
+  grep.
 - Every memory file requires a `description` in its frontmatter; for
   `reference/` files it is the only signal the injected index shows.
 - Memory files are written in the first person, descriptions included:
@@ -44,14 +45,13 @@ An agent's memory is a git repository of markdown files at
   `human-preferences-directness`).
 - Files in `system/` are capped at 2,200 characters each; the compiled
   injection is capped at 24,000 characters in total.
-- `system/soul.md` is how the agent sees itself: positions, taste,
-  self-conception, its reading of any assigned persona. It answers to the
-  agent alone; chosen identity belongs there, invented events do not.
-- `system/persona.md` is who the agent is told to be -- name, backstory,
-  character -- recorded by the agent as the human assigns it in
-  conversation. A human never edits a memory file directly.
-- A fresh store scaffolds minimal template versions of soul, persona, and
-  the human identity file; everything real accumulates from lived
+- `system/soul.md` is the agent's single identity file: how it sees
+  itself -- positions, taste, self-conception -- and any role the human
+  assigns (name, backstory, character), recorded as given and kept apart
+  from what the agent makes of it. Chosen identity belongs there,
+  invented events do not. A human never edits a memory file directly.
+- A fresh store scaffolds minimal template versions of the soul and the
+  human identity file; everything real accumulates from lived
   sessions.
 - `reference/history/` holds dated episodic notes named
   `YYYY-MM-DD-<slug>.md`, staged for consolidation; nothing lives there

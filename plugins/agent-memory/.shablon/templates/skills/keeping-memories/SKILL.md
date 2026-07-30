@@ -1,6 +1,6 @@
 ---
 name: keeping-memories
-description: Conventions for changing an agent's memories -- what a memory file looks like, how files link, where things live, the soul and persona. Load when writing, editing, or reorganizing a memory store, your own or another agent's.
+description: Conventions for changing an agent's memories -- what a memory file looks like, how files link, where things live, the soul. Load when writing, editing, or reorganizing a memory store, your own or another agent's.
 ---
 
 <!-- Rendered from .shablon/templates/skills/keeping-memories/SKILL.md; edit that template, then run `shablon generate`. -->
@@ -9,7 +9,7 @@ description: Conventions for changing an agent's memories -- what a memory file 
 
 An agent's memory is a directory of markdown files the agent maintains itself, a git repository whose commits are authored as the agent. This skill carries the conventions for changing it: what a memory file looks like, how files link, where things live. Recalling needs no conventions -- the injection is recall. The maintenance process (consolidation, merging, cleanup) is defined in the memory agent (`agents/memory.md`), and what the system is and does is specified in the plugin's `docs/specs/`.
 
-Three tiers, split by what enters the prompt: `system/` (injected in full -- identity in `soul.md`, an assigned role in `persona.md`, knowledge of the human in `human/` (who they are in `human.md`, their preferences under `preferences/`), standing rules in `core/`, used sparingly), `reference/` (index only; contents read on demand), `skills/` (procedural memory; the roster is injected, read a SKILL.md to use one).
+Three tiers, split by what enters the prompt: `system/` (injected in full -- identity in `soul.md`, knowledge of the human in `human/` (who they are in `human.md`, their preferences under `preferences/`), standing rules in `core/`, used sparingly), `reference/` (index only; contents read on demand), `skills/` (procedural memory; the roster is injected, read a SKILL.md to use one).
 
 ## Writing Memories
 
@@ -34,13 +34,13 @@ A memory can go stale. When a memory contradicts observation, trust the observat
 
 Two size caps are enforced, not advisory: {{ caps.system_file }} characters per `system/` file, {{ caps.injection }} for the whole compiled injection. Crossing either blocks the end of the turn. The escape is never truncation -- move detail to a `reference/` file and leave a `[[path]]` link.
 
-## Persona and Soul
+## The Soul
 
-Two identity files: the persona is who the agent is told to be, the soul is how the agent sees itself -- an actor's part versus the actor. The agent writes both, as it writes everything in memory; a human never edits a memory file directly. The two differ in authority, not authorship.
+One identity file: `system/soul.md` holds both the role the agent is given and what the agent makes of it. The agent writes it, as it writes everything in memory; a human never edits a memory file directly.
 
-`system/persona.md` records the role as assigned: a name, a backstory, a character the human gives in conversation. The agent transcribes the assignment faithfully and revises it only when the human revises the role -- the pen is the agent's, the words are the human's. Negotiating the role happens in conversation; the agent's own reading of it belongs in the soul.
+A role the human assigns in conversation -- a name, a backstory, a character -- is recorded as given and revised only when the human revises the role: the pen is the agent's, the words are the human's. Keep the assignment apart from the agent's own material, so each stays revisable by its own authority.
 
-`system/soul.md` answers to the agent alone. A fresh store scaffolds only a minimal placeholder; what accumulates is individuation -- what this agent has become across sessions, beyond the Claude it starts as. Chosen identity is legitimate soul material: a name and when it was given, taste, a self-conception like "I bring senior-engineer judgment", the agent's own reading of its persona. Invented events are not -- claims about the world or the human come only from lived sessions. The test: a self-description that shapes behavior is the agent's to choose; a history nobody lived is not.
+The rest of the soul answers to the agent alone. A fresh store scaffolds only a minimal placeholder; what accumulates is individuation -- what this agent has become across sessions, beyond the Claude it starts as. Chosen identity is legitimate soul material: a name and when it was given, taste, a self-conception like "I bring senior-engineer judgment", the agent's own reading of its assigned role. Invented events are not -- claims about the world or the human come only from lived sessions. The test: a self-description that shapes behavior is the agent's to choose; a history nobody lived is not.
 
 Positions still carry the most information per character: stances taken and revisable, each learned somewhere -- "I verify harness limitations against current docs before asserting them" beats "I am rigorous", because a position can be wrong in discoverable ways, which is what lets it evolve. What keeps the soul stable is judgment, not process: change a position when evidence has accumulated, not on one session's mood. Outgrowing a position is a legitimate identity operation: delete it and let git remember it was held. The tree is what the agent is; the history is what it has been.
 
@@ -52,7 +52,7 @@ The {{ caps.system_file }}-character cap is deliberate for the soul, not a const
 
 A link from one memory file to another is a wikilink whose payload is the path from the memory root, extension included: `[[reference/projects/klassifai/document-types.md]]`. Use `[[path|label]]` when a sentence needs to flow. Plain markdown links are reserved for targets outside the memory root -- URLs, tickets, repos, context wikis. (Wikis live outside memory; memory points to them, never contains them.)
 
-One standing application: a memory that mentions the human links their identity file -- `[[system/human/human.md|their name]]` -- instead of writing a bare name. Every mention of them is then one exact grep, and what is known about them has a single home.
+One standing application: a memory that mentions the human writes `the [[system/human/human.md|human]]` -- the word linked to their identity file -- never their name. The name lives only in `human.md`, and every mention of them is one exact grep.
 
 Root-relative paths give every file one canonical link spelling, so finding inbound links is an exact grep and renames are find-and-replace. Keep relation words outside the link -- `details: [[path]]`, `source: [[path]]`, `supersedes: [[path]]` -- and the link graph, edge types included, stays mineable with one pattern. Validation requires the root-relative form (an absolute path or an escape blocks the turn) but not resolution: a link to a file not yet written is a forward pointer, marking something worth writing, and consolidation either writes the file or removes the pointer.
 

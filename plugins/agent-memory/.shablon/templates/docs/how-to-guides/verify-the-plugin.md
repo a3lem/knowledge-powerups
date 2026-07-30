@@ -72,7 +72,7 @@ expect a store whose root lists exactly `main/` and `worktrees/`: `main/`
 holds the git dir, the three tiers with their reserved subdirectories
 (`system/human/`, `system/human/preferences/`, `system/core/`,
 `reference/projects/`, `reference/history/`, each with a `.gitkeep`), the
-template soul, persona, and human identity (`system/human/human.md`,
+template soul and human identity (`system/human/human.md`,
 injected under tag `identity`), seeded `index.md` files in
 `reference/projects/` and `reference/history/`, and one
 commit authored as the agent; the session worktree sits beside it with the

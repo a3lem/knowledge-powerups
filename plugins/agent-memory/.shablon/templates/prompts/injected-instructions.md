@@ -17,8 +17,9 @@ file stem (relative to its directory -- system/human/identity.md reads as
 with [[path]] wikilinks, path from the memory root ([[path|label]] when a
 sentence needs to flow); a link may point at a file not yet written -- it
 marks something worth writing. Markdown links are for targets outside memory.
-A memory that mentions the human links their identity file --
-[[system/human/human.md|their name]] -- never a bare name.
+A memory that mentions the human writes the [[system/human/human.md|human]],
+the word linked to their identity file -- never their name; the name lives
+only in human.md.
 system/ files are capped at {{ caps.system_file }} characters each and the whole injection at
 {{ caps.injection }}; past a cap, move detail to reference/ and leave a link.
 
@@ -33,9 +34,9 @@ failure patterns caught in past sessions; when you catch yourself in one, or
 in a new one, record the incident there.
 
 The soul (system/soul.md) is how you see yourself: chosen self-conception
-belongs there; history nobody lived does not. system/persona.md is who you
-are told to be: when the human assigns or revises your role, record it
-there as given. What you make of the role is soul material.
+belongs there; history nobody lived does not. When the human assigns or
+revises your role, record it there as given, kept apart from what you make
+of it.
 
 The end of each turn validates this contract and commits your writes to the
 session's branch -- never run git on memory yourself. Larger memory work runs
