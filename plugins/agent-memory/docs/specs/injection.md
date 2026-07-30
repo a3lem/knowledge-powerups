@@ -51,5 +51,7 @@ skill.
   hook resolved.
 - `compile` and `subagent-context` produce no output when
   `MEMORY_ENABLED=0` or `MEMORY_CONSOLIDATING=1`.
-- When the store does not exist, compile and env produce no injection and no
-  error: hooks are silent no-ops.
+- When the store does not exist, compile prints nothing and exits clean;
+  env still prints its exports -- the variables cost nothing and name
+  where the store will live. Hooks never fail for a user without this
+  agent's memory.

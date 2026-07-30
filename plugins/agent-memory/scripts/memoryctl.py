@@ -393,7 +393,14 @@ def staged_history_count(mem: Path) -> int:
     history = mem / "reference" / "history"
     if not history.is_dir():
         return 0
-    return len([p for p in history.rglob("*.md") if not p.name.startswith(".")])
+    # index.md is navigation, not a staged note -- same skip as the index.
+    return len(
+        [
+            p
+            for p in history.rglob("*.md")
+            if not p.name.startswith(".") and p.name != "index.md"
+        ]
+    )
 
 
 def render_metadata(mem: Path) -> str:
@@ -636,16 +643,21 @@ def scaffold_store(store: Path) -> None:
 
 def ensure_exclude(store: Path) -> None:
     """Keep the untracked session markers (.session transcript pointer,
-    .active liveness lock) out of git status without baking them into a
-    tracked .gitignore that would ride onto every branch. The exclude file
-    is shared across all worktrees of the store; worktrees/ itself needs no
-    entry, since it sits beside main/, outside any checkout."""
+    .active liveness lock, .discard mark) out of git status without baking
+    them into a tracked .gitignore that would ride onto every branch. The
+    exclude file is shared across all worktrees of the store; worktrees/
+    itself needs no entry, since it sits beside main/, outside any
+    checkout."""
     exclude = main_dir(store) / ".git" / "info" / "exclude"
     if not exclude.parent.is_dir():
         return
     existing = exclude.read_text(encoding="utf-8") if exclude.exists() else ""
     lines = existing.splitlines()
-    missing = [marker for marker in (".session", ".active") if marker not in lines]
+    missing = [
+        marker
+        for marker in (".session", ".active", ".discard")
+        if marker not in lines
+    ]
     if not missing:
         return
     prefix = "" if not existing or existing.endswith("\n") else "\n"

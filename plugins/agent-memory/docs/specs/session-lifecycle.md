@@ -19,8 +19,9 @@ list is the consolidation queue.
   session checkouts.
 - At SessionStart the worktree `worktrees/session-<id>` on branch
   `session-<id>` (branched from main) is created if missing and reused if
-  present -- so resume continues where the session left off, and resume
-  after worktree deletion lands on a fresh branch off current main.
+  present -- so resume continues where the session left off. A deleted
+  worktree is reattached to its surviving branch; only when the branch
+  too is gone does a resume start fresh off current main.
 - SessionStart also ensures the worktree carries the skills tier and the
   `.claude/skills` discovery symlink, healing stores that predate them; the
   auto-commit carries the link onto the branch, and the next merge lands it
@@ -53,8 +54,8 @@ list is the consolidation queue.
   the memory agent, which commits any uncommitted worktree writes first.
   The branch remains afterward, still queued. A conflict aborts the sync:
   cross-branch disagreement is consolidation work.
-- `/discard` marks the session's worktree with a `.discard` file; the mark
-  is undoable until swept. Marked sessions are skipped by consolidation
+- `/discard` marks the session's worktree with an untracked `.discard`
+  file; the mark is undoable until swept. Marked sessions are skipped by consolidation
   and deleted by clean-up.
 - Clean-up (the last process of a pass, performed by the memory agent)
   reads the two markers; no timers. Neither `.active` nor `.discard`: the branch --

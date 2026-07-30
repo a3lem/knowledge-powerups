@@ -36,8 +36,9 @@ echo "$JSON" | $CTL compile | head
 ```
 
 Expect: `worktrees/session-t1` exists on branch `session-t1`; `.session`
-in it holds the transcript path and `.active` sits beside it (both
-excluded from git status); the env file has `MEMORY_DIR` (worktree
+in it holds the transcript path and `.active` sits beside it (the
+exclude file covers all three session markers, `.discard` included, so
+none reaches git status); the env file has `MEMORY_DIR` (worktree
 path) plus `MEMORY_ROOT_DIR` and `MEMORY_AGENT_ID`, never
 `MEMORY_CONSOLIDATING`; compile's `root` attribute is the worktree and
 `<memory-metadata>` shows the `MEMORY_DIR:` line and the consolidation
