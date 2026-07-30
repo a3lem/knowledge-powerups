@@ -13,9 +13,9 @@ of every turn, so violations block the turn until fixed -- the contract is
 compelled by the harness, not requested of the model. When it passes, the
 same hook commits the session's writes (see the session-lifecycle spec).
 
-- A `system/` file over 2,200 characters is a violation; the message directs
+- A `system/` file over {{ caps.system_file }} characters is a violation; the message directs
   to condensing or moving detail to `reference/`, never truncation.
-- A compiled injection over 24,000 characters in total is a violation; the
+- A compiled injection over {{ caps.injection }} characters in total is a violation; the
   remedy is the same -- `reference/` is indexed, not injected.
 - A `system/` or `reference/` file without a `description` in its
   frontmatter is a violation: for `reference/` files the description is the

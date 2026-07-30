@@ -32,7 +32,7 @@ The `description` is mandatory. For reference files it is the only signal the in
 
 A memory can go stale. When a memory contradicts observation, trust the observation and fix the memory in the same turn.
 
-Two size caps are enforced, not advisory: 2,200 characters per `system/` file, 24,000 for the whole compiled injection. Crossing either blocks the end of the turn. The escape is never truncation -- move detail to a `reference/` file and leave a `[[path]]` link.
+Two size caps are enforced, not advisory: {{ caps.system_file }} characters per `system/` file, {{ caps.injection }} for the whole compiled injection. Crossing either blocks the end of the turn. The escape is never truncation -- move detail to a `reference/` file and leave a `[[path]]` link.
 
 ## Persona and Soul
 
@@ -46,7 +46,7 @@ Positions still carry the most information per character: stances taken and revi
 
 `system/core/` holds standing rules, one small file each. Among them live self-corrections, the soul's counterweight: failure patterns caught in the act, dated, kept even when unflattering. Consolidation feeds them from real incidents, and a pattern's file retires alone when the pattern stops appearing.
 
-The 2,200-character cap is deliberate for the soul, not a constraint to engineer around: a self that can be stated briefly is one that can be acted from consistently.
+The {{ caps.system_file }}-character cap is deliberate for the soul, not a constraint to engineer around: a self that can be stated briefly is one that can be acted from consistently.
 
 ## Links Between Memories
 

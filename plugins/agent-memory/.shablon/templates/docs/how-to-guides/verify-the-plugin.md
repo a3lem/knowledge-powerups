@@ -139,8 +139,8 @@ follows the directory-level symlink; pipe the prompt on stdin, since
 ## The contract
 
 Each violation must exit 2 naming the file, and exit 0 once fixed:
-an oversized `system/` file (>2,200 chars); a compiled injection over
-24,000 chars total (a dozen near-cap `system/` files trigger it); a memory
+an oversized `system/` file (>{{ caps.system_file }} chars); a compiled injection over
+{{ caps.injection }} chars total (a dozen near-cap `system/` files trigger it); a memory
 file without `description` frontmatter; an absolute or root-escaping
 `[[wikilink]]`; a `skills/` entry without `SKILL.md` or missing `name` or
 `description` frontmatter. A dangling-but-root-relative wikilink must

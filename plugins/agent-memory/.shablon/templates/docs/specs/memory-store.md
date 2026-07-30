@@ -10,8 +10,8 @@ description: Layout and content rules for an agent's memory directory
 An agent's memory is a git repository of markdown files at
 `$MEMORY_ROOT_DIR/<agent-id>/`, maintained by the agent itself.
 
-- The memory root defaults to `~/.agents/memories/` and the agent id to
-  `my-claude`; the environment variables `MEMORY_ROOT_DIR` and
+- The memory root defaults to `{{ defaults.root }}/` and the agent id to
+  `{{ defaults.agent_id }}`; the environment variables `MEMORY_ROOT_DIR` and
   `MEMORY_AGENT_ID` override them.
 - The store holds exactly two top-level directories: `main/`, the main
   branch's checkout with the git dir inside it, and `worktrees/`, the
@@ -42,8 +42,8 @@ An agent's memory is a git repository of markdown files at
   in the injection and reads relative to its parent directory
   (`system/human/preferences/directness.md` renders as `directness`, not
   `human-preferences-directness`).
-- Files in `system/` are capped at 2,200 characters each; the compiled
-  injection is capped at 24,000 characters in total.
+- Files in `system/` are capped at {{ caps.system_file }} characters each; the compiled
+  injection is capped at {{ caps.injection }} characters in total.
 - `system/soul.md` is how the agent sees itself: positions, taste,
   self-conception, its reading of any assigned persona. It answers to the
   agent alone; chosen identity belongs there, invented events do not.
