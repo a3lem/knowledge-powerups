@@ -48,10 +48,10 @@ description: memory-system jargon, defined in one place
 - **consolidate-<run>** -- the staging branch where a pass assembles
   everything before main receives its single merge; deleted once that
   merge lands.
-- **janitor** -- the memory agent's final duty in a pass (not a separate
-  agent), driven by the `.active` and `.discard` markers: an ended,
-  unified session's branch and worktree go; a discarded ended session
-  goes by force; anything still active stays.
+- **clean-up** -- the last process of a pass, performed by the memory
+  agent like the rest and driven by the `.active` and `.discard` markers:
+  an ended, unified session's branch and worktree go; a discarded ended
+  session goes by force; anything still active stays.
 - **skill discovery** -- the harness loads agent skills from
   `.claude/skills/` of every `--add-dir` directory; the store tracks that
   path as a symlink to `skills/`. Since `--add-dir` points at the store's
@@ -71,7 +71,7 @@ description: memory-system jargon, defined in one place
   merges cleanly; a conflict aborts and waits for consolidation. The
   branch stays queued.
 - **/discard (command)** -- marks a session as not worth remembering:
-  skipped by consolidation, deleted by the janitor, undoable until swept.
+  skipped by consolidation, deleted by clean-up, undoable until swept.
 - **calibration** -- the interactive audit (command `/calibrate`) where the
   human grades memories (true-false) and the agent's stated confidence in
   them.

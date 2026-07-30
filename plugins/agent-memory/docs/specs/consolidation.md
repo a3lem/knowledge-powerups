@@ -57,7 +57,7 @@ dates, git history).
   does.
 - Discarded sessions (see the session-lifecycle spec) are skipped: not
   unified, not mined.
-- The janitor runs last; its marker-driven rules live in the
+- Clean-up runs last; its marker-driven rules live in the
   session-lifecycle spec.
 - A merge conflict is resolved with judgment and evidence, never blind; an
   unresolvable one aborts the merge and stops with an explanation.

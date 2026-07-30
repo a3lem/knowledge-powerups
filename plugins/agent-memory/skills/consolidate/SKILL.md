@@ -13,11 +13,11 @@ prompt:
 
 - The mode: the process word from the arguments -- `mine`, `unify`, or
   `refine` -- or, with no argument, `full` for a whole pass: unify the queued
-  branches, refine the result, accept it into main, run the janitor, mining
+  branches, refine the result, accept it into main, clean up, mining
   transcripts along the way where evidence is needed.
 - The store root: `$MEMORY_ROOT_DIR/$MEMORY_AGENT_ID` (both are exported for
   shell commands).
 
 Do not touch the store yourself. When the agent returns, relay its report:
 what it unified, what it refined and forgot, what landed in main, and what
-the janitor removed.
+clean-up removed.

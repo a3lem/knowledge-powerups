@@ -34,7 +34,7 @@ Subcommands:
             a clean worktree is a no-op.
   session-end
             Remove the worktree's untracked .active liveness lock. A
-            SessionEnd hook runs it, so the janitor can tell an ended
+            SessionEnd hook runs it, so clean-up can tell an ended
             session from a running one without guessing from timestamps.
   subagent-context
             Print SubagentStart hook JSON whose additionalContext carries the
@@ -632,7 +632,7 @@ def ensure_worktree(store: Path, session_id: str, transcript: str | None) -> Pat
     ensure_skills_discovery(path)
     (path / ".session").write_text((transcript or "") + "\n", encoding="utf-8")
     # The liveness lock: present while the session runs. SessionEnd removes
-    # it; a resume rewrites it. The janitor deletes nothing that carries it.
+    # it; a resume rewrites it. Clean-up deletes nothing that carries it.
     (path / ".active").touch()
     return path
 

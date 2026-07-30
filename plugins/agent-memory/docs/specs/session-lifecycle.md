@@ -48,9 +48,9 @@ main receives merges only. The branch list is the consolidation queue.
   cross-branch disagreement is consolidation work.
 - `/discard` marks the session's worktree with a `.discard` file; the mark
   is undoable until swept. Marked sessions are skipped by consolidation
-  and deleted by the janitor.
-- The janitor (the memory agent's last duty in a pass) reads the two
-  markers; no timers. Neither `.active` nor `.discard`: the branch --
+  and deleted by clean-up.
+- Clean-up (the last process of a pass, performed by the memory agent)
+  reads the two markers; no timers. Neither `.active` nor `.discard`: the branch --
   confirmed merged into main -- and its worktree are removed, and a later
   resume starts fresh off current main. `.discard` alone: branch and
   worktree are removed by force, content and all. Both markers: left for

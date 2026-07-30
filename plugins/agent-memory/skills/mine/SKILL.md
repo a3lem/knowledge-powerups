@@ -28,7 +28,7 @@ turns are the highest-signal lines.
 ## Finding the transcript
 
 The worktree's `.session` file holds the transcript path while the
-worktree exists; after the janitor removes it, the unify commit message
+worktree exists; after clean-up removes it, the unify commit message
 for that session holds the same path. Transcripts are JSONL, one event
 per line. The harness prunes them after a retention period (30 days by
 default) -- a session that deserves close mining should get it while its

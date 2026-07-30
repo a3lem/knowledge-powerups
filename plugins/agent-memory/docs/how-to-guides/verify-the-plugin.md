@@ -147,7 +147,7 @@ git branch -d consolidate-r1
 Each unify commit's message must record the session id and transcript
 path. Expect: main's first-parent log gained exactly one merge commit;
 both session branches appear in `git branch --merged main`; validate
-exits 0 on final main. Janitor: for a worktree without `.active`,
+exits 0 on final main. Clean-up: for a worktree without `.active`,
 `git branch -d` (never `-D`, except for a discarded session) removes the
 merged branch and the worktree; a worktree still holding `.active` stays,
 branch included.
