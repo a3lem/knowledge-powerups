@@ -39,8 +39,8 @@ Expect: `worktrees/session-t1` exists on branch `session-t1`; `.session`
 in it holds the transcript path and `.active` sits beside it (the
 exclude file covers all three session markers, `.discard` included, so
 none reaches git status); the env file has `MEMORY_DIR` (worktree
-path) plus `MEMORY_ROOT_DIR` and `MEMORY_AGENT_ID`, never
-`MEMORY_CONSOLIDATING`; compile's `root` attribute is the worktree and
+path) plus `MEMORY_ROOT_DIR` and `MEMORY_AGENT_ID`; compile's
+`root` attribute is the worktree and
 `<memory-metadata>` shows the `MEMORY_DIR:` line and the consolidation
 queue depth.
 
@@ -133,9 +133,6 @@ follows the directory-level symlink; pipe the prompt on stdin, since
 
 - `MEMORY_ENABLED=0`: every subcommand silent, exit 0, no store created
   in a fresh temp dir.
-- `MEMORY_CONSOLIDATING=1`: `worktree` creates nothing, `compile` and
-  `subagent-context` emit nothing, `commit`, `session-end`, and `index`
-  are no-ops; `env` and `validate` unaffected.
 - `MEMORY_SESSION=` (set empty): `worktree` prints nothing and creates
   nothing; `compile` binds `main/` with the read-only preamble; `env`
   points `MEMORY_DIR` at `main/` and forwards the switch; `commit` and

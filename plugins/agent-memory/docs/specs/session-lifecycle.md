@@ -31,8 +31,7 @@ list is the consolidation queue.
   debugging aid; branch name, markers, and auto-commit are unchanged. All
   of this configuration may also come per project from
   `<cwd>/.agents/memory.conf` (`KEY = value`, keys without the `MEMORY_`
-  prefix); the environment wins. `MEMORY_CONSOLIDATING` is process state
-  and comes from the environment only.
+  prefix); the environment wins.
 - SessionStart also ensures the worktree carries the skills tier and the
   `.claude/skills` discovery symlink, healing stores that predate them; the
   auto-commit carries the link onto the branch, and the next merge lands it
@@ -76,8 +75,3 @@ list is the consolidation queue.
   a future pass. `.active` alone: content unified, branch and worktree
   stay. The `consolidate-<run>` branch is deleted once its merge lands.
   Beyond `.discard`, nothing is removed by force.
-- When `MEMORY_CONSOLIDATING=1`, SessionStart performs no injection and no
-  worktree creation, and `commit`, `session-end`, `index`, and
-  `subagent-context` are no-ops: a
-  consolidation process never sees compiled memory and never writes as a
-  session.

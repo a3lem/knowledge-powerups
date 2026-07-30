@@ -46,8 +46,8 @@ skill.
   skipped: consolidation works from the outside view.
 - `memoryctl env` prints `export MEMORY_DIR=<session worktree>` plus
   forwarding exports for `MEMORY_ROOT_DIR` and `MEMORY_AGENT_ID`, and for
-  `MEMORY_SESSION`, `MEMORY_SESSION_ID`, and `MEMORY_SESSION_DIR` when set
-  (never `MEMORY_CONSOLIDATING`); a SessionStart hook appends them to
+  `MEMORY_SESSION`, `MEMORY_SESSION_ID`, and `MEMORY_SESSION_DIR` when
+  set; a SessionStart hook appends them to
   `$CLAUDE_ENV_FILE`, so shell commands run with the configuration the
   hook resolved. The exports carry resolved values -- a setting read from
   `<cwd>/.agents/memory.conf` is forwarded as its environment variable, so
@@ -57,7 +57,7 @@ skill.
   `prompts/sessionless-preamble.md`; `MEMORY_DIR` then names the `main/`
   checkout, and nothing is created or committed.
 - `compile` and `subagent-context` produce no output when
-  `MEMORY_ENABLED=0` or `MEMORY_CONSOLIDATING=1`.
+  `MEMORY_ENABLED=0`.
 - When the store does not exist, compile prints nothing and exits clean;
   env still prints its exports -- the variables cost nothing and name
   where the store will live. Hooks never fail for a user without this

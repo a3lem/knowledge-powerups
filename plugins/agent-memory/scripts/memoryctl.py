@@ -52,9 +52,7 @@ is $MEMORY_AGENT_ID (default my-claude). The agent's store lives at
 <root>/<agent-id>/ and holds exactly two directories: main/ (the main
 checkout, with the git dir inside it) and worktrees/ (one session checkout
 per branch, siblings of main, never nested inside a checkout).
-MEMORY_ENABLED=0 turns every subcommand into a silent no-op;
-MEMORY_CONSOLIDATING=1 makes worktree, commit, session-end, index, and
-subagent-context no-ops and silences compile.
+MEMORY_ENABLED=0 turns every subcommand into a silent no-op.
 
 The session layer has switches of its own. MEMORY_SESSION= (set empty)
 runs the session without a branch or worktree: memory is injected
@@ -67,8 +65,7 @@ at an explicit path instead of worktrees/session-<id>, a debugging aid.
 Configuration may also come from <cwd>/.agents/memory.conf, a `KEY = value`
 file whose keys are the variable names with the MEMORY_ prefix left off
 (ROOT_DIR, AGENT_ID, ENABLED, SESSION, SESSION_ID, SESSION_DIR). The file
-is read first; environment variables take precedence. MEMORY_CONSOLIDATING
-is process state, not configuration, and comes from the environment only.
+is read first; environment variables take precedence.
 """
 
 from __future__ import annotations
@@ -993,7 +990,6 @@ def main() -> int:
     # with no side effects -- the session leaves no memory trace.
     if config_value("ENABLED") == "0":
         return 0
-    consolidating = bool(os.environ.get("MEMORY_CONSOLIDATING"))
 
     # Stdin is read at most once, and only when a flag left a gap -- passing
     # every flag never blocks.
@@ -1021,22 +1017,19 @@ def main() -> int:
 
     store = store_dir()
     if args.command == "worktree":
-        # A consolidation run gets no worktree: it never sees compiled memory.
-        return 0 if consolidating else cmd_worktree(store, session_id, transcript)
+        return cmd_worktree(store, session_id, transcript)
     if args.command == "env":
         return cmd_env(store, session_id)
     if args.command == "compile":
-        return 0 if consolidating else cmd_compile(store, session_id)
+        return cmd_compile(store, session_id)
     if args.command == "commit":
-        return 0 if consolidating else cmd_commit(store, session_id)
+        return cmd_commit(store, session_id)
     if args.command == "session-end":
-        return 0 if consolidating else cmd_session_end(store, session_id)
+        return cmd_session_end(store, session_id)
     if args.command == "index":
-        return 0 if consolidating else cmd_index(store, session_id)
+        return cmd_index(store, session_id)
     if args.command == "subagent-context":
-        return (
-            0 if consolidating else cmd_subagent_context(store, session_id, agent_type)
-        )
+        return cmd_subagent_context(store, session_id, agent_type)
     return cmd_validate(store, session_id)
 
 

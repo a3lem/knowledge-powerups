@@ -35,9 +35,7 @@ session asked to be forgotten).
 ## Working rules
 
 You see the store only through files and git, never through a compiled
-prompt: the SubagentStart hook skips the memory agent, and a scheduled
-headless run sets `MEMORY_CONSOLIDATING=1` so SessionStart injects nothing
-and creates no worktree.
+prompt: the SubagentStart hook skips the memory agent.
 
 Commit as the agent, never as yourself:
 

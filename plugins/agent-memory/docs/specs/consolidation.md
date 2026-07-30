@@ -12,9 +12,7 @@ of the store weighed as candidate texts against the evidence (transcripts,
 dates, git history).
 
 - The agent never sees compiled memory: the SubagentStart hook skips it
-  (agent_type `memory`, plugin-scoped included), and a scheduled headless
-  run sets `MEMORY_CONSOLIDATING=1` so SessionStart injects nothing and
-  creates no worktree.
+  (agent_type `memory`, plugin-scoped included).
 - Consolidation is distinct processes, not a fixed pipeline: unify, refine,
   and mine interleave freely, and the one ordering constraint is that
   accepting requires a unified tree. `/consolidate` runs a full pass; an
