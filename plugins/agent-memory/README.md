@@ -20,8 +20,10 @@ No further setup: the first session scaffolds the store, and hooks handle
 injection, validation, and end-of-turn commits from then on.
 
 The index-md plugin is a companion: reference directories keep generated
-`index.md` tables of contents, and the memory skills invoke the index-md
-skill to regenerate them.
+`index.md` tables of contents. The hooks refresh them at SessionStart and
+SessionEnd through the repo's shared `cli/generate_index.py`, and the
+memory skills invoke the index-md skill for creation and manual
+regeneration.
 
 ## Skills
 

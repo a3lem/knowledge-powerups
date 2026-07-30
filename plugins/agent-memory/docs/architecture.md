@@ -18,20 +18,23 @@ Three layers, three kinds of authority:
   export lines), `compile` (print the injection), `validate` (check the
   contract, exit 2 on violations), `commit` (commit the session worktree's
   writes, authored as the agent), `session-end` (drop the worktree's
-  `.active` liveness lock), `subagent-context` (print the
+  `.active` liveness lock), `index` (refresh the generated index.md
+  bodies in the worktree's `reference/`, via the repo's shared
+  `cli/generate_index.py`), `subagent-context` (print the
   SubagentStart JSON that carries the injection to subagents). Stdlib-only,
   run with plain `python3`, silent no-op when memory is disabled or no
   store exists. The surface stays deliberately small: a new verb only when
   hooks need deterministic stdin plumbing; the memory agent's operations
   are plain git, prescribed by skills.
 - **hooks** (`hooks/hooks.json`) -- the compulsion: SessionStart runs
-  worktree → env → compile as one command (stdin captured once), so every
-  session gets its own branch, its env exports, and its injection;
-  SubagentStart injects the same block into subagents (read-only preamble,
-  memory agent skipped); SessionEnd drops the session's `.active` liveness
-  lock; Stop validates the session's worktree -- exit 2 blocks the turn --
-  and, when clean, commits the session's writes. The model isn't trusted
-  to respect its own limits; the harness compels them.
+  worktree → index → env → compile as one command (stdin captured once),
+  so every session gets its own branch, fresh index bodies, its env
+  exports, and its injection; SubagentStart injects the same block into
+  subagents (read-only preamble, memory agent skipped); SessionEnd
+  refreshes the index bodies again and drops the session's `.active`
+  liveness lock; Stop validates the session's worktree -- exit 2 blocks
+  the turn -- and, when clean, commits the session's writes. The model
+  isn't trusted to respect its own limits; the harness compels them.
 - **skills and the agent** -- the judgment: `keeping-memories` carries the
   save-side conventions (writing rules, links, tiers, the soul);
   `mine-history`, `unify`, and `refine` carry each consolidation

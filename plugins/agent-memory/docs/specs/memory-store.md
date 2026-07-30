@@ -56,11 +56,13 @@ An agent's memory is a git repository of markdown files at
 - `reference/projects/` holds one directory per code base.
 - A `reference/` directory carries an `index.md`: its frontmatter
   `description` is authored and is what the injected index shows for the
-  directory; its body is a generated table of contents (the index-md
-  skill), regenerated after files are added, removed, or moved -- never
-  written by hand. An entry whose file is gone is dropped on
-  regeneration. The scaffold seeds `index.md` for the two reserved
-  reference directories.
+  directory; its body is a generated table of contents (the shared
+  `cli/generate_index.py`, reached via the index-md skill or
+  `memoryctl index`), regenerated after files are added, removed, or
+  moved -- never written by hand. An entry whose file is gone is dropped
+  on regeneration. SessionStart and SessionEnd refresh existing indexes;
+  creating one is authored work. The scaffold seeds `index.md` for the
+  two reserved reference directories.
 - A link from one memory file to another is a wikilink whose payload is the
   path from the memory root (the checkout), extension included:
   `[[reference/projects/klassifai/document-types.md]]`, optionally

@@ -19,8 +19,10 @@ only gets one when it holds something index-worthy -- a subdirectory with an
 index.md, or a .md file carrying both title and description. Bottom-up order
 makes worthiness propagate: one documented file deep in the tree pulls
 index.md files up its ancestor chain. -r --no-strict indexes every directory.
+--refresh-only never creates: only existing index.md files are regenerated --
+the mode for machinery (a created index.md needs its description authored).
 
-Usage: generate_index.py DIRECTORY [-r] [--no-strict] [--include GLOB]...
+Usage: generate_index.py DIRECTORY [-r] [--no-strict] [--refresh-only] [--include GLOB]...
 """
 
 from __future__ import annotations
@@ -205,7 +207,7 @@ def render(frontmatter_raw: str, title: str, entries: list[Entry]) -> str:
 
 
 def process_directory(
-    directory: Path, include: list[str], create_always: bool
+    directory: Path, include: list[str], create_always: bool, refresh_only: bool
 ) -> tuple[bool, list[str]]:
     """Regenerate directory/index.md in place. Returns (written, warnings)."""
     assert directory.is_dir(), directory
@@ -214,8 +216,11 @@ def process_directory(
     warnings: list[str] = []
     index_path = directory / "index.md"
 
-    if not index_path.is_file() and not create_always and not index_worthy(directory):
-        return False, []
+    if not index_path.is_file():
+        if refresh_only:
+            return False, []
+        if not create_always and not index_worthy(directory):
+            return False, []
 
     fm: Frontmatter | None = None
     body = ""
@@ -279,6 +284,11 @@ def main() -> None:
         help="with -r: create an index.md in every directory, worthy or not",
     )
     parser.add_argument(
+        "--refresh-only",
+        action="store_true",
+        help="only regenerate existing index.md files; never create one",
+    )
+    parser.add_argument(
         "--include",
         action="append",
         default=[],
@@ -296,7 +306,9 @@ def main() -> None:
     warnings: list[str] = []
     written = 0
     for target in targets:
-        wrote, target_warnings = process_directory(target, include, create_always)
+        wrote, target_warnings = process_directory(
+            target, include, create_always, args.refresh_only
+        )
         written += int(wrote)
         warnings.extend(target_warnings)
 

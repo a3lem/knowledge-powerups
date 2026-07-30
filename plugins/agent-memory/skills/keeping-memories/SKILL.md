@@ -58,7 +58,7 @@ Root-relative paths give every file one canonical link spelling, so finding inbo
 
 Only an index of `reference/` reaches the prompt: each file's path and its frontmatter `description`, no contents. A file with no description, or a vague one, goes invisible at exactly the moment the agent decides what to read; validation blocks a reference file that lacks one.
 
-Each `reference/` directory carries an `index.md` with two authorship rules in one file. The frontmatter `description` is authored -- it is what the injected index shows for the directory. The body is a generated table of contents, maintained with the index-md skill: regenerate it after adding, removing, or moving files, and never write it by hand. Regeneration drops entries whose file is gone. The generated body serves on-disk traversal (a consolidation agent walking the tree without an injection); the compiled index ignores it and omits `index.md` from file listings.
+Each `reference/` directory carries an `index.md` with two authorship rules in one file. The frontmatter `description` is authored -- it is what the injected index shows for the directory. The body is a generated table of contents, maintained with the index-md skill: regenerate it after adding, removing, or moving files, and never write it by hand. Regeneration drops entries whose file is gone. The generated body serves on-disk traversal (a consolidation agent walking the tree without an injection); the compiled index ignores it and omits `index.md` from file listings. The harness refreshes existing indexes at SessionStart and SessionEnd, but only refreshes: creating a directory's `index.md` is your work, because its description is.
 
 Two directory names are reserved:
 

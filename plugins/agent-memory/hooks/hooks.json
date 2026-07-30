@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "json=$(cat); printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" worktree >/dev/null || true; { [ -n \"${CLAUDE_ENV_FILE}\" ] && printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" env >> \"${CLAUDE_ENV_FILE}\"; } || true; printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" compile || true"
+            "command": "json=$(cat); printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" worktree >/dev/null || true; printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" index || true; { [ -n \"${CLAUDE_ENV_FILE}\" ] && printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" env >> \"${CLAUDE_ENV_FILE}\"; } || true; printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" compile || true"
           }
         ]
       }
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" session-end || true"
+            "command": "json=$(cat); printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" index || true; printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" session-end || true"
           }
         ]
       }

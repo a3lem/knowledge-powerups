@@ -28,6 +28,7 @@ Feed hand-built hook JSON on stdin, with a temp file standing in for
 JSON='{"session_id":"t1","transcript_path":"/tmp/t1.jsonl","hook_event_name":"SessionStart","source":"startup"}'
 ENVF=$(mktemp)
 echo "$JSON" | $CTL worktree          # prints the worktree path
+echo "$JSON" | $CTL index             # silent; refreshes reference/ index bodies
 echo "$JSON" | $CTL env >> "$ENVF"
 echo "$JSON" | $CTL compile | head
 ```
@@ -49,11 +50,19 @@ off current main.
 ## The SessionEnd hook
 
 ```sh
+echo "$JSON" | $CTL index
 echo "$JSON" | $CTL session-end
 ```
 
 Expect: `.active` gone from the worktree, `.session` untouched. A second
 run, and a run for a session with no worktree, exit 0 silently.
+
+`index` regenerates the body of every existing `index.md` under the
+worktree's `reference/` and prints nothing to stdout (at SessionStart,
+stdout belongs to the injection). It never creates an index.md -- drop a
+described file into a directory without one and assert none appears --
+and with the shared `cli/generate_index.py` missing it skips with a
+stderr note, exit 0.
 
 Bootstrap: point `MEMORY_ROOT_DIR` at an empty temp dir, run the chain,
 expect a store whose root lists exactly `main/` and `worktrees/`: `main/`
@@ -122,8 +131,8 @@ follows the directory-level symlink; pipe the prompt on stdin, since
 - `MEMORY_ENABLED=0`: every subcommand silent, exit 0, no store created
   in a fresh temp dir.
 - `MEMORY_CONSOLIDATING=1`: `worktree` creates nothing, `compile` and
-  `subagent-context` emit nothing, `commit` and `session-end` are no-ops;
-  `env` and `validate` unaffected.
+  `subagent-context` emit nothing, `commit`, `session-end`, and `index`
+  are no-ops; `env` and `validate` unaffected.
 
 ## The contract
 

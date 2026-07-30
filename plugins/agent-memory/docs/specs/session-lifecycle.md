@@ -24,6 +24,12 @@ main receives merges only. The branch list is the consolidation queue.
   `.claude/skills` discovery symlink, healing stores that predate them; the
   auto-commit carries the link onto the branch, and the next merge lands it
   in main, where discovery actually looks.
+- SessionStart and SessionEnd refresh the generated index.md bodies in the
+  worktree's `reference/` tree (`memoryctl index`, refresh-only: an
+  index.md is never created by machinery, since creation means authoring
+  its description). A SessionStart refresh is committed by the turn's
+  auto-commit; a SessionEnd refresh stays uncommitted until unify's
+  commit-leftovers step picks it up.
 - `MEMORY_DIR` points at the session's worktree and is exported via
   `$CLAUDE_ENV_FILE`, together with the `MEMORY_*` configuration the hook
   resolved (`MEMORY_ROOT_DIR`, `MEMORY_AGENT_ID`), so Bash commands see
@@ -58,7 +64,7 @@ main receives merges only. The branch list is the consolidation queue.
   stay. The `consolidate-<run>` branch is deleted once its merge lands.
   Beyond `.discard`, nothing is removed by force.
 - When `MEMORY_CONSOLIDATING=1`, SessionStart performs no injection and no
-  worktree creation, and `commit`, `session-end`, and `subagent-context`
-  are no-ops: a
+  worktree creation, and `commit`, `session-end`, `index`, and
+  `subagent-context` are no-ops: a
   consolidation process never sees compiled memory and never writes as a
   session.

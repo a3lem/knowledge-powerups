@@ -36,6 +36,10 @@ Subcommands:
             Remove the worktree's untracked .active liveness lock. A
             SessionEnd hook runs it, so clean-up can tell an ended
             session from a running one without guessing from timestamps.
+  index     Refresh the generated index.md bodies in the worktree's
+            reference/ tree (shared cli/generate_index.py, refresh-only:
+            never creates). SessionStart and SessionEnd hooks run it, so
+            the on-disk indexes track the tree at session boundaries.
   subagent-context
             Print SubagentStart hook JSON whose additionalContext carries the
             compiled memory with a read-only preamble, so subagents see the
@@ -48,7 +52,7 @@ is $MEMORY_AGENT_ID (default my-claude). The agent's store lives at
 checkout, with the git dir inside it) and worktrees/ (one session checkout
 per branch, siblings of main, never nested inside a checkout).
 MEMORY_ENABLED=0 turns every subcommand into a silent no-op;
-MEMORY_CONSOLIDATING=1 makes worktree, commit, session-end, and
+MEMORY_CONSOLIDATING=1 makes worktree, commit, session-end, index, and
 subagent-context no-ops and silences compile.
 """
 
@@ -150,6 +154,12 @@ WIKILINK_RE = re.compile(r"\[\[([^\][|]+?)(?:\|[^\]]*)?\]\]")
 PROMPTS_DIR = Path(__file__).resolve().parent.parent / "prompts"
 INSTRUCTIONS_FILE = PROMPTS_DIR / "injected-instructions.md"
 SUBAGENT_PREAMBLE_FILE = PROMPTS_DIR / "subagent-preamble.md"
+
+# The index.md body generator, shared across plugins in the repo's cli/
+# directory (plugins/agent-memory/scripts -> repo root). Absent -- e.g. an
+# installed copy without the checkout -- the index refresh degrades to a
+# skipped step, never a failure.
+INDEX_GENERATOR = Path(__file__).resolve().parents[3] / "cli" / "generate_index.py"
 
 
 def prompt_block(path: Path) -> str:
@@ -761,6 +771,35 @@ def cmd_commit(store: Path, session_id: str | None) -> int:
     return 0
 
 
+def cmd_index(store: Path, session_id: str | None) -> int:
+    """Refresh the generated index.md bodies in the session worktree's
+    reference/ tree. Refresh only -- creation needs an authored description,
+    so it stays with the agent and the index-md skill. Prints nothing to
+    stdout: at SessionStart, stdout belongs to the injection."""
+    target = session_worktree(store, session_id)
+    if target is None:
+        return 0
+    ref = target / "reference"
+    if not ref.is_dir():
+        return 0
+    if not INDEX_GENERATOR.is_file():
+        print(
+            f"memoryctl: no index generator at {INDEX_GENERATOR}; skipping",
+            file=sys.stderr,
+        )
+        return 0
+    result = subprocess.run(
+        [sys.executable, str(INDEX_GENERATOR), str(ref), "-r", "--refresh-only"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        detail = result.stderr.strip() or result.stdout.strip()
+        print(f"memoryctl: index refresh failed: {detail}", file=sys.stderr)
+    return 0
+
+
 def cmd_session_end(store: Path, session_id: str | None) -> int:
     """Remove the session worktree's .active liveness lock. A missing
     worktree or lock is a no-op: a memoryless or already-ended session has
@@ -853,6 +892,11 @@ def main() -> int:
         parents=[common],
         help="remove the session worktree's .active liveness lock",
     )
+    sub.add_parser(
+        "index",
+        parents=[common],
+        help="refresh generated index.md bodies in the worktree's reference/",
+    )
     subagent = sub.add_parser(
         "subagent-context",
         parents=[common],
@@ -900,6 +944,8 @@ def main() -> int:
         return 0 if consolidating else cmd_commit(store, session_id)
     if args.command == "session-end":
         return 0 if consolidating else cmd_session_end(store, session_id)
+    if args.command == "index":
+        return 0 if consolidating else cmd_index(store, session_id)
     if args.command == "subagent-context":
         return (
             0 if consolidating else cmd_subagent_context(store, session_id, agent_type)

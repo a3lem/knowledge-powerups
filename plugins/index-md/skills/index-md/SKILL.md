@@ -25,11 +25,18 @@ description: <what purpose does the directory serve? one sentence>
 
 2. Generate the body -- never write it by hand:
 
+   The generator lives in the repo's shared `cli/` directory, two levels
+   above the plugin root (stdlib-only, plain `python3`):
+
    ```sh
-   uv run python ${CLAUDE_PLUGIN_ROOT}/skills/index-md/scripts/generate_index.py <dir>                    # one directory
-   uv run python ${CLAUDE_PLUGIN_ROOT}/skills/index-md/scripts/generate_index.py <dir> -r                 # whole tree, bottom-up
-   uv run python ${CLAUDE_PLUGIN_ROOT}/skills/index-md/scripts/generate_index.py <dir> --include '*.py'   # also list matching files (repeatable)
+   python3 ${CLAUDE_PLUGIN_ROOT}/../../cli/generate_index.py <dir>                    # one directory
+   python3 ${CLAUDE_PLUGIN_ROOT}/../../cli/generate_index.py <dir> -r                 # whole tree, bottom-up
+   python3 ${CLAUDE_PLUGIN_ROOT}/../../cli/generate_index.py <dir> --include '*.py'   # also list matching files (repeatable)
    ```
+
+   `--refresh-only` regenerates existing index.md files and never creates
+   one -- the mode for machinery, since a created index.md needs its
+   description authored.
 
 3. Read the script's "needs attention" report and fix gaps at the source: add `description` frontmatter to the file (or to the subdirectory's own index.md) and regenerate. Put a description directly in the index body only when the source cannot carry one (e.g. a non-md file).
 
