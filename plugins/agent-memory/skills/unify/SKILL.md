@@ -53,3 +53,8 @@ Branches also disagree without conflicting: two sessions filing
 overlapping facts in different files merge cleanly and leave the tree
 inconsistent. Note such overlaps as you merge; reconciling them is
 refine work on the unified tree.
+
+One class of conflict is mechanical, not a disagreement: `index.md`
+bodies are generated listings, so when branches conflict there, take
+either side and regenerate with the index-md skill after the merge.
+Judgment applies only to the authored frontmatter description.

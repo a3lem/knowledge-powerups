@@ -56,11 +56,13 @@ Root-relative paths give every file one canonical link spelling, so finding inbo
 
 ## The Reference Tier
 
-Only an index of `reference/` reaches the prompt: each file's path and its frontmatter `description`, no contents. Nothing indexes the tree at rest -- the index is compiled straight from the files. So a file with no description, or a vague one, goes invisible at exactly the moment the agent decides what to read; validation blocks a reference file that lacks one.
+Only an index of `reference/` reaches the prompt: each file's path and its frontmatter `description`, no contents. A file with no description, or a vague one, goes invisible at exactly the moment the agent decides what to read; validation blocks a reference file that lacks one.
+
+Each `reference/` directory carries an `index.md` with two authorship rules in one file. The frontmatter `description` is authored -- it is what the injected index shows for the directory. The body is a generated table of contents, maintained with the index-md skill: regenerate it after adding, removing, or moving files, and never write it by hand. Regeneration drops entries whose file is gone. The generated body serves on-disk traversal (a consolidation agent walking the tree without an injection); the compiled index ignores it and omits `index.md` from file listings.
 
 Two directory names are reserved:
 
-- `projects/` -- one directory per code base. The injection prunes below it: project names and descriptions appear, their contents do not. A project directory's description comes from a `<name>.md` file inside it (`projects/klassifai/klassifai.md`) -- the sibling-relative naming rule applied to the directory's own summary. Without that file the entry is name-only.
+- `projects/` -- one directory per code base. The injection prunes below it: project names and their `index.md` descriptions appear, their contents do not.
 - `history/` -- dated episodic notes (`2026-07-21-<slug>.md`), staged for consolidation. Each pass promotes what generalizes into a proper home and deletes the rest; nothing lives in `history/` permanently.
 
 Everything else in `reference/` is free-form. The structure is the agent's to change -- reorganize when the tree stops matching how the knowledge is actually reached, and rewrite inbound links in the same pass.

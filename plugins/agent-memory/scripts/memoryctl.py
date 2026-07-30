@@ -111,6 +111,23 @@ system/human/preferences/. When another memory mentions my human, it links
 this file rather than writing a bare name.
 """
 
+# Reference directories carry an index.md: authored frontmatter description
+# (what compile shows for the directory), generated body (the index-md
+# skill's table of contents). The reserved ones are seeded at scaffold.
+PROJECTS_INDEX_TEMPLATE = """\
+---
+title: projects
+description: One directory per code base I work in; each project's index.md describes it.
+---
+"""
+
+HISTORY_INDEX_TEMPLATE = """\
+---
+title: history
+description: My dated episodic notes, staged for consolidation; nothing lives here permanently.
+---
+"""
+
 # The reserved directories the conventions name: knowledge of the human and
 # standing rules in system/, per-code-base and staged episodic notes in
 # reference/. Scaffolded so the layout is discoverable without the skill.
@@ -202,11 +219,11 @@ def file_description(f: Path) -> str:
     return ""
 
 
-def project_description(project: Path) -> str:
-    """A pruned project directory's description comes from its <name>.md file
-    (e.g. projects/klassifai/klassifai.md); without one, the entry is name-only."""
-    named = project / f"{project.name}.md"
-    return file_description(named) if named.is_file() else ""
+def dir_description(d: Path) -> str:
+    """A directory's description is the authored frontmatter of its index.md;
+    the generated body is ignored here. Without one, the entry is name-only."""
+    idx = d / "index.md"
+    return file_description(idx) if idx.is_file() else ""
 
 
 def tag_name(f: Path) -> str:
@@ -281,13 +298,17 @@ def render_reference_index(mem: Path) -> str:
                         entry_line(
                             indent + "  ",
                             f"{project.name}/",
-                            project_description(project),
+                            dir_description(project),
                         )
                     )
                 continue
-            lines.append(entry_line(indent, f"{sub.name}/", ""))
+            lines.append(entry_line(indent, f"{sub.name}/", dir_description(sub)))
             walk(sub, depth + 1)
+        # index.md files are navigation for on-disk traversal; the compiled
+        # index shows their description on the directory line instead.
         for f in visible([p for p in d.iterdir() if p.is_file()]):
+            if f.name == "index.md":
+                continue
             lines.append(entry_line(indent, f.name, file_description(f)))
 
     head = '<memory-index root="reference/">'
@@ -559,9 +580,9 @@ def ensure_skills_discovery(checkout: Path) -> None:
 def scaffold_store(store: Path) -> None:
     """Create a fresh store: main/ holding the three tiers with their
     reserved subdirectories, the template soul, persona, and human
-    identity, the skills discovery symlink, git init, and one commit
-    authored as the agent; worktrees/ beside it for the session
-    checkouts."""
+    identity, index.md seeds for the reserved reference directories, the
+    skills discovery symlink, git init, and one commit authored as the
+    agent; worktrees/ beside it for the session checkouts."""
     main = main_dir(store)
     main.mkdir(parents=True, exist_ok=True)
     (store / "worktrees").mkdir(exist_ok=True)
@@ -580,6 +601,13 @@ def scaffold_store(store: Path) -> None:
     human = main / "system" / "human" / "human.md"
     if not human.exists():
         human.write_text(HUMAN_TEMPLATE, encoding="utf-8")
+    for rel, template in (
+        ("reference/projects", PROJECTS_INDEX_TEMPLATE),
+        ("reference/history", HISTORY_INDEX_TEMPLATE),
+    ):
+        idx = main / rel / "index.md"
+        if not idx.exists():
+            idx.write_text(template, encoding="utf-8")
     aid = agent_id()
     git(main, "init", "-b", "main")
     git(main, "add", "-A")

@@ -20,12 +20,14 @@ skill.
   `<{name}><path>$MEMORY_DIR/<rel></path><description>...</description>`
   followed by its body verbatim.
 - `reference/` renders as `<memory-index>`: labels and descriptions only, no
-  contents, with a note saying files are read on demand. Descriptions come
-  from each file's own frontmatter; no index file exists at rest.
+  contents, with a note saying files are read on demand. A file's
+  description comes from its own frontmatter; a directory's comes from the
+  authored frontmatter of its `index.md` (without one, the entry is
+  name-only). The generated body of an `index.md` is never injected, and
+  `index.md` files are omitted from the file listing -- their description
+  already sits on the directory line.
 - The index is pruned below `reference/projects/`: project names and
-  descriptions appear, their contents do not. A project directory's
-  description comes from the `<name>.md` file inside it (e.g.
-  `projects/klassifai/klassifai.md`); without one, the entry is name-only.
+  descriptions appear, their contents do not.
 - `skills/` renders as `<memory-skills>`, one `name -- description` line per
   skill. The roster reflects the session's branch; loadable skills come from
   main via `.claude/skills` discovery (see the memory-store spec).

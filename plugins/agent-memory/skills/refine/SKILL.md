@@ -46,3 +46,8 @@ being read.
 **Split.** A `system/` file pressing its 2,200-character cap, or any
 file grown into a list, splits into small linked files -- each gains its
 own description, its own links, its own retirement.
+
+After any operation that adds, removes, or moves files, regenerate the
+affected `index.md` bodies with the index-md skill -- their generated
+listings are part of the tree's consistency, and a removed directory
+disappears from its parent's index on regeneration.

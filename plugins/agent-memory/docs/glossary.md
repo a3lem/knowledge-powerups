@@ -24,6 +24,10 @@ description: memory-system jargon, defined in one place
   ceremony: file a fact, fix a stale memory, leave a forward pointer.
 - **forward pointer** -- a wikilink to a file not yet written; legal, and a
   marker for consolidation to write the file or drop the link.
+- **index.md** -- a reference directory's table of contents: authored
+  frontmatter `description` (the injected index's source for the
+  directory's entry), generated body (the index-md skill's listing, for
+  on-disk traversal; never written by hand, never injected).
 - **memory agent** -- the one subagent performing every memory operation
   beyond inline habits. Runs without memory injection, so no version of the
   store is privileged.

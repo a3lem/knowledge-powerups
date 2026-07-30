@@ -19,6 +19,10 @@ which holds exactly two directories: `main/`, the main branch's checkout, and
 No further setup: the first session scaffolds the store, and hooks handle
 injection, validation, and end-of-turn commits from then on.
 
+The index-md plugin is a companion: reference directories keep generated
+`index.md` tables of contents, and the memory skills invoke the index-md
+skill to regenerate them.
+
 ## Skills
 
 To make the agent's own skills loadable, launch Claude Code with the store

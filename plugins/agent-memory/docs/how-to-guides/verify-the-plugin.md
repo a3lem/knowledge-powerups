@@ -61,9 +61,14 @@ holds the git dir, the three tiers with their reserved subdirectories
 (`system/human/`, `system/human/preferences/`, `system/core/`,
 `reference/projects/`, `reference/history/`, each with a `.gitkeep`), the
 template soul, persona, and human identity (`system/human/human.md`,
-injected under tag `identity`), and one
+injected under tag `identity`), seeded `index.md` files in
+`reference/projects/` and `reference/history/`, and one
 commit authored as the agent; the session worktree sits beside it with the
 full layout present, since `.gitkeep` rides the branch.
+
+Index rendering: a reference directory's line in `<memory-index>` carries
+the description from its `index.md` frontmatter; `index.md` itself never
+appears as a file entry, and its generated body is never injected.
 
 ## The Stop chain
 
