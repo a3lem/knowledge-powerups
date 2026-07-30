@@ -14,7 +14,7 @@ Always use the standard layout for `docs/` below, so that a file's role and auth
 
 Everything in `docs/` outside `dev/` is reference material and may be built on without re-verification. Human and agent both take pains to keep it current: drift between docs and code is a bug and gets corrected, stale files are removed, and 'less is more' thinking is applied to avoid churn.
 
-`dev/` is the workspace for doing the work, e.g. decomposing a complex plan into multiple files, even multiple 'slices' (sub-plans). Files here make no authority promise. Finished work moves to `work/completed/`.
+`dev/` is the workspace for doing the work, e.g. decomposing a complex plan into multiple files, even multiple 'slices' (sub-plans). Files here make no authority promise. Finished work moves to `work/completed/`, dropped work to `work/abandoned/`.
 
 ## Frontmatter
 
@@ -69,6 +69,8 @@ This lets index.md files be generated instead of maintained (see /index-md:index
               <spec-name>.delta.md  # 'delta' because only *difference* w.r.t. spec is described.
         completed/
           <iso-date>-<work-slug>/  # e.g. 2026-03-20-fix-bad-exception-handling/ (prepend date to previously active work slug)
+        abandoned/
+          <iso-date>-<work-slug>/  # dropped or superseded; describes code that was never written
         backlog.md  # optional. a good place to log ideas for future improvements
       references/
         ...  # fetched material, e.g. pydantic-llms.txt from https://pydantic.dev/llms.txt
@@ -79,6 +81,18 @@ This lets index.md files be generated instead of maintained (see /index-md:index
 ## Work items
 
 The files listed under `<slug>/` are suggestions; a work item may contain any files. A work item has either plan.md or goal/approach/status, never both. Default to goal/approach/status; plan.md is for a simple item that can likely be completed in a single short session. If such an item grows beyond that, split plan.md into goal/approach/status and delete it. Use whatever section structure seems appropriate, unless the human has instructed you to use a particular template.
+
+### States
+
+A work item sits in exactly one of three directories, and that directory is its status:
+
+- `active/` -- being worked on. Blocked, paused, and waiting-on-someone all count as active; record the reason in status.md.
+- `completed/` -- the work landed. The item describes code that exists, though it may have drifted since.
+- `abandoned/` -- the work stopped and won't resume. Superseded counts. The item describes code that was never written, so never read it as a record of the codebase.
+
+Three states, no more. Extra directories for finer status turn the file tree into a state machine somebody has to maintain, and status.md already covers the nuance.
+
+Before abandoning, promote whatever outlives the item: "we decided not to do X because Y" is an ADR, and a sharp edge someone will hit again belongs in reference docs. Then move the item and move on. `abandoned/` exists to keep `active/` accurate at the cost of one `git mv` -- it isn't there to preserve plans.
 
 ## Principles
 

@@ -1,6 +1,6 @@
 ---
 name: unify
-description: Load this skill when unifying queued session branches into one candidate tree -- the unify process of memory consolidation. Merges every non-discarded session branch into a consolidate-<run> branch, recording each session's transcript path, and resolves cross-branch differences with evidence.
+description: Merge queued session branches into one candidate tree on consolidate-<run>, recording each session's transcript path and resolving cross-branch differences with evidence. The unify process of memory consolidation; load when unifying session branches.
 ---
 
 # Unify

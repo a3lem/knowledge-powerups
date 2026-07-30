@@ -20,9 +20,9 @@ dates, git history).
   accepting requires a unified tree. `/consolidate` runs a full pass; an
   optional process word (`mine`, `unify`, `refine`) limits it to that
   process.
-- Each process's procedure lives in its skill (`mine`, `unify`, `refine`);
-  the memory agent preloads all three, and the human may hand the same
-  skills to a different runner.
+- Each process's procedure lives in its skill (`mine-history`, `unify`,
+  `refine`); the memory agent preloads all three, and the human may hand
+  the same skills to a different runner.
 - Unify: every queued session branch that is not discarded -- branches of
   still-active sessions included -- merges into a `consolidate-<run>`
   branch off main, checked out in the `main/` checkout, where a bare

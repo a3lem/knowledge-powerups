@@ -33,8 +33,9 @@ Three layers, three kinds of authority:
   and, when clean, commits the session's writes. The model isn't trusted
   to respect its own limits; the harness compels them.
 - **skills and the agent** -- the judgment: `keeping-memories` carries the
-  save-side conventions (writing rules, links, tiers, the soul); `mine`,
-  `unify`, and `refine` carry each consolidation process's procedure,
+  save-side conventions (writing rules, links, tiers, the soul);
+  `mine-history`, `unify`, and `refine` carry each consolidation
+  process's procedure,
   preloaded by the `memory` agent (`agents/memory.md`) and loadable by
   any runner the human prefers; `calibrate` runs the interactive audit
   with the human; `consolidate`, `sync`, and `discard` are the thin

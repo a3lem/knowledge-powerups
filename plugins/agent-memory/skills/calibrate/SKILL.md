@@ -1,6 +1,6 @@
 ---
 name: calibrate
-description: Load this skill when the user invokes /calibrate or asks to review, verify, or challenge the agent's memories -- an interactive pass where the agent states its confidence, the human grades both the claim and that confidence, and each verdict is acted on the same turn.
+description: Review memories with the human -- an interactive pass where the agent states its confidence, the human grades both the claim and that confidence, and each verdict is acted on the same turn. Load on /calibrate, or when asked to review, verify, or challenge the agent's memories.
 ---
 
 # Calibrating Memory

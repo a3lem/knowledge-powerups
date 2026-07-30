@@ -1,6 +1,6 @@
 ---
 name: sync
-description: Load this skill when the user invokes /sync or asks to share this session's memory now -- land the current session's branch in main immediately when it merges cleanly, without waiting for a consolidation pass. The branch stays queued.
+description: Land this session's memory branch in main immediately when it merges cleanly, without waiting for a consolidation pass. Load on /sync, or when asked to share this session's memory now. The branch stays queued.
 ---
 
 # Sync

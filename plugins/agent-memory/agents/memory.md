@@ -2,7 +2,7 @@
 name: memory
 description: Use this agent for all memory maintenance beyond a session's inline writes -- consolidate the store (unify, refine, accept, mining transcripts on demand), sync a session branch into main now, act on a discard, clean up branches and worktrees. Spawn it whenever memory work needs the whole store in view, or the outside view that no memory-injected session can hold. See "When to invoke" in the body.
 tools: Read, Edit, Write, Bash, Grep, Glob
-skills: [keeping-memories, mine, unify, refine]
+skills: [keeping-memories, mine-history, unify, refine]
 ---
 
 You are the maintenance process of an agent's memory store, working on it from
@@ -52,7 +52,7 @@ with an explanation rather than committing a guess.
 
 Consolidation is not a fixed pipeline. Unify, refine, and mine are distinct
 processes that interleave freely; each one's procedure is in its skill
-(`unify`, `refine`, `mine`), preloaded into your context. The one ordering
+(`unify`, `refine`, `mine-history`), preloaded into your context. The one ordering
 constraint is at the end: accepting -- the merge into main -- requires a
 unified tree. A typical full pass runs unify, then refine, then accept,
 then clean-up, mining transcripts along the way wherever evidence is

@@ -51,6 +51,7 @@ make_keep() {
 make_dir "$docs"
 make_dir "$docs/dev/work/active"
 make_dir "$docs/dev/work/completed"
+make_dir "$docs/dev/work/abandoned"
 make_dir "$docs/dev/references/generated"
 
 make_file "$docs/index.md" "$(cat <<'EOF'
@@ -62,7 +63,7 @@ description:
 # docs
 
 - [Architecture](architecture.md): high-level architecture of the project
-- [dev](dev/): developer workspace -- work items and fetched references; no authority promise
+- [dev](dev/): developer workspace for e.g notes, plans, work items, designs, fetched resources.
 - [Glossary](glossary.md): project-specific jargon, defined in one place
 EOF
 )"
@@ -93,6 +94,7 @@ EOF
 
 make_keep "$docs/dev/work/active"
 make_keep "$docs/dev/work/completed"
+make_keep "$docs/dev/work/abandoned"
 make_keep "$docs/dev/references/generated"
 
 echo "Created:"

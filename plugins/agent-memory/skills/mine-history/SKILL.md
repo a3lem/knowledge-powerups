@@ -1,6 +1,6 @@
 ---
-name: mine
-description: Load this skill when mining a session transcript for evidence -- settling a contradiction between memories, fleshing out an underdefined memory, or distilling patterns a session's inline writes missed. The mine process of memory consolidation; runs on demand, not as a stage.
+name: mine-history
+description: Mine a conversation transcript for evidence -- settle a contradiction between memories, flesh out an underdefined memory, distill patterns the session's inline writes missed. The mine process of memory consolidation, run on demand, not as a stage. Load when memory work needs a session's log.
 ---
 
 # Mine
@@ -24,6 +24,20 @@ memories should not weigh them against the record that produced them.
 Skim by default; read closely on signals: a long transcript with few
 memory commits, or the user correcting the agent mid-session. The user's
 turns are the highest-signal lines.
+
+## Delegating the skim
+
+A skim is extraction, not judgment, and a smaller model does it well.
+When several transcripts need skimming, delegate: run a headless helper
+per transcript --
+
+    MEMORY_ENABLED=0 claude -p --model haiku < prompt-with-transcript
+
+-- asking for candidate facts, corrections, and contradiction evidence,
+each with the transcript line that supports it. `MEMORY_ENABLED=0`
+keeps the helper from leaving a session branch of its own. What the
+helper returns is candidate material only: judging it against the store
+and filing it stays with you.
 
 ## Finding the transcript
 

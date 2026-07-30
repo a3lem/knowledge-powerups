@@ -1,6 +1,6 @@
 ---
 name: discard
-description: Load this skill when the user invokes /discard or says this session is not worth remembering -- mark the current session so consolidation skips it and clean-up deletes it. Undoable until swept.
+description: Mark this session not worth remembering, so consolidation skips it and clean-up deletes it. Load on /discard, or when the user says to forget this session. Undoable until swept.
 ---
 
 # Discard

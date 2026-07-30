@@ -1,6 +1,6 @@
 ---
 name: refine
-description: Load this skill when refining a memory tree -- reconciling contradictions, deduplicating, re-homing misfiled content, distilling episodic detail, forgetting the irrelevant. The refine process of memory maintenance; deep passes run in the memory agent, on the unified tree or directly on main.
+description: Improve a memory tree in place -- reconcile contradictions, deduplicate, re-home misfiled content, distill episodic detail, forget the irrelevant. The refine process of memory maintenance; load when refining. Deep passes run in the memory agent, on the unified tree or directly on main.
 ---
 
 # Refine

@@ -1,6 +1,6 @@
 ---
 name: consolidate
-description: Load this skill when the user invokes /consolidate or asks to consolidate, unify, refine, or mine agent memory -- the memory agent's maintenance pass over the queued session branches. An optional process word (mine, unify, refine) limits the pass to that process; no word runs a full pass, which closes by accepting the result into main.
+description: Run a consolidation pass over the queued session branches by spawning the memory agent. Load on /consolidate, or when asked to consolidate, unify, refine, or mine agent memory. An optional process word (mine, unify, refine) limits the pass to that process; no word runs a full pass, which closes by accepting the result into main.
 ---
 
 # Consolidate
@@ -17,6 +17,13 @@ prompt:
   transcripts along the way where evidence is needed.
 - The store root: `$MEMORY_ROOT_DIR/$MEMORY_AGENT_ID` (both are exported for
   shell commands).
+
+Mining is extraction more than judgment, and a smaller model does it well.
+When the mode is `mine`, consider spawning the agent with a smaller model
+(the Agent tool's model parameter, e.g. `haiku`); within a full pass, the
+mine-history skill tells the agent how to delegate transcript skims the
+same way. Judgment-heavy modes -- `unify`, `refine`, `full` -- keep the
+session's model.
 
 Do not touch the store yourself. When the agent returns, relay its report:
 what it unified, what it refined and forgot, what landed in main, and what

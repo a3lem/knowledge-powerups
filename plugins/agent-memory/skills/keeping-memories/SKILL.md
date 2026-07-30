@@ -1,6 +1,6 @@
 ---
 name: keeping-memories
-description: Load this skill when writing, editing, or reorganizing an agent's memories -- filing knowledge beyond the injected habits, revising the soul, restructuring the reference tier -- or when working on a memory store that is not your own.
+description: Conventions for changing an agent's memories -- what a memory file looks like, how files link, where things live, the soul and persona. Load when writing, editing, or reorganizing a memory store, your own or another agent's.
 ---
 
 # Keeping Memories
