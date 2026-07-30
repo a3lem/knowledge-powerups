@@ -15,9 +15,9 @@ Unaddressed items from [HANDOVER.md](HANDOVER.md). Where a ticket exists, detail
 
 ## Agent memory
 
-- [ ] Build the agent-memory skills: `system/` (prompt-injected, size-constrained) vs `reference/` (paths in prompt, content on demand) vs `skills/` (procedural memory).
-- [ ] Encode: memory mounts wikis rather than embedding them; history compaction, dreaming, and defragmentation are one primitive under different names.
-- [ ] `reference/` per-directory index.md was an open question; answered yes in practice (Adriaan's own memory tree has them) -- write it down.
+- [x] Build the agent-memory skills: `system/` (prompt-injected, size-constrained) vs `reference/` (paths in prompt, content on demand) vs `skills/` (procedural memory). (keeping-memories written 2026-07-26; consolidation delivered with the memory agent; akps-8e51 closed as v0.1 on 2026-07-29.)
+- [x] Encode: wikis live outside memory, memory links to them (mounting was retracted); history compaction, dreaming, and defragmentation are one primitive under different names. (Both in keeping-memories.)
+- [x] `reference/` per-directory index.md was an open question; answered yes at first, then reversed on 2026-07-27 (akps-4e8e): the injected index compiles from each file's frontmatter, no index file at rest.
 
 ## Conventional docs
 

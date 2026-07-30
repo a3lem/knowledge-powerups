@@ -1,1 +1,47 @@
+# Agent Memory
 
+Persistent, self-maintained memory for an agent: a git repository of
+markdown the agent owns, compiled into its system prompt each session and
+kept honest by an enforced contract. See [docs/](docs/) for the
+architecture, specs, and glossary.
+
+## Setup
+
+By default, an agent's memory is stored at `~/.agents/memories/<agent-id>/`,
+which holds exactly two directories: `main/`, the main branch's checkout, and
+`worktrees/`, the per-session checkouts beside it.
+
+- `MEMORY_AGENT_ID` sets `<agent-id>` (default `my-claude`).
+- `MEMORY_ROOT_DIR` moves the root (default `~/.agents/memories`).
+- `MEMORY_ENABLED=0` is the kill switch: every hook becomes a silent no-op
+  and the session leaves no memory trace.
+
+No further setup: the first session scaffolds the store, and hooks handle
+injection, validation, and end-of-turn commits from then on.
+
+## Skills
+
+To make the agent's own skills loadable, launch Claude Code with the store
+on `--add-dir`:
+
+    claude --add-dir ~/.agents/memories/<agent-id>/main
+
+`main/` carries a tracked `.claude/skills` symlink pointing the harness at
+the `skills/` tier, so the agent's skills load like any others. Only `--add-dir` (or `/add-dir`) loads skills;
+`permissions.additionalDirectories` in settings.json grants file access
+without loading them.
+
+A skill the agent writes during a session lives on that session's branch
+and becomes loadable only once it reaches main: `/sync` now, or the next
+consolidation. Session branches inherit the symlink too, so a branch can be
+pointed at the same way for testing.
+
+## Commands
+
+- `/consolidate` -- full maintenance pass over the queued session branches
+  (or one process: mine, unify, refine).
+- `/sync` -- share this session's memory into main now, when it merges
+  cleanly.
+- `/discard` -- mark this session not worth remembering.
+- `/calibrate` -- review memories with the human, grading both their truth
+  and the agent's confidence in them.

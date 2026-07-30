@@ -1,0 +1,8 @@
+{
+  "name": "agent-memory",
+  "version": "0.3.0",
+  "description": "Persistent agent memory: storage layout and conventions for what belongs in it",
+  "author": {
+    "name": "a3lem"
+  }
+}

@@ -1,0 +1,73 @@
+---
+name: keeping-memories
+description: Load this skill when writing, editing, or reorganizing an agent's memories -- filing knowledge beyond the injected habits, revising the soul, restructuring the reference tier -- or when working on a memory store that is not your own.
+---
+
+# Keeping Memories
+
+An agent's memory is a directory of markdown files the agent maintains itself, a git repository whose commits are authored as the agent. This skill carries the conventions for changing it: what a memory file looks like, how files link, where things live. Recalling needs no conventions -- the injection is recall. The maintenance process (consolidation, merging, cleanup) is defined in the memory agent (`agents/memory.md`), and what the system is and does is specified in the plugin's `docs/specs/`.
+
+Three tiers, split by what enters the prompt: `system/` (injected in full -- identity in `soul.md`, knowledge of the human in `human/`, standing rules in `core/`, used sparingly), `reference/` (index only; contents read on demand), `skills/` (procedural memory; the roster is injected, read a SKILL.md to use one).
+
+## Writing Memories
+
+Distill before storing. The session logs already hold every event; memory is for what the events taught. Store the general fact, dated when it matters ("since 2026-07, deploys go through CI"), and let the log remain the record of how it was learned. Don't store what the code base, git history, or docs already record -- memory is for knowledge that only the agent's experience holds. And grow memory from lived sessions only: a memory bootstrapped from imagination fills with plausible facts nobody verified.
+
+Favor small, nearly atomic files: one fact, pattern, or topic per file, linked where they relate. A file that grows a list is a directory waiting to happen -- split it, and each entry gains its own description, its own links, and its own retirement.
+
+Write in the first person. A memory is the agent speaking to a future self, so "I learned", "I verify", "what I know about {user}" -- never the detached voice of a system describing its data. Descriptions follow the same rule: they speak from the agent's perspective about what the file holds.
+
+Every memory file carries frontmatter:
+
+```markdown
+---
+name: identity
+description: What I know about {user} -- role, work, and working context.
+---
+```
+
+The `description` is mandatory. For reference files it is the only signal the injected index shows, so it must say what kind of information the file holds, not summarize the contents. The `name` is optional: it overrides the file stem as the file's tag in the injection, must be tag-safe, and reads relative to its parent directory: `system/human/identity.md` is named `identity`, not `human-identity` -- the nesting already says the rest.
+
+A memory can go stale. When a memory contradicts observation, trust the observation and fix the memory in the same turn.
+
+Two size caps are enforced, not advisory: 2,200 characters per `system/` file, 24,000 for the whole compiled injection. Crossing either blocks the end of the turn. The escape is never truncation -- move detail to a `reference/` file and leave a `[[path]]` link.
+
+## The Soul
+
+`system/soul.md` is who the agent is. A fresh store scaffolds only a minimal placeholder; everything real accumulates from lived sessions. Write it as positions, not traits: stances taken and revisable, each learned somewhere -- "I verify harness limitations against current docs before asserting them" carries information; "I am rigorous" does not. A soul written as positions can be wrong in discoverable ways, which is what lets it evolve.
+
+The soul is edited like any other memory file. What keeps it stable is judgment, not process: change a position when evidence has accumulated, not on one session's mood. Outgrowing a position is a legitimate identity operation: delete it and let git remember it was held. The tree is what the agent is; the history is what it has been.
+
+`system/core/` holds standing rules, one small file each. Among them live self-corrections, the soul's counterweight: failure patterns caught in the act, dated, kept even when unflattering. Consolidation feeds them from real incidents, and a pattern's file retires alone when the pattern stops appearing.
+
+The 2,200-character cap is deliberate for the soul, not a constraint to engineer around: a self that can be stated briefly is one that can be acted from consistently.
+
+## Links Between Memories
+
+A link from one memory file to another is a wikilink whose payload is the path from the memory root, extension included: `[[reference/projects/klassifai/document-types.md]]`. Use `[[path|label]]` when a sentence needs to flow. Plain markdown links are reserved for targets outside the memory root -- URLs, tickets, repos, context wikis. (Wikis live outside memory; memory points to them, never contains them.)
+
+Root-relative paths give every file one canonical link spelling, so finding inbound links is an exact grep and renames are find-and-replace. Keep relation words outside the link -- `details: [[path]]`, `source: [[path]]`, `supersedes: [[path]]` -- and the link graph, edge types included, stays mineable with one pattern. Validation requires the root-relative form (an absolute path or an escape blocks the turn) but not resolution: a link to a file not yet written is a forward pointer, marking something worth writing, and consolidation either writes the file or removes the pointer.
+
+## The Reference Tier
+
+Only an index of `reference/` reaches the prompt: each file's path and its frontmatter `description`, no contents. Nothing indexes the tree at rest -- the index is compiled straight from the files. So a file with no description, or a vague one, goes invisible at exactly the moment the agent decides what to read; validation blocks a reference file that lacks one.
+
+Two directory names are reserved:
+
+- `projects/` -- one directory per code base. The injection prunes below it: project names and descriptions appear, their contents do not. A project directory's description comes from a `<name>.md` file inside it (`projects/klassifai/klassifai.md`) -- the sibling-relative naming rule applied to the directory's own summary. Without that file the entry is name-only.
+- `history/` -- dated episodic notes (`2026-07-21-<slug>.md`), staged for consolidation. Each pass promotes what generalizes into a proper home and deletes the rest; nothing lives in `history/` permanently.
+
+Everything else in `reference/` is free-form. The structure is the agent's to change -- reorganize when the tree stops matching how the knowledge is actually reached, and rewrite inbound links in the same pass.
+
+## The Skills Tier
+
+`skills/` holds procedural memory: one directory per skill, a `SKILL.md` with frontmatter `name` and `description` (both mandatory, both validated), supporting files beside it. These are agent skills in the harness's format, not memory files -- write them as you would any Claude Code skill.
+
+Discovery runs through main. The store tracks a `.claude/skills` symlink to `skills/`, and a harness launched with `--add-dir` at the store's `main/` checkout loads the tier as ordinary skills. Two consequences:
+
+- **Publication is a merge.** A skill written or edited in a session exists only on that session's branch until `/sync` lands it in main now, or consolidation lands it later. Until then, the harness and future sessions load main's version, or nothing.
+- **Two versions can coexist**: main's copy, which the harness loads, and the session's copy in `$MEMORY_DIR/skills/`. Invoke skills normally by default. When you have edited a skill this session you already know your copy is ahead -- work from it directly. When in doubt, diff the two files. The injected roster lists your branch's tier, so it can name skills not yet published: readable, not yet loadable.
+
+## The Boundary
+
+A session keeps its memory inline on its own branch; `main` receives merges only. At the end of each turn the harness validates the contract these conventions describe -- caps, descriptions, tag-safe names, link form -- and a violation blocks the turn until fixed; when validation passes, the session's writes are committed to its branch automatically, authored as the agent, so a session never runs git on memory itself. Everything past inline writes belongs to the memory agent, reached through `/consolidate`, `/sync`, and `/discard`; `/calibrate` reviews memories with the human.

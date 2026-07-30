@@ -1,0 +1,44 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "json=$(cat); printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" worktree >/dev/null || true; { [ -n \"${CLAUDE_ENV_FILE}\" ] && printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" env >> \"${CLAUDE_ENV_FILE}\"; } || true; printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" compile || true"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" session-end || true"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" subagent-context || true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "json=$(cat); printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" validate && printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" commit"
+          }
+        ]
+      }
+    ]
+  }
+}
