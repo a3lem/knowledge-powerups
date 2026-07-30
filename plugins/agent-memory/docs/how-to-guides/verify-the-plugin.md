@@ -145,6 +145,11 @@ follows the directory-level symlink; pipe the prompt on stdin, since
   an explicit `--session` still wins over the pin.
 - `MEMORY_SESSION_DIR=<path>`: worktree, markers, and auto-commit land at
   `<path>`, on branch `session-<id>`; `env` binds `MEMORY_DIR` to it.
+- `.agents/memory.conf` in the working directory (`KEY = value`, keys
+  without the `MEMORY_` prefix): a conf `AGENT_ID` steers the whole
+  chain, an environment `MEMORY_AGENT_ID` beats it, `SESSION =` (empty
+  value) disables the session layer, and `env` prints resolved values --
+  conf-derived settings included -- as exports.
 
 ## The contract
 

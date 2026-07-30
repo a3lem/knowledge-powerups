@@ -23,6 +23,11 @@ which holds exactly two directories: `main/`, the main branch's checkout, and
 - `MEMORY_SESSION_DIR=<path>` puts the session worktree at an explicit
   path -- a debugging aid.
 
+The same configuration can live per project in `<cwd>/.agents/memory.conf`
+-- `KEY = value` lines, keys named like the variables above with the
+`MEMORY_` prefix left off (`ROOT_DIR`, `AGENT_ID`, `ENABLED`, `SESSION`,
+`SESSION_ID`, `SESSION_DIR`). Environment variables win over the file.
+
 No further setup: the first session scaffolds the store, and hooks handle
 injection, validation, and end-of-turn commits from then on.
 

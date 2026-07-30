@@ -63,11 +63,18 @@ MEMORY_SESSION_ID=<id> pins the session id -- it beats the id in the hook
 JSON (the --session flag still wins), so any number of sessions share one
 branch and worktree. MEMORY_SESSION_DIR=<path> puts the session worktree
 at an explicit path instead of worktrees/session-<id>, a debugging aid.
+
+Configuration may also come from <cwd>/.agents/memory.conf, a `KEY = value`
+file whose keys are the variable names with the MEMORY_ prefix left off
+(ROOT_DIR, AGENT_ID, ENABLED, SESSION, SESSION_ID, SESSION_DIR). The file
+is read first; environment variables take precedence. MEMORY_CONSOLIDATING
+is process state, not configuration, and comes from the environment only.
 """
 
 from __future__ import annotations
 
 import argparse
+import functools
 import json
 import os
 import re
@@ -173,12 +180,42 @@ def prompt_block(path: Path) -> str:
     return f"<memory-instructions>\n{body}\n</memory-instructions>"
 
 
+@functools.cache
+def read_conf() -> dict[str, str]:
+    """<cwd>/.agents/memory.conf: `KEY = value` lines, keys named like the
+    environment variables with the MEMORY_ prefix left off. Blank lines and
+    `#` comments are skipped; an empty value is legal (SESSION = disables
+    the session layer, exactly like MEMORY_SESSION= in the environment)."""
+    try:
+        text = (Path(".agents") / "memory.conf").read_text(encoding="utf-8")
+    except OSError:
+        return {}
+    values: dict[str, str] = {}
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        key, sep, value = line.partition("=")
+        if sep:
+            values[key.strip()] = value.strip()
+    return values
+
+
+def config_value(name: str) -> str | None:
+    """One lookup for all configuration: $MEMORY_<name> from the
+    environment, else <name> from the conf file. The environment wins."""
+    env = os.environ.get(f"MEMORY_{name}")
+    if env is not None:
+        return env
+    return read_conf().get(name)
+
+
 def agent_id() -> str:
-    return os.environ.get("MEMORY_AGENT_ID", DEFAULT_AGENT_ID)
+    return config_value("AGENT_ID") or DEFAULT_AGENT_ID
 
 
 def root_dir() -> Path:
-    return Path(os.environ.get("MEMORY_ROOT_DIR", DEFAULT_ROOT)).expanduser()
+    return Path(config_value("ROOT_DIR") or DEFAULT_ROOT).expanduser()
 
 
 def store_dir() -> Path:
@@ -188,13 +225,13 @@ def store_dir() -> Path:
 def session_disabled() -> bool:
     """MEMORY_SESSION set to the empty string switches the session layer
     off: no branch, no worktree, memory injected read-only from main."""
-    return os.environ.get("MEMORY_SESSION") == ""
+    return config_value("SESSION") == ""
 
 
 def session_dir_override() -> Path | None:
     """MEMORY_SESSION_DIR pins the session worktree to an explicit path
     instead of worktrees/session-<id> -- a debugging aid."""
-    value = os.environ.get("MEMORY_SESSION_DIR")
+    value = config_value("SESSION_DIR")
     return Path(value).expanduser() if value else None
 
 
@@ -759,10 +796,12 @@ def cmd_env(store: Path, session_id: str | None) -> int:
     print(f"export MEMORY_DIR={shlex.quote(str(target))}")
     print(f"export MEMORY_ROOT_DIR={shlex.quote(str(root_dir()))}")
     print(f"export MEMORY_AGENT_ID={shlex.quote(agent_id())}")
-    for name in ("MEMORY_SESSION", "MEMORY_SESSION_ID", "MEMORY_SESSION_DIR"):
-        value = os.environ.get(name)
+    # Resolved values, conf file included, so Bash commands see the same
+    # configuration wherever they later cd to.
+    for name in ("SESSION", "SESSION_ID", "SESSION_DIR"):
+        value = config_value(name)
         if value is not None:
-            print(f"export {name}={shlex.quote(value)}")
+            print(f"export MEMORY_{name}={shlex.quote(value)}")
     return 0
 
 
@@ -952,7 +991,7 @@ def main() -> int:
 
     # Kill switch: MEMORY_ENABLED=0 turns every entry point into a silent no-op
     # with no side effects -- the session leaves no memory trace.
-    if os.environ.get("MEMORY_ENABLED") == "0":
+    if config_value("ENABLED") == "0":
         return 0
     consolidating = bool(os.environ.get("MEMORY_CONSOLIDATING"))
 
@@ -968,7 +1007,7 @@ def main() -> int:
     session_id, transcript = resolve_session_inputs(data, args.session, args.transcript)
     # MEMORY_SESSION_ID pins the id between the explicit flag and the hook
     # JSON: every session started with the pin shares one branch and worktree.
-    pin = os.environ.get("MEMORY_SESSION_ID")
+    pin = config_value("SESSION_ID")
     if args.session is None and pin:
         session_id = pin
     raw_type = data.get("agent_type")

@@ -49,7 +49,9 @@ skill.
   `MEMORY_SESSION`, `MEMORY_SESSION_ID`, and `MEMORY_SESSION_DIR` when set
   (never `MEMORY_CONSOLIDATING`); a SessionStart hook appends them to
   `$CLAUDE_ENV_FILE`, so shell commands run with the configuration the
-  hook resolved.
+  hook resolved. The exports carry resolved values -- a setting read from
+  `<cwd>/.agents/memory.conf` is forwarded as its environment variable, so
+  Bash commands see the same configuration wherever they cd to.
 - With `MEMORY_SESSION=` (set empty), compile binds `main/` and swaps the
   maintenance instructions for the read-only preamble in
   `prompts/sessionless-preamble.md`; `MEMORY_DIR` then names the `main/`

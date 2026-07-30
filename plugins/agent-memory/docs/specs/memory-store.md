@@ -12,7 +12,8 @@ An agent's memory is a git repository of markdown files at
 
 - The memory root defaults to `~/.agents/memories/` and the agent id to
   `my-claude`; the environment variables `MEMORY_ROOT_DIR` and
-  `MEMORY_AGENT_ID` override them.
+  `MEMORY_AGENT_ID` override them, as do `ROOT_DIR` and `AGENT_ID` entries
+  in `<cwd>/.agents/memory.conf` (the environment wins).
 - The store holds exactly two top-level directories: `main/`, the main
   branch's checkout with the git dir inside it, and `worktrees/`, the
   session checkouts beside it -- checkouts never nest. Content rules below

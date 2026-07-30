@@ -28,7 +28,11 @@ list is the consolidation queue.
   the `--session` flag still wins -- so sessions started with the pin
   share one branch and worktree. `MEMORY_SESSION_DIR=<path>` puts the
   worktree at an explicit path instead of `worktrees/session-<id>`, a
-  debugging aid; branch name, markers, and auto-commit are unchanged.
+  debugging aid; branch name, markers, and auto-commit are unchanged. All
+  of this configuration may also come per project from
+  `<cwd>/.agents/memory.conf` (`KEY = value`, keys without the `MEMORY_`
+  prefix); the environment wins. `MEMORY_CONSOLIDATING` is process state
+  and comes from the environment only.
 - SessionStart also ensures the worktree carries the skills tier and the
   `.claude/skills` discovery symlink, healing stores that predate them; the
   auto-commit carries the link onto the branch, and the next merge lands it
