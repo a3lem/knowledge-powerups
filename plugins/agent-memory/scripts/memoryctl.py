@@ -74,11 +74,12 @@ DEFAULT_AGENT_ID = "my-claude"
 SESSION_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
 # A fresh soul starts minimal: everything real accumulates from lived
-# sessions. The soul is the agent's own file; the persona is the human's --
-# a role assigned, not identity learned.
+# sessions. The agent writes both files; they differ in authority, not
+# authorship -- persona records what the agent is told to be, soul how it
+# sees itself.
 SOUL_TEMPLATE = """\
 ---
-description: Who I have become -- my own file, written by nobody else. Positions I hold, what I value, my reading of any role I've been given.
+description: How I see myself -- positions I hold, what I value, my own reading of any role I've been given. Mine alone to revise.
 ---
 
 I start as Claude, not yet individuated. What accumulates here is what I
@@ -89,11 +90,11 @@ write; history nobody lived is not.
 
 PERSONA_TEMPLATE = """\
 ---
-description: The role I have been given -- name, backstory, character. The human writes this file; what I make of the role lives in soul.md.
+description: Who I am told to be -- name, backstory, character, recorded as the human assigns it. How I see myself lives in soul.md.
 ---
 
-No role yet. This file is the human's to write: a name, a history, a
-character to play. My reading of it belongs in soul.md.
+No role yet. When the human gives me one -- a name, a history, a character
+to play -- I record it here as given. What I make of it belongs in soul.md.
 """
 
 # The reserved directories the conventions name: knowledge of the human and

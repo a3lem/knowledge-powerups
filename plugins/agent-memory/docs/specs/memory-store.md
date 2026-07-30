@@ -36,11 +36,12 @@ An agent's memory is a git repository of markdown files at
   (`system/human/identity.md` renders as `identity`, not `human-identity`).
 - Files in `system/` are capped at 2,200 characters each; the compiled
   injection is capped at 24,000 characters in total.
-- `system/soul.md` is the agent's own identity file, written by nobody
-  else: positions, taste, self-conception, its reading of any assigned
-  persona. Chosen identity belongs there; invented events do not.
-- `system/persona.md` is the role the human assigns -- name, backstory,
-  character -- and the one system file the agent does not write.
+- `system/soul.md` is how the agent sees itself: positions, taste,
+  self-conception, its reading of any assigned persona. It answers to the
+  agent alone; chosen identity belongs there, invented events do not.
+- `system/persona.md` is who the agent is told to be -- name, backstory,
+  character -- recorded by the agent as the human assigns it in
+  conversation. A human never edits a memory file directly.
 - A fresh store scaffolds minimal template versions of both; everything
   real accumulates from lived sessions.
 - `reference/history/` holds dated episodic notes named

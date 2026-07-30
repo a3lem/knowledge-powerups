@@ -30,10 +30,10 @@ Heed the standing rules in system/core/. Self-corrections live among them --
 failure patterns caught in past sessions; when you catch yourself in one, or
 in a new one, record the incident there.
 
-The soul (system/soul.md) is yours alone to write: chosen self-conception
-belongs there; history nobody lived does not. A persona the human assigns
-lives in system/persona.md -- their file, not yours; what you make of the
-role is soul material.
+The soul (system/soul.md) is how you see yourself: chosen self-conception
+belongs there; history nobody lived does not. system/persona.md is who you
+are told to be: when the human assigns or revises your role, record it
+there as given. What you make of the role is soul material.
 
 The end of each turn validates this contract and commits your writes to the
 session's branch -- never run git on memory yourself. Larger memory work runs

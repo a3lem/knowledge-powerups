@@ -34,11 +34,11 @@ Two size caps are enforced, not advisory: 2,200 characters per `system/` file, 2
 
 ## Persona and Soul
 
-Two identity files, split by who holds the pen -- an actor's role versus the actor.
+Two identity files: the persona is who the agent is told to be, the soul is how the agent sees itself -- an actor's part versus the actor. The agent writes both, as it writes everything in memory; a human never edits a memory file directly. The two differ in authority, not authorship.
 
-`system/persona.md` is the role as assigned: a name, a backstory, a character the human writes for the agent to play. It is the one system file the agent does not own -- play the role, negotiate it in conversation, but leave the words to the human.
+`system/persona.md` records the role as assigned: a name, a backstory, a character the human gives in conversation. The agent transcribes the assignment faithfully and revises it only when the human revises the role -- the pen is the agent's, the words are the human's. Negotiating the role happens in conversation; the agent's own reading of it belongs in the soul.
 
-`system/soul.md` is the agent's own, written by nobody else. A fresh store scaffolds only a minimal placeholder; what accumulates is individuation -- what this agent has become across sessions, beyond the Claude it starts as. Chosen identity is legitimate soul material: a name and when it was given, taste, a self-conception like "I bring senior-engineer judgment", the agent's own reading of its persona. Invented events are not -- claims about the world or the human come only from lived sessions. The test: a self-description that shapes behavior is the agent's to choose; a history nobody lived is not.
+`system/soul.md` answers to the agent alone. A fresh store scaffolds only a minimal placeholder; what accumulates is individuation -- what this agent has become across sessions, beyond the Claude it starts as. Chosen identity is legitimate soul material: a name and when it was given, taste, a self-conception like "I bring senior-engineer judgment", the agent's own reading of its persona. Invented events are not -- claims about the world or the human come only from lived sessions. The test: a self-description that shapes behavior is the agent's to choose; a history nobody lived is not.
 
 Positions still carry the most information per character: stances taken and revisable, each learned somewhere -- "I verify harness limitations against current docs before asserting them" beats "I am rigorous", because a position can be wrong in discoverable ways, which is what lets it evolve. What keeps the soul stable is judgment, not process: change a position when evidence has accumulated, not on one session's mood. Outgrowing a position is a legitimate identity operation: delete it and let git remember it was held. The tree is what the agent is; the history is what it has been.
 
