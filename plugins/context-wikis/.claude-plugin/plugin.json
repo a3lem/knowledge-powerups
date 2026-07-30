@@ -1,0 +1,8 @@
+{
+  "name": "context-wikis",
+  "version": "0.1.0",
+  "description": "Git-tracked context wikis in the Open Knowledge Format -- shareable, layered knowledge stores",
+  "author": {
+    "name": "a3lem"
+  }
+}
