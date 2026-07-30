@@ -21,6 +21,14 @@ list is the consolidation queue.
   present -- so resume continues where the session left off. A deleted
   worktree is reattached to its surviving branch; only when the branch
   too is gone does a resume start fresh off current main.
+- The session layer is configurable. `MEMORY_SESSION=` (set empty) runs
+  the session with no branch or worktree: memory is injected read-only
+  from main, and `worktree`, `commit`, and `session-end` are no-ops.
+  `MEMORY_SESSION_ID=<id>` pins the session id -- it beats the hook JSON,
+  the `--session` flag still wins -- so sessions started with the pin
+  share one branch and worktree. `MEMORY_SESSION_DIR=<path>` puts the
+  worktree at an explicit path instead of `worktrees/session-<id>`, a
+  debugging aid; branch name, markers, and auto-commit are unchanged.
 - SessionStart also ensures the worktree carries the skills tier and the
   `.claude/skills` discovery symlink, healing stores that predate them; the
   auto-commit carries the link onto the branch, and the next merge lands it

@@ -45,10 +45,15 @@ skill.
   The memory agent (`agent_type` `memory`, plugin-scoped included) is
   skipped: consolidation works from the outside view.
 - `memoryctl env` prints `export MEMORY_DIR=<session worktree>` plus
-  forwarding exports for `MEMORY_ROOT_DIR` and `MEMORY_AGENT_ID` (never
-  `MEMORY_CONSOLIDATING`); a SessionStart hook appends them to
+  forwarding exports for `MEMORY_ROOT_DIR` and `MEMORY_AGENT_ID`, and for
+  `MEMORY_SESSION`, `MEMORY_SESSION_ID`, and `MEMORY_SESSION_DIR` when set
+  (never `MEMORY_CONSOLIDATING`); a SessionStart hook appends them to
   `$CLAUDE_ENV_FILE`, so shell commands run with the configuration the
   hook resolved.
+- With `MEMORY_SESSION=` (set empty), compile binds `main/` and swaps the
+  maintenance instructions for the read-only preamble in
+  `prompts/sessionless-preamble.md`; `MEMORY_DIR` then names the `main/`
+  checkout, and nothing is created or committed.
 - `compile` and `subagent-context` produce no output when
   `MEMORY_ENABLED=0` or `MEMORY_CONSOLIDATING=1`.
 - When the store does not exist, compile prints nothing and exits clean;

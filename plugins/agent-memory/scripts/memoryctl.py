@@ -55,6 +55,14 @@ per branch, siblings of main, never nested inside a checkout).
 MEMORY_ENABLED=0 turns every subcommand into a silent no-op;
 MEMORY_CONSOLIDATING=1 makes worktree, commit, session-end, index, and
 subagent-context no-ops and silences compile.
+
+The session layer has switches of its own. MEMORY_SESSION= (set empty)
+runs the session without a branch or worktree: memory is injected
+read-only from main and nothing is created or committed.
+MEMORY_SESSION_ID=<id> pins the session id -- it beats the id in the hook
+JSON (the --session flag still wins), so any number of sessions share one
+branch and worktree. MEMORY_SESSION_DIR=<path> puts the session worktree
+at an explicit path instead of worktrees/session-<id>, a debugging aid.
 """
 
 from __future__ import annotations
@@ -147,6 +155,7 @@ WIKILINK_RE = re.compile(r"\[\[([^\][|]+?)(?:\|[^\]]*)?\]\]")
 PROMPTS_DIR = Path(__file__).resolve().parent.parent / "prompts"
 INSTRUCTIONS_FILE = PROMPTS_DIR / "injected-instructions.md"
 SUBAGENT_PREAMBLE_FILE = PROMPTS_DIR / "subagent-preamble.md"
+SESSIONLESS_PREAMBLE_FILE = PROMPTS_DIR / "sessionless-preamble.md"
 
 # The index.md body generator, shared across plugins in the repo's cli/
 # directory (plugins/agent-memory/scripts -> repo root). Absent -- e.g. an
@@ -174,6 +183,19 @@ def root_dir() -> Path:
 
 def store_dir() -> Path:
     return root_dir() / agent_id()
+
+
+def session_disabled() -> bool:
+    """MEMORY_SESSION set to the empty string switches the session layer
+    off: no branch, no worktree, memory injected read-only from main."""
+    return os.environ.get("MEMORY_SESSION") == ""
+
+
+def session_dir_override() -> Path | None:
+    """MEMORY_SESSION_DIR pins the session worktree to an explicit path
+    instead of worktrees/session-<id> -- a debugging aid."""
+    value = os.environ.get("MEMORY_SESSION_DIR")
+    return Path(value).expanduser() if value else None
 
 
 def main_dir(store: Path) -> Path:
@@ -678,8 +700,9 @@ def ensure_worktree(store: Path, session_id: str, transcript: str | None) -> Pat
     ensure_exclude(store)
     main = main_dir(store)
     branch = f"session-{session_id}"
-    path = store / "worktrees" / branch
+    path = session_dir_override() or store / "worktrees" / branch
     if not (path.is_dir() and (path / ".git").exists()):
+        path.parent.mkdir(parents=True, exist_ok=True)
         git(main, "worktree", "prune")
         if branch_exists(main, branch):
             # Resume where the session left off: reattach its existing branch.
@@ -698,6 +721,11 @@ def ensure_worktree(store: Path, session_id: str, transcript: str | None) -> Pat
 
 def session_worktree(store: Path, session_id: str | None) -> Path | None:
     """The session's worktree path if it exists on disk, else None."""
+    if session_disabled():
+        return None
+    override = session_dir_override()
+    if override is not None:
+        return override if override.is_dir() else None
     if not session_id:
         return None
     path = store / "worktrees" / f"session-{session_id}"
@@ -705,6 +733,9 @@ def session_worktree(store: Path, session_id: str | None) -> Path | None:
 
 
 def cmd_worktree(store: Path, session_id: str | None, transcript: str | None) -> int:
+    if session_disabled():
+        # The session layer is off: nothing to create, memory reads from main.
+        return 0
     if session_id is None:
         print(
             "memoryctl: worktree needs a session id (stdin session_id or --session)",
@@ -721,12 +752,17 @@ def cmd_env(store: Path, session_id: str | None) -> int:
     # Printed even when the target is missing: the variable costs nothing and
     # names the advertised location. The forwarded configuration lets Bash
     # commands run with exactly what the hook resolved.
-    target = (
-        store / "worktrees" / f"session-{session_id}" if session_id else main_dir(store)
-    )
+    if session_disabled() or session_id is None:
+        target = main_dir(store)
+    else:
+        target = session_dir_override() or store / "worktrees" / f"session-{session_id}"
     print(f"export MEMORY_DIR={shlex.quote(str(target))}")
     print(f"export MEMORY_ROOT_DIR={shlex.quote(str(root_dir()))}")
     print(f"export MEMORY_AGENT_ID={shlex.quote(agent_id())}")
+    for name in ("MEMORY_SESSION", "MEMORY_SESSION_ID", "MEMORY_SESSION_DIR"):
+        value = os.environ.get(name)
+        if value is not None:
+            print(f"export {name}={shlex.quote(value)}")
     return 0
 
 
@@ -737,6 +773,11 @@ def cmd_compile(store: Path, session_id: str | None) -> int:
         # gets a silent no-op, not a failure.
         print(f"memoryctl: no memory dir at {target}; nothing to do", file=sys.stderr)
         return 0
+    if session_disabled():
+        # No branch to write to: the injection carries the read-only framing
+        # instead of the maintenance instructions.
+        print(compile_memory(target, preamble=prompt_block(SESSIONLESS_PREAMBLE_FILE)))
+        return 0
     print(compile_memory(target))
     return 0
 
@@ -746,7 +787,7 @@ def cmd_commit(store: Path, session_id: str | None) -> int:
     agent. Only worktrees are committed -- never the main/ checkout, which
     only the memory agent writes."""
     target = session_worktree(store, session_id)
-    if target is None:
+    if target is None or session_id is None:
         print(
             "memoryctl: commit needs a session worktree; nothing to do", file=sys.stderr
         )
@@ -925,6 +966,11 @@ def main() -> int:
     )
     data = read_stdin_json() if need_stdin else {}
     session_id, transcript = resolve_session_inputs(data, args.session, args.transcript)
+    # MEMORY_SESSION_ID pins the id between the explicit flag and the hook
+    # JSON: every session started with the pin shares one branch and worktree.
+    pin = os.environ.get("MEMORY_SESSION_ID")
+    if args.session is None and pin:
+        session_id = pin
     raw_type = data.get("agent_type")
     agent_type = agent_type_flag or (raw_type if isinstance(raw_type, str) else None)
     if session_id is not None:

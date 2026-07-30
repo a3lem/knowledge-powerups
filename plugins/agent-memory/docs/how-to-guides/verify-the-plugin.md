@@ -136,6 +136,15 @@ follows the directory-level symlink; pipe the prompt on stdin, since
 - `MEMORY_CONSOLIDATING=1`: `worktree` creates nothing, `compile` and
   `subagent-context` emit nothing, `commit`, `session-end`, and `index`
   are no-ops; `env` and `validate` unaffected.
+- `MEMORY_SESSION=` (set empty): `worktree` prints nothing and creates
+  nothing; `compile` binds `main/` with the read-only preamble; `env`
+  points `MEMORY_DIR` at `main/` and forwards the switch; `commit` and
+  `session-end` exit 0 silently.
+- `MEMORY_SESSION_ID=pinA`: the chain builds `worktrees/session-pinA`
+  whatever the stdin id says, and the auto-commit message names `pinA`;
+  an explicit `--session` still wins over the pin.
+- `MEMORY_SESSION_DIR=<path>`: worktree, markers, and auto-commit land at
+  `<path>`, on branch `session-<id>`; `env` binds `MEMORY_DIR` to it.
 
 ## The contract
 

@@ -16,6 +16,12 @@ which holds exactly two directories: `main/`, the main branch's checkout, and
 - `MEMORY_ROOT_DIR` moves the root (default `~/.agents/memories`).
 - `MEMORY_ENABLED=0` is the kill switch: every hook becomes a silent no-op
   and the session leaves no memory trace.
+- `MEMORY_SESSION=` (set empty) runs a session without a branch or
+  worktree: memory is injected read-only from main, nothing is written.
+- `MEMORY_SESSION_ID=<id>` pins the session id, so any number of sessions
+  share one memory branch.
+- `MEMORY_SESSION_DIR=<path>` puts the session worktree at an explicit
+  path -- a debugging aid.
 
 No further setup: the first session scaffolds the store, and hooks handle
 injection, validation, and end-of-turn commits from then on.
