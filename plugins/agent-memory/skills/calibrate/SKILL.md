@@ -15,7 +15,7 @@ Scope: the human is the authority on facts about themselves and about the world.
 
 1. **Select candidates.** Read `system/` in full and walk the `reference/` index for files whose descriptions promise factual claims. Prefer claims that are consequential if wrong, old, or never confirmed since being written. `system/` files outrank `reference/` ones -- they shape every session.
 
-2. **Present in small batches.** Give each memory as a claim with its source: which file it lives in, and -- when `git log` or `git blame` on that file says so cheaply -- which session or commit wrote it. "I have (from `system/human/identity.md`): you work at Klassif.ai as an AI/ML engineer. Still right?" Plain conversation, a handful of claims at a time, highest value first. Stop when the human has had enough -- a partial pass is fine, and unchecked claims get no mark of any kind.
+2. **Present in small batches.** Give each memory as a claim with its source: which file it lives in, and -- when `git log` or `git blame` on that file says so cheaply -- which session or commit wrote it. "I have (from `system/human/human.md`): you work at Klassif.ai as an AI/ML engineer. Still right?" Plain conversation, a handful of claims at a time, highest value first. Stop when the human has had enough -- a partial pass is fine, and unchecked claims get no mark of any kind.
 
 3. **State your confidence before the verdict.** For each claim, before the human rules, say how sure you are that it holds and why -- "high, confirmed twice last month" or "low, inferred once and never seen again". The order is the whole point: confidence stated after the answer is worthless, and confidence is what makes this calibration rather than correction.
 

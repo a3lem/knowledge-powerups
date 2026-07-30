@@ -28,8 +28,8 @@ Three layers, three kinds of authority:
   are plain git, prescribed by skills.
 - **hooks** (`hooks/hooks.json`) -- the compulsion: SessionStart runs
   worktree → index → env → compile as one command (stdin captured once),
-  so every session gets its own branch, fresh index bodies, its env
-  exports, and its injection; SubagentStart injects the same block into
+  so by default every session gets its own branch, fresh index bodies,
+  its env exports, and its injection; SubagentStart injects the same block into
   subagents (read-only preamble, memory agent skipped); SessionEnd
   refreshes the index bodies again and drops the session's `.active`
   liveness lock; Stop validates the session's worktree -- exit 2 blocks

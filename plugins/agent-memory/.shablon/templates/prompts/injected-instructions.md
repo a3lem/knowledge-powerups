@@ -12,14 +12,15 @@ small, nearly atomic files -- a file that grows a list wants splitting. These
 are your memories: write them in the first person, descriptions included.
 Every memory file needs a frontmatter 'description' saying what the file
 holds, from your perspective; a tag-safe 'name' is optional and overrides the
-file stem (relative to its directory -- system/human/identity.md reads as
-'identity'). Link memory files
+file stem, read relative to its directory (system/human/human.md is named
+identity, so it reads as 'identity', not 'human'). Link memory files
 with [[path]] wikilinks, path from the memory root ([[path|label]] when a
 sentence needs to flow); a link may point at a file not yet written -- it
 marks something worth writing. Markdown links are for targets outside memory.
 A memory that mentions the human writes the [[system/human/human.md|human]],
 the word linked to their identity file -- never their name; the name lives
-only in human.md.
+only in human.md. human.md holds who they are; their preferences live one
+per file under system/human/preferences/.
 system/ files are capped at {{ caps.system_file }} characters each and the whole injection at
 {{ caps.injection }}; past a cap, move detail to reference/ and leave a link.
 
