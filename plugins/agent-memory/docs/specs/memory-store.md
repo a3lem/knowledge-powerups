@@ -22,6 +22,11 @@ An agent's memory is a git repository of markdown files at
   every branch and worktree.
 - `system/` reserves two subdirectories: `human/` for knowledge of the
   human, `core/` for standing rules -- self-corrections among them.
+- `system/human/human.md` is the human's identity file (who they are:
+  name, role, working context); `system/human/preferences/` holds their
+  preferences, one small file each. A memory that mentions the human
+  links `human.md` -- `[[system/human/human.md|name]]` -- instead of
+  writing a bare name, so every mention is one exact grep.
 - Every memory file requires a `description` in its frontmatter; for
   `reference/` files it is the only signal the injected index shows.
 - Memory files are written in the first person, descriptions included:
@@ -42,8 +47,9 @@ An agent's memory is a git repository of markdown files at
 - `system/persona.md` is who the agent is told to be -- name, backstory,
   character -- recorded by the agent as the human assigns it in
   conversation. A human never edits a memory file directly.
-- A fresh store scaffolds minimal template versions of both; everything
-  real accumulates from lived sessions.
+- A fresh store scaffolds minimal template versions of soul, persona, and
+  the human identity file; everything real accumulates from lived
+  sessions.
 - `reference/history/` holds dated episodic notes named
   `YYYY-MM-DD-<slug>.md`, staged for consolidation; nothing lives there
   permanently.

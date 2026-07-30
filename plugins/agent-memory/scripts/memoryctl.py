@@ -97,11 +97,26 @@ No role yet. When the human gives me one -- a name, a history, a character
 to play -- I record it here as given. What I make of it belongs in soul.md.
 """
 
+# The frontmatter name keeps the injection tag <identity>, not a <human>
+# nested inside the <human> directory tag.
+HUMAN_TEMPLATE = """\
+---
+name: identity
+description: Who my human is -- name, role, working context. Other memories link this file when they mention them, never a bare name.
+---
+
+I haven't learned who my human is yet. Name, role, and working context go
+here as I learn them; their preferences live in files under
+system/human/preferences/. When another memory mentions my human, it links
+this file rather than writing a bare name.
+"""
+
 # The reserved directories the conventions name: knowledge of the human and
 # standing rules in system/, per-code-base and staged episodic notes in
 # reference/. Scaffolded so the layout is discoverable without the skill.
 RESERVED_DIRS = (
     "system/human",
+    "system/human/preferences",
     "system/core",
     "reference/projects",
     "reference/history",
@@ -543,9 +558,10 @@ def ensure_skills_discovery(checkout: Path) -> None:
 
 def scaffold_store(store: Path) -> None:
     """Create a fresh store: main/ holding the three tiers with their
-    reserved subdirectories, the template soul and persona, the skills
-    discovery symlink, git init, and one commit authored as the agent;
-    worktrees/ beside it for the session checkouts."""
+    reserved subdirectories, the template soul, persona, and human
+    identity, the skills discovery symlink, git init, and one commit
+    authored as the agent; worktrees/ beside it for the session
+    checkouts."""
     main = main_dir(store)
     main.mkdir(parents=True, exist_ok=True)
     (store / "worktrees").mkdir(exist_ok=True)
@@ -561,6 +577,9 @@ def scaffold_store(store: Path) -> None:
     persona = main / "system" / "persona.md"
     if not persona.exists():
         persona.write_text(PERSONA_TEMPLATE, encoding="utf-8")
+    human = main / "system" / "human" / "human.md"
+    if not human.exists():
+        human.write_text(HUMAN_TEMPLATE, encoding="utf-8")
     aid = agent_id()
     git(main, "init", "-b", "main")
     git(main, "add", "-A")

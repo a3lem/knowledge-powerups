@@ -17,11 +17,11 @@ Set up a repository's `docs/` directory to follow the standard layout. The layou
    ${CLAUDE_PLUGIN_ROOT}/skills/adopt-conventions/scripts/scaffold_docs.sh <repo-root>
    ```
 
-   It creates the baseline (index.md, glossary.md, architecture.md, the `dev/` workspace) and nothing more: the optional reference dirs (explanation/, how-to-guides/, specs/, adrs/) are created on demand, when the first file needs one. The script is idempotent and never overwrites an existing file.
+   It creates the baseline (glossary.md, architecture.md, the `dev/` workspace) and nothing more: the optional reference dirs (explanation/, how-to-guides/, specs/, adrs/) are created on demand, when the first file needs one. No index.md: whether the project keeps one is the human's call, and /index-md:index-md can generate it from the tree if they want it. Seed files carry the frontmatter keys with no values -- the wording is the human's, not the script's. The script is idempotent and never overwrites an existing file.
 
 3. **Brownfield** -- `docs/` exists with content: follow 'Adopting in an existing project' below. Nothing moves before the human approves the plan.
 
-4. **Finish by hand.** The script leaves placeholders only. Write a one-line description per entry in `docs/index.md`, and seed `architecture.md` with the project's actual high-level structure -- read the code first, don't fabricate.
+4. **Finish by hand.** The script leaves placeholders only. Fill in each file's `description`, and seed `architecture.md` with the project's actual high-level structure -- read the code first, don't fabricate.
 
 ## Adopting in an existing project
 

@@ -6,7 +6,9 @@
 # Idempotent: creates only what is missing, never overwrites or truncates
 # an existing file. Safe to re-run. Optional reference dirs (explanation/,
 # how-to-guides/, specs/, adrs/) are deliberately not created here; they
-# are created on demand when the first file needs one.
+# are created on demand when the first file needs one. No index.md either:
+# whether the project keeps one, and how, is the user's call. Seed files
+# carry the frontmatter keys but no prefilled wording.
 set -euo pipefail
 
 root="${1:-.}"
@@ -54,24 +56,10 @@ make_dir "$docs/dev/work/completed"
 make_dir "$docs/dev/work/abandoned"
 make_dir "$docs/dev/references/generated"
 
-make_file "$docs/index.md" "$(cat <<'EOF'
----
-title: docs
-description:
----
-
-# docs
-
-- [Architecture](architecture.md): high-level architecture of the project
-- [dev](dev/): developer workspace for e.g notes, plans, work items, designs, fetched resources.
-- [Glossary](glossary.md): project-specific jargon, defined in one place
-EOF
-)"
-
 make_file "$docs/glossary.md" "$(cat <<'EOF'
 ---
 title: Glossary
-description: project-specific jargon, defined in one place
+description:
 ---
 
 # Glossary
@@ -83,7 +71,7 @@ EOF
 make_file "$docs/architecture.md" "$(cat <<'EOF'
 ---
 title: Architecture
-description: high-level architecture of the project
+description:
 ---
 
 # Architecture

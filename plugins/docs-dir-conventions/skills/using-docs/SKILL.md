@@ -27,7 +27,7 @@ description: What deleting an issue does and doesn't remove
 ---
 ```
 
-This lets index.md files be generated instead of maintained (see /index-md:index-md skill). Deliberately absent: `type` (the path already encodes a file's role) and dates (git records them).
+They tell a reader what the file is about without opening it, and they make index.md files generatable instead of hand-maintained (see /index-md:index-md skill). Deliberately absent: `type` (the path already encodes a file's role) and dates (git records them).
 
 ## Standard layout for `docs/`
 
@@ -37,7 +37,7 @@ This lets index.md files be generated instead of maintained (see /index-md:index
   CONTRIBUTING.md  # how to get started contributing. brief!
   CHANGELOG.md  # all notable changes to the project (see /changelog-md skill)
   docs/
-    index.md  # directory listing (see /index-md:index-md skill)
+    index.md  # optional. directory listing; can be generated (see /index-md:index-md skill)
     glossary.md  # project-specific jargon must be defined here.
     architecture.md  # high-level architecture of the project (see /architecture-md skill)
     philosophy.md  # optional. design principles and high-level goals -- one-line claims, each linking to an explainer (e.g. in explanation/)

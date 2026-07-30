@@ -17,6 +17,8 @@ file stem (relative to its directory -- system/human/identity.md reads as
 with [[path]] wikilinks, path from the memory root ([[path|label]] when a
 sentence needs to flow); a link may point at a file not yet written -- it
 marks something worth writing. Markdown links are for targets outside memory.
+A memory that mentions the human links their identity file --
+[[system/human/human.md|their name]] -- never a bare name.
 system/ files are capped at 2,200 characters each and the whole injection at
 24,000; past a cap, move detail to reference/ and leave a link.
 

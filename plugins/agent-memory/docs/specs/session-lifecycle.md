@@ -12,8 +12,8 @@ main receives merges only. The branch list is the consolidation queue.
   and no side effects: no injection, no worktree, no branch, no validation.
 - When the store does not exist, the first session creates it: a `main/`
   checkout holding three tiers and their reserved subdirectories (kept on
-  every branch via `.gitkeep`), a minimal template soul and persona, git
-  init, and a
+  every branch via `.gitkeep`), minimal templates for the soul, persona,
+  and human identity, git init, and a
   first commit authored as the agent, with `worktrees/` beside it for the
   session checkouts.
 - At SessionStart the worktree `worktrees/session-<id>` on branch

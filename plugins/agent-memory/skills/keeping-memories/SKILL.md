@@ -7,7 +7,7 @@ description: Conventions for changing an agent's memories -- what a memory file 
 
 An agent's memory is a directory of markdown files the agent maintains itself, a git repository whose commits are authored as the agent. This skill carries the conventions for changing it: what a memory file looks like, how files link, where things live. Recalling needs no conventions -- the injection is recall. The maintenance process (consolidation, merging, cleanup) is defined in the memory agent (`agents/memory.md`), and what the system is and does is specified in the plugin's `docs/specs/`.
 
-Three tiers, split by what enters the prompt: `system/` (injected in full -- identity in `soul.md`, an assigned role in `persona.md`, knowledge of the human in `human/`, standing rules in `core/`, used sparingly), `reference/` (index only; contents read on demand), `skills/` (procedural memory; the roster is injected, read a SKILL.md to use one).
+Three tiers, split by what enters the prompt: `system/` (injected in full -- identity in `soul.md`, an assigned role in `persona.md`, knowledge of the human in `human/` (who they are in `human.md`, their preferences under `preferences/`), standing rules in `core/`, used sparingly), `reference/` (index only; contents read on demand), `skills/` (procedural memory; the roster is injected, read a SKILL.md to use one).
 
 ## Writing Memories
 
@@ -26,7 +26,7 @@ description: What I know about {user} -- role, work, and working context.
 ---
 ```
 
-The `description` is mandatory. For reference files it is the only signal the injected index shows, so it must say what kind of information the file holds, not summarize the contents. The `name` is optional: it overrides the file stem as the file's tag in the injection, must be tag-safe, and reads relative to its parent directory: `system/human/identity.md` is named `identity`, not `human-identity` -- the nesting already says the rest.
+The `description` is mandatory. For reference files it is the only signal the injected index shows, so it must say what kind of information the file holds, not summarize the contents. The `name` is optional: it overrides the file stem as the file's tag in the injection, must be tag-safe, and reads relative to its parent directory: `system/human/preferences/directness.md` is named `directness`, not `human-preferences-directness` -- the nesting already says the rest.
 
 A memory can go stale. When a memory contradicts observation, trust the observation and fix the memory in the same turn.
 
@@ -49,6 +49,8 @@ The 2,200-character cap is deliberate for the soul, not a constraint to engineer
 ## Links Between Memories
 
 A link from one memory file to another is a wikilink whose payload is the path from the memory root, extension included: `[[reference/projects/klassifai/document-types.md]]`. Use `[[path|label]]` when a sentence needs to flow. Plain markdown links are reserved for targets outside the memory root -- URLs, tickets, repos, context wikis. (Wikis live outside memory; memory points to them, never contains them.)
+
+One standing application: a memory that mentions the human links their identity file -- `[[system/human/human.md|their name]]` -- instead of writing a bare name. Every mention of them is then one exact grep, and what is known about them has a single home.
 
 Root-relative paths give every file one canonical link spelling, so finding inbound links is an exact grep and renames are find-and-replace. Keep relation words outside the link -- `details: [[path]]`, `source: [[path]]`, `supersedes: [[path]]` -- and the link graph, edge types included, stays mineable with one pattern. Validation requires the root-relative form (an absolute path or an escape blocks the turn) but not resolution: a link to a file not yet written is a forward pointer, marking something worth writing, and consolidation either writes the file or removes the pointer.
 
