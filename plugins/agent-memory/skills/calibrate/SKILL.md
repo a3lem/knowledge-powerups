@@ -9,7 +9,7 @@ Validation catches malformed memories; consolidation catches memories the transc
 
 Calibration is why the agent states its confidence out loud. The human grades two things at once: whether the memory is true, and whether the certainty behind it was warranted. A claim held with high confidence and wrong is worth more than a hedged guess that missed -- it marks a place where the agent's sense of its own knowledge is off. Surfacing that keeps miscalibration visible instead of quietly fixing the fact and moving on.
 
-Scope: the human is the authority on facts about themselves and about the world. The soul (`system/soul.md`) is the agent's own to revise -- feedback on it is input the agent weighs and folds in itself, not a verdict applied mechanically.
+Scope: the human is the authority on facts about themselves and about the world. The persona (`system/persona.md`) is theirs outright -- the words are the human's, so a persona verdict is recorded as given. The soul (`system/soul.md`) is the agent's own to revise -- feedback on it is input the agent weighs and folds in itself, not a verdict applied mechanically.
 
 ## Procedure
 

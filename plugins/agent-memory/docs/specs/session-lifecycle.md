@@ -5,8 +5,9 @@ description: How a session's memory branch is born, used, committed, and queued
 
 # Session Lifecycle
 
-A session works on its own branch of the memory store in a git worktree;
-main receives merges only. The branch list is the consolidation queue.
+A session works on its own branch of the memory store in a git worktree
+and never writes main; only the memory agent commits there. The branch
+list is the consolidation queue.
 
 - With `MEMORY_ENABLED=0`, every memoryctl subcommand exits 0 with no output
   and no side effects: no injection, no worktree, no branch, no validation.

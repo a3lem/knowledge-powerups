@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Compile and validate an agent's memory directory.
 
-A session works on its own branch of the store in a git worktree; main
-receives merges only. Every subcommand reads the harness hook JSON on stdin
+A session works on its own branch of the store in a git worktree and
+never writes main; only the memory agent commits there. Every subcommand
+reads the harness hook JSON on stdin
 (`session_id`, `transcript_path`) and binds to that session's worktree;
 `--session <id>` / `--transcript <path>` override for manual runs and tests.
 
@@ -742,7 +743,7 @@ def cmd_compile(store: Path, session_id: str | None) -> int:
 def cmd_commit(store: Path, session_id: str | None) -> int:
     """Commit the session worktree's writes to its branch, authored as the
     agent. Only worktrees are committed -- never the main/ checkout, which
-    receives merges only."""
+    only the memory agent writes."""
     target = session_worktree(store, session_id)
     if target is None:
         print(

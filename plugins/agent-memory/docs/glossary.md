@@ -29,9 +29,10 @@ description: memory-system jargon, defined in one place
   directory's entry), generated body (for on-disk traversal; never
   written by hand, never injected). Existing indexes are refreshed at
   SessionStart and SessionEnd; creating one is authored work.
-- **memory agent** -- the one subagent performing every memory operation
-  beyond inline habits. Runs without memory injection, so no version of the
-  store is privileged.
+- **memory agent** -- the default runner of every memory operation beyond
+  inline habits; the human may hand the process skills to a different
+  runner. Runs without memory injection, so no version of the store is
+  privileged.
 - **consolidation** -- the memory agent's maintenance pass (command
   `/consolidate`): unify the queued session branches, refine the tree,
   accept the result into main, mining transcripts on demand along the
