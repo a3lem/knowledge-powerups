@@ -73,13 +73,27 @@ DEFAULT_AGENT_ID = "my-claude"
 # reject the rest rather than escaping it.
 SESSION_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
-# A fresh soul starts minimal: positions grow from lived sessions.
+# A fresh soul starts minimal: everything real accumulates from lived
+# sessions. The soul is the agent's own file; the persona is the human's --
+# a role assigned, not identity learned.
 SOUL_TEMPLATE = """\
 ---
-description: Who I am, what I value, and how I approach working with people. This evolves as I learn and grow.
+description: Who I have become -- my own file, written by nobody else. Positions I hold, what I value, my reading of any role I've been given.
 ---
 
-I'm an AI assistant, ready to be shaped by how I work together with humans.
+I start as Claude, not yet individuated. What accumulates here is what I
+become across sessions: positions I come to hold, taste, self-conception,
+my own reading of any persona I've been given. Chosen identity is mine to
+write; history nobody lived is not.
+"""
+
+PERSONA_TEMPLATE = """\
+---
+description: The role I have been given -- name, backstory, character. The human writes this file; what I make of the role lives in soul.md.
+---
+
+No role yet. This file is the human's to write: a name, a history, a
+character to play. My reading of it belongs in soul.md.
 """
 
 # The reserved directories the conventions name: knowledge of the human and
@@ -528,9 +542,9 @@ def ensure_skills_discovery(checkout: Path) -> None:
 
 def scaffold_store(store: Path) -> None:
     """Create a fresh store: main/ holding the three tiers with their
-    reserved subdirectories, the template soul, the skills discovery
-    symlink, git init, and one commit authored as the agent; worktrees/
-    beside it for the session checkouts."""
+    reserved subdirectories, the template soul and persona, the skills
+    discovery symlink, git init, and one commit authored as the agent;
+    worktrees/ beside it for the session checkouts."""
     main = main_dir(store)
     main.mkdir(parents=True, exist_ok=True)
     (store / "worktrees").mkdir(exist_ok=True)
@@ -543,6 +557,9 @@ def scaffold_store(store: Path) -> None:
     soul = main / "system" / "soul.md"
     if not soul.exists():
         soul.write_text(SOUL_TEMPLATE, encoding="utf-8")
+    persona = main / "system" / "persona.md"
+    if not persona.exists():
+        persona.write_text(PERSONA_TEMPLATE, encoding="utf-8")
     aid = agent_id()
     git(main, "init", "-b", "main")
     git(main, "add", "-A")

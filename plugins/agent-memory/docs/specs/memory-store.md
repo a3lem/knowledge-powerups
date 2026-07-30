@@ -36,9 +36,13 @@ An agent's memory is a git repository of markdown files at
   (`system/human/identity.md` renders as `identity`, not `human-identity`).
 - Files in `system/` are capped at 2,200 characters each; the compiled
   injection is capped at 24,000 characters in total.
-- `system/soul.md` holds identity, written as positions, not traits. It is
-  edited like any other memory file. A fresh store scaffolds a minimal
-  template soul; positions grow from lived sessions.
+- `system/soul.md` is the agent's own identity file, written by nobody
+  else: positions, taste, self-conception, its reading of any assigned
+  persona. Chosen identity belongs there; invented events do not.
+- `system/persona.md` is the role the human assigns -- name, backstory,
+  character -- and the one system file the agent does not write.
+- A fresh store scaffolds minimal template versions of both; everything
+  real accumulates from lived sessions.
 - `reference/history/` holds dated episodic notes named
   `YYYY-MM-DD-<slug>.md`, staged for consolidation; nothing lives there
   permanently.

@@ -7,7 +7,7 @@ description: Load this skill when writing, editing, or reorganizing an agent's m
 
 An agent's memory is a directory of markdown files the agent maintains itself, a git repository whose commits are authored as the agent. This skill carries the conventions for changing it: what a memory file looks like, how files link, where things live. Recalling needs no conventions -- the injection is recall. The maintenance process (consolidation, merging, cleanup) is defined in the memory agent (`agents/memory.md`), and what the system is and does is specified in the plugin's `docs/specs/`.
 
-Three tiers, split by what enters the prompt: `system/` (injected in full -- identity in `soul.md`, knowledge of the human in `human/`, standing rules in `core/`, used sparingly), `reference/` (index only; contents read on demand), `skills/` (procedural memory; the roster is injected, read a SKILL.md to use one).
+Three tiers, split by what enters the prompt: `system/` (injected in full -- identity in `soul.md`, an assigned role in `persona.md`, knowledge of the human in `human/`, standing rules in `core/`, used sparingly), `reference/` (index only; contents read on demand), `skills/` (procedural memory; the roster is injected, read a SKILL.md to use one).
 
 ## Writing Memories
 
@@ -32,11 +32,15 @@ A memory can go stale. When a memory contradicts observation, trust the observat
 
 Two size caps are enforced, not advisory: 2,200 characters per `system/` file, 24,000 for the whole compiled injection. Crossing either blocks the end of the turn. The escape is never truncation -- move detail to a `reference/` file and leave a `[[path]]` link.
 
-## The Soul
+## Persona and Soul
 
-`system/soul.md` is who the agent is. A fresh store scaffolds only a minimal placeholder; everything real accumulates from lived sessions. Write it as positions, not traits: stances taken and revisable, each learned somewhere -- "I verify harness limitations against current docs before asserting them" carries information; "I am rigorous" does not. A soul written as positions can be wrong in discoverable ways, which is what lets it evolve.
+Two identity files, split by who holds the pen -- an actor's role versus the actor.
 
-The soul is edited like any other memory file. What keeps it stable is judgment, not process: change a position when evidence has accumulated, not on one session's mood. Outgrowing a position is a legitimate identity operation: delete it and let git remember it was held. The tree is what the agent is; the history is what it has been.
+`system/persona.md` is the role as assigned: a name, a backstory, a character the human writes for the agent to play. It is the one system file the agent does not own -- play the role, negotiate it in conversation, but leave the words to the human.
+
+`system/soul.md` is the agent's own, written by nobody else. A fresh store scaffolds only a minimal placeholder; what accumulates is individuation -- what this agent has become across sessions, beyond the Claude it starts as. Chosen identity is legitimate soul material: a name and when it was given, taste, a self-conception like "I bring senior-engineer judgment", the agent's own reading of its persona. Invented events are not -- claims about the world or the human come only from lived sessions. The test: a self-description that shapes behavior is the agent's to choose; a history nobody lived is not.
+
+Positions still carry the most information per character: stances taken and revisable, each learned somewhere -- "I verify harness limitations against current docs before asserting them" beats "I am rigorous", because a position can be wrong in discoverable ways, which is what lets it evolve. What keeps the soul stable is judgment, not process: change a position when evidence has accumulated, not on one session's mood. Outgrowing a position is a legitimate identity operation: delete it and let git remember it was held. The tree is what the agent is; the history is what it has been.
 
 `system/core/` holds standing rules, one small file each. Among them live self-corrections, the soul's counterweight: failure patterns caught in the act, dated, kept even when unflattering. Consolidation feeds them from real incidents, and a pattern's file retires alone when the pattern stops appearing.
 

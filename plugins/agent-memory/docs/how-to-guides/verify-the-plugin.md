@@ -59,7 +59,8 @@ Bootstrap: point `MEMORY_ROOT_DIR` at an empty temp dir, run the chain,
 expect a store whose root lists exactly `main/` and `worktrees/`: `main/`
 holds the git dir, the three tiers with their reserved subdirectories
 (`system/human/`, `system/core/`, `reference/projects/`,
-`reference/history/`, each with a `.gitkeep`), the template soul, and one
+`reference/history/`, each with a `.gitkeep`), the template soul and
+persona, and one
 commit authored as the agent; the session worktree sits beside it with the
 full layout present, since `.gitkeep` rides the branch.
 

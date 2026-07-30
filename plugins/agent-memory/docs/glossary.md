@@ -59,9 +59,13 @@ description: memory-system jargon, defined in one place
 - **session liveness** -- whether a session might still write: the
   worktree's untracked `.active` file, written at SessionStart and removed
   at SessionEnd.
-- **soul** -- `system/soul.md`: who the agent is, written as positions, not
-  traits. Edited like any other memory file; kept stable by judgment, not
-  machinery.
+- **persona** -- `system/persona.md`: the role the human assigns -- name,
+  backstory, character. The one system file the agent does not write; the
+  agent's reading of the role lives in the soul.
+- **soul** -- `system/soul.md`: the agent's own identity file, written by
+  nobody else -- positions, taste, self-conception, its reading of any
+  assigned persona. Chosen identity belongs there; invented events do
+  not. Kept stable by judgment, not machinery.
 - **/sync (command)** -- lands the session's branch in main now, when it
   merges cleanly; a conflict aborts and waits for consolidation. The
   branch stays queued.
