@@ -16,9 +16,10 @@ Three layers, three kinds of authority:
   itself on first use and ensuring the `.claude/skills` discovery
   symlink), `env` (print the `MEMORY_DIR` and `MEMORY_*`
   export lines), `compile` (print the injection), `validate` (check the
-  contract, exit 2 on violations), `commit` (commit the session worktree's
-  writes, authored as the agent), `session-end` (drop the worktree's
-  `.active` liveness lock), `index` (refresh the generated index.md
+  contract, exit 2 on violations), `system-delta` (report the turn's net
+  growth in `system/`, exit 2 to block once), `commit` (commit the session
+  worktree's writes, authored as the agent), `session-end` (drop the
+  worktree's `.active` liveness lock), `index` (refresh the generated index.md
   bodies in the worktree's `reference/`, via the repo's shared
   `cli/generate_index.py`), `subagent-context` (print the
   SubagentStart JSON that carries the injection to subagents). Stdlib-only,

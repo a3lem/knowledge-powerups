@@ -39,6 +39,14 @@ An agent's memory is a git repository of markdown files at
 - Memory favors small, nearly atomic files -- one fact, rule, or pattern
   per file, linked where they relate -- over files that accumulate lists.
   Convention, not validated.
+- Memory never stores secrets -- credentials, API keys, tokens: the store
+  is a git repository that may leave the machine. A secret stays in the
+  environment or a secrets store and is referenced by name. Convention,
+  not validated.
+- Memory prose is terse: notes to a future self, not essays -- state the
+  fact and stop. Every character of `system/` is read in every session.
+  Convention, not validated; the growth check at Stop and the accounting
+  line in the metadata are its reminders.
 - A memory file may carry a frontmatter `name` matching
   `^[A-Za-z][A-Za-z0-9._-]*$`; it overrides the file stem as the file's tag
   in the injection and reads relative to its parent directory

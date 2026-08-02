@@ -14,6 +14,9 @@ passes.
 
 Run `memoryctl validate` and let it pass before every commit.
 
+Standing goal for a pass: `system/` ends no larger than it started,
+unless new facts earned the growth.
+
 ## The operations
 
 **Reconcile.** When two files state incompatible facts, find which one
@@ -46,6 +49,12 @@ being read.
 **Split.** A `system/` file pressing its 2,200-character cap, or any
 file grown into a list, splits into small linked files -- each gains its
 own description, its own links, its own retirement.
+
+**Condense.** Rewrite a verbose memory tersely: same facts, fewer
+characters. Flowing prose becomes notes -- state the fact and stop.
+`system/` first, where every character is read in every session: a file
+that says the same thing in half the characters is the same memory at
+half the cost.
 
 After any operation that adds, removes, or moves files, regenerate the
 affected `index.md` bodies with the index-md skill -- their generated

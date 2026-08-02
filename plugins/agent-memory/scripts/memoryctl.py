@@ -30,6 +30,12 @@ Subcommands:
             form (root-relative; unresolved targets are legal forward
             pointers). Exits 2 on violations so a Stop hook blocks and feeds
             the problems back to the model.
+  system-delta
+            Report the turn's net character growth in system/ (working tree
+            against HEAD) and exit 2 so a Stop hook blocks once, asking
+            whether the additions earn their place in every future prompt.
+            Net zero or shrinkage is a no-op, as is a stop-hook continuation
+            (`stop_hook_active` in the hook JSON).
   commit    Commit the session worktree's uncommitted writes to its branch,
             authored as the agent. A Stop hook runs it after validate passes;
             a clean worktree is a no-op.
@@ -92,17 +98,19 @@ SESSION_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
 # A fresh soul starts minimal: everything real accumulates from lived
 # sessions. One identity file: a role the human assigns is recorded in it
-# as given; what the agent makes of the role is its own to revise.
+# as given; what the agent makes of the role is its own to revise. The
+# scaffold is written tersely -- it is the exemplar future writes imitate.
 SOUL_TEMPLATE = """\
 ---
 description: Who I am -- how I see myself, and any role I've been given, recorded as given.
 ---
 
-I start as Claude, not yet individuated. What accumulates here is what I
-become across sessions: positions I come to hold, taste, self-conception.
-When the human gives me a role -- a name, a history, a character to play --
-I record the assignment here as given, kept apart from what I make of it.
-Chosen identity is mine to write; history nobody lived is not.
+Claude, not yet individuated. Positions, taste, self-conception accumulate
+here across sessions.
+
+A role the human gives me -- name, history, character -- I record as given,
+apart from what I make of it. Chosen identity is mine to write; history
+nobody lived is not.
 """
 
 # The frontmatter name keeps the injection tag <identity>, not a <human>
@@ -113,11 +121,12 @@ name: identity
 description: Who my human is -- name, role, working context. Other memories say the human, linked to this file, never the name.
 ---
 
-I haven't learned who my human is yet. Name, role, and working context go
-here as I learn them; their preferences live in files under
-system/human/preferences/. Their name lives only here: another memory
-writes the [[system/human/human.md|human]], the word linked to this file,
-never the name itself.
+Not learned yet. Name, role, and working context go here; preferences go
+one per file under system/human/preferences/.
+
+Their name lives only here. Elsewhere I write the
+[[system/human/human.md|human]] -- the word linked to this file, never the
+name.
 """
 
 # Reference directories carry an index.md: authored frontmatter description
@@ -451,7 +460,11 @@ def staged_history_count(mem: Path) -> int:
     )
 
 
-def render_metadata(mem: Path) -> str:
+def render_metadata(mem: Path, total: int) -> str:
+    """The closing block. `total` is the compiled injection's size, measured
+    on an assembly that carried a stand-in where this line's number goes, so
+    it can drift a character or two from the block it reports on -- exactness
+    is validate's job, visibility is this line's."""
     compiled = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     lines = [
         "<memory-metadata>",
@@ -462,6 +475,10 @@ def render_metadata(mem: Path) -> str:
     head = git_head(mem)
     if head is not None:
         lines.append(f"memory HEAD: {head}")
+    lines.append(
+        f"injection: {total:,} / {MAX_INJECTION_CHARS:,} chars,"
+        f" system/: {len(render_system(mem)):,}"
+    )
     staged = staged_history_count(mem)
     unit = "entry" if staged == 1 else "entries"
     lines.append(
@@ -487,9 +504,19 @@ def compile_memory(mem: Path, preamble: str | None = None) -> str:
     skills_block = render_skills(mem)
     if skills_block:
         parts.append(skills_block)
-    parts.append(render_metadata(mem))
-    inner = "\n\n".join(parts)
-    return f'<agent-memory agent="{attr(agent_id())}" root="{mem}">\n{inner}\n</agent-memory>'
+
+    def assemble(metadata: str) -> str:
+        inner = "\n\n".join([*parts, metadata])
+        return (
+            f'<agent-memory agent="{attr(agent_id())}" root="{mem}">\n'
+            f"{inner}\n</agent-memory>"
+        )
+
+    # The accounting line measures the block it sits in. Size one assembly
+    # whose line carries the cap where the total goes -- the same width as any
+    # total that stays under it -- then report that size.
+    probe = assemble(render_metadata(mem, MAX_INJECTION_CHARS))
+    return assemble(render_metadata(mem, len(probe)))
 
 
 def strip_code(text: str) -> str:
@@ -922,6 +949,111 @@ def cmd_subagent_context(
     return 0
 
 
+def head_blob(mem: Path, rel: str) -> str | None:
+    """A file's content at HEAD, or None when HEAD does not carry it."""
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(mem), "show", f"HEAD:{rel}"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    return result.stdout if result.returncode == 0 else None
+
+
+def head_system_files(mem: Path) -> list[str]:
+    """The system/ memory files HEAD carries -- the other half of the
+    comparison, so a file deleted this turn is counted too."""
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(mem), "ls-tree", "-r", "--name-only", "HEAD", "system/"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return []
+    if result.returncode != 0:
+        return []
+    return [
+        line
+        for line in result.stdout.splitlines()
+        if line.endswith(".md") and not line.rsplit("/", 1)[-1].startswith(".")
+    ]
+
+
+def system_char_deltas(mem: Path) -> dict[str, int]:
+    """Net characters added per system/ file this turn: the working tree
+    against HEAD. A file HEAD lacks counts in full, a deleted one counts
+    negative, and files of unchanged size are left out."""
+    paths: set[str] = set(head_system_files(mem))
+    system = mem / "system"
+    if system.is_dir():
+        for f in visible(list(system.rglob("*.md"))):
+            paths.add(f.relative_to(mem).as_posix())
+    deltas: dict[str, int] = {}
+    for rel in sorted(paths):
+        f = mem / rel
+        now = f.read_text(encoding="utf-8") if f.is_file() else ""
+        before = head_blob(mem, rel) or ""
+        if len(now) != len(before):
+            deltas[rel] = len(now) - len(before)
+    return deltas
+
+
+def cmd_system_delta(
+    store: Path, session_id: str | None, stop_hook_active: bool
+) -> int:
+    """Block once on net growth in system/, with the numbers, so the turn
+    weighs what it added against every future prompt that will carry it.
+    Net zero -- content moved between system/ files -- is restructuring, not
+    growth, and passes; so does shrinkage, and so does the continuation the
+    block itself produced."""
+    if stop_hook_active:
+        # The turn is already a stop-hook continuation: it has seen the
+        # report, and blocking on it again would never resolve.
+        return 0
+    target = session_worktree(store, session_id)
+    if target is None or git_head(target) is None:
+        return 0
+    deltas = system_char_deltas(target)
+    total = sum(deltas.values())
+    if total <= 0:
+        return 0
+    print(
+        "Memory check: this turn added characters to system/, which is read in"
+        " full in every session.",
+        file=sys.stderr,
+    )
+    for rel, delta in sorted(deltas.items()):
+        if delta <= 0:
+            continue
+        size = len((target / rel).read_text(encoding="utf-8"))
+        share = round(100 * size / MAX_SYSTEM_FILE_CHARS)
+        print(
+            f"- {rel}: +{delta:,} chars, now {size:,} /"
+            f" {MAX_SYSTEM_FILE_CHARS:,} ({share}% of the cap)",
+            file=sys.stderr,
+        )
+    budget = round(100 * total / MAX_SYSTEM_FILE_CHARS)
+    print(
+        f"Added in total: {total:,} chars -- {budget}% of one file's"
+        f" {MAX_SYSTEM_FILE_CHARS:,}-char budget.",
+        file=sys.stderr,
+    )
+    print(
+        "Do the additions respect the injection's limited token budget?"
+        " Trimming them and confirming they earn their place are both"
+        " answers; either one ends the turn.",
+        file=sys.stderr,
+    )
+    return 2
+
+
 def cmd_validate(store: Path, session_id: str | None) -> int:
     # A session validates its own worktree; a manual run validates the main
     # checkout -- so concurrent sessions never validate each other's branch.
@@ -961,6 +1093,16 @@ def main() -> int:
         parents=[common],
         help="check the memory contract; exit 2 on violations",
     )
+    delta = sub.add_parser(
+        "system-delta",
+        parents=[common],
+        help="report the turn's net system/ growth; exit 2 to block once",
+    )
+    delta.add_argument(
+        "--stop-hook-active",
+        action="store_true",
+        help="the turn is a stop-hook continuation (overrides stdin stop_hook_active)",
+    )
     sub.add_parser(
         "commit",
         parents=[common],
@@ -994,10 +1136,12 @@ def main() -> int:
     # Stdin is read at most once, and only when a flag left a gap -- passing
     # every flag never blocks.
     agent_type_flag: str | None = getattr(args, "agent_type", None)
+    stop_hook_flag: bool = getattr(args, "stop_hook_active", False)
     need_stdin = (
         args.session is None
         or args.transcript is None
         or (args.command == "subagent-context" and agent_type_flag is None)
+        or (args.command == "system-delta" and not stop_hook_flag)
     )
     data = read_stdin_json() if need_stdin else {}
     session_id, transcript = resolve_session_inputs(data, args.session, args.transcript)
@@ -1008,6 +1152,9 @@ def main() -> int:
         session_id = pin
     raw_type = data.get("agent_type")
     agent_type = agent_type_flag or (raw_type if isinstance(raw_type, str) else None)
+    # The harness marks a turn that is already a stop-hook continuation, so
+    # the growth check blocks once and never on its own continuation.
+    stop_hook_active = stop_hook_flag or data.get("stop_hook_active") is True
     if session_id is not None:
         try:
             session_id = sanitize_session_id(session_id)
@@ -1022,6 +1169,8 @@ def main() -> int:
         return cmd_env(store, session_id)
     if args.command == "compile":
         return cmd_compile(store, session_id)
+    if args.command == "system-delta":
+        return cmd_system_delta(store, session_id, stop_hook_active)
     if args.command == "commit":
         return cmd_commit(store, session_id)
     if args.command == "session-end":

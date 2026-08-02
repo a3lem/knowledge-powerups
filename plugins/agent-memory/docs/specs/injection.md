@@ -33,8 +33,11 @@ skill.
   main via `.claude/skills` discovery (see the memory-store spec).
 - `<memory-metadata>` closes the block: agent id, a `MEMORY_DIR: <worktree
   path>` line stating the binding explicitly, compile time (UTC), memory
-  HEAD (short), count of entries staged in `reference/history/`, and the
-  consolidation queue depth (count of `session-*` branches).
+  HEAD (short), an injection accounting line (system/ tier characters and
+  total compiled characters against the 24,000 cap; the total may drift a
+  few characters from validate's exact measure), count of entries staged
+  in `reference/history/`, and the consolidation queue depth (count of
+  `session-*` branches).
 - The `root` attribute and `$MEMORY_DIR` refer to the session's worktree,
   not the `main/` checkout; a session only ever sees its own branch.
 - `memoryctl subagent-context`, run by a SubagentStart hook, injects the

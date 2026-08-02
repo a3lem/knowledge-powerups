@@ -41,8 +41,10 @@ exclude file covers all three session markers, `.discard` included, so
 none reaches git status); the env file has `MEMORY_DIR` (worktree
 path) plus `MEMORY_ROOT_DIR` and `MEMORY_AGENT_ID`; compile's
 `root` attribute is the worktree and
-`<memory-metadata>` shows the `MEMORY_DIR:` line and the consolidation
-queue depth.
+`<memory-metadata>` shows the `MEMORY_DIR:` line, the accounting line
+(`injection: <n> / 24,000 chars, system/: <n>`, the total within a few
+characters of `$CTL compile | wc -c` and the system/ figure matching the
+inlined tier), and the consolidation queue depth.
 
 Concurrency and resume: run the chain for two ids, commit a distinct file
 in each worktree, assert the branches diverge and main is untouched.
@@ -87,7 +89,8 @@ appears as a file entry, and its generated body is never injected.
 Dirty the worktree, then run the hook's exact shape:
 
 ```sh
-echo "$JSON" | $CTL validate && echo "$JSON" | $CTL commit
+echo "$JSON" | $CTL validate && echo "$JSON" | $CTL system-delta \
+  && echo "$JSON" | $CTL commit
 ```
 
 Expect: with a contract violation present, validate exits 2 and no commit
@@ -95,6 +98,25 @@ happens; once clean, the worktree's writes land as one commit on
 `session-t1`, author `<agent-id> <agent-id>@agents.local`, message
 `inline writes, session t1`, and the worktree reads clean. A second run is
 a no-op.
+
+## The system/ growth check
+
+Add characters to a `system/` file in the worktree and run the chain
+again. Expect: `system-delta` exits 2 with a stderr report naming the
+file, the characters it added, and its new size against the
+2,200-char cap with a percentage, then the total added as a share of
+that same per-file budget and the question whether the additions respect
+the injection's budget; nothing is committed. Check the numbers against
+`git show HEAD:system/<file>` and `wc -c` on the working copy.
+
+Re-run with `"stop_hook_active":true` added to the JSON: no report, exit
+0, and the commit lands -- this is the continuation the block produced,
+and it must be able to finish.
+
+No-ops, each exiting 0 with the commit landing: `system/` untouched;
+a `system/` file shrunk; text moved between two `system/` files, which
+nets zero. `MEMORY_ENABLED=0` and `MEMORY_SESSION=` (set empty) print
+nothing and exit 0, as does a session with no worktree.
 
 ## The SubagentStart hook
 

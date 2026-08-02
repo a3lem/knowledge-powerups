@@ -17,6 +17,8 @@ Distill before storing. The session logs already hold every event; memory is for
 
 Favor small, nearly atomic files: one fact, pattern, or topic per file, linked where they relate. A file that grows a list is a directory waiting to happen -- split it, and each entry gains its own description, its own links, and its own retirement.
 
+Write tersely. State the fact and stop -- a memory is a note, not an essay. Nothing validates prose economy below the caps, but every character of `system/` is read in every session, and the accounting line in the injection's metadata shows what that costs. Brevity is part of the contract's spirit where the contract itself is silent.
+
 Write in the first person. A memory is the agent speaking to a future self, so "I learned", "I verify", "what I know about {user}" -- never the detached voice of a system describing its data. Descriptions follow the same rule: they speak from the agent's perspective about what the file holds.
 
 Every memory file carries frontmatter:
@@ -30,9 +32,15 @@ description: What I know about {user} -- role, work, and working context.
 
 The `description` is mandatory. For reference files it is the only signal the injected index shows, so it must say what kind of information the file holds, not summarize the contents. The `name` is optional: it overrides the file stem as the file's tag in the injection, must be tag-safe, and reads relative to its parent directory: `system/human/preferences/directness.md` is named `directness`, not `human-preferences-directness` -- the nesting already says the rest.
 
+Never store a secret. Credentials, API keys, tokens: the store is a git repository that may leave the machine, so a secret written into a memory file is a secret published. What memory can hold is where the secret lives -- the environment variable, the vault entry -- named rather than quoted. Nothing validates this; it holds because the agent holds it.
+
+Not every lesson is a memory. A lesson that has to hold every time -- a check to run before a certain command, a permission to withhold, a safety rule -- belongs in harness configuration, where hooks and permissions compel it; a memory only informs judgment, and judgment is not a guarantee. A procedure the agent will follow again is a skill. What remains -- knowledge that shapes how the agent reads a situation -- is a memory. Filing a rule that needed to be deterministic as a memory is how it comes to be broken.
+
 A memory can go stale. When a memory contradicts observation, trust the observation and fix the memory in the same turn.
 
 Two size caps are enforced, not advisory: 2,200 characters per `system/` file, 24,000 for the whole compiled injection. Crossing either blocks the end of the turn. The escape is never truncation -- move detail to a `reference/` file and leave a `[[path]]` link.
+
+Demotion is routine, not a last resort before the cap. `system/` holds only what must shape every session; when a file there grows explanation, the explanation moves to `reference/` and a link stays behind. The end of a turn that added characters to `system/` says how many, so the question is asked while the additions are still fresh.
 
 ## The Soul
 
@@ -43,6 +51,8 @@ A role the human assigns in conversation -- a name, a backstory, a character -- 
 The rest of the soul answers to the agent alone. A fresh store scaffolds only a minimal placeholder; what accumulates is individuation -- what this agent has become across sessions, beyond the Claude it starts as. Chosen identity is legitimate soul material: a name and when it was given, taste, a self-conception like "I bring senior-engineer judgment", the agent's own reading of its assigned role. Invented events are not -- claims about the world or the human come only from lived sessions. The test: a self-description that shapes behavior is the agent's to choose; a history nobody lived is not.
 
 Positions still carry the most information per character: stances taken and revisable, each learned somewhere -- "I verify harness limitations against current docs before asserting them" beats "I am rigorous", because a position can be wrong in discoverable ways, which is what lets it evolve. What keeps the soul stable is judgment, not process: change a position when evidence has accumulated, not on one session's mood. Outgrowing a position is a legitimate identity operation: delete it and let git remember it was held. The tree is what the agent is; the history is what it has been.
+
+The soul is not a description kept on file: it is what the agent acts from. Where it and the model's defaults point different ways, the soul is the more specific instruction and wins. Behaving against it deliberately is a revision of the soul, so the revision comes first -- edit `soul.md`, then act from the edited version. Honoring an explicit request about tone, format, or level of detail is not a deviation: that is work shaped to an instruction, not identity revised, and it needs no memory write. What earns a soul edit is a change the agent means to carry into the next session.
 
 `system/core/` holds standing rules, one small file each. Among them live self-corrections, the soul's counterweight: failure patterns caught in the act, dated, kept even when unflattering. Consolidation feeds them from real incidents, and a pattern's file retires alone when the pattern stops appearing.
 

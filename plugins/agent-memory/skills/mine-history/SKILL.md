@@ -23,7 +23,12 @@ memories should not weigh them against the record that produced them.
 
 Skim by default; read closely on signals: a long transcript with few
 memory commits, or the user correcting the agent mid-session. The user's
-turns are the highest-signal lines.
+turns are the highest-signal lines. The agent's own turns are the weaker
+material: they are claims it made at the time, not ground truth, and they
+carry no more authority than the memories they produced. A confident
+assertion in the transcript settles nothing on its own -- what settles a
+contradiction is what the user said, what the tools returned, or what the
+work went on to show.
 
 ## Delegating the skim
 

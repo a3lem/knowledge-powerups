@@ -31,11 +31,12 @@ dates, git history).
   evidence.
 - Refine: semantic care of the tree -- contradictory facts reconciled,
   duplicates collapsed, misfiled content re-homed, episodic detail
-  distilled to what generalizes, the irrelevant forgotten. The test for
-  structure is one question, one home. `memoryctl validate` passes before
-  every commit. Refinement is not confined to the pass: light forms run
-  inline in sessions, and the agent may refine main directly between
-  passes.
+  distilled to what generalizes, verbose memories condensed, the
+  irrelevant forgotten. The test for structure is one question, one home.
+  A pass leaves `system/` no larger than it started unless new facts
+  earned the growth. `memoryctl validate` passes before every commit.
+  Refinement is not confined to the pass: light forms run inline in
+  sessions, and the agent may refine main directly between passes.
 - Forgetting is a first-class operation: a deliberate deletion states its
   reason in the deleting commit's message, and nothing deliberately
   forgotten is re-added from a transcript unless evidence postdating the

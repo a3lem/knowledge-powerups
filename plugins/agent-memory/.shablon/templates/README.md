@@ -64,6 +64,16 @@ pointed at the same way for testing.
 - `/calibrate` -- review memories with the human, grading both their truth
   and the agent's confidence in them.
 
+Consolidation does not have to wait to be asked for. Run headless on a cron
+job or a scheduled routine --
+
+    claude -p /consolidate
+
+-- it becomes the agent's sleep cycle: queued session branches unify and
+staged history distills while nobody is at the keyboard. Between scheduled
+runs, the `consolidation queue` and staged-history counts in the injected
+`<memory-metadata>` are the signal that a pass is due.
+
 ## Generated surfaces
 
 This README, the injected instructions, the keeping-memories skill, the
