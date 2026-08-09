@@ -51,10 +51,12 @@ file grown into a list, splits into small linked files -- each gains its
 own description, its own links, its own retirement.
 
 **Condense.** Rewrite a verbose memory tersely: same facts, fewer
-characters. Flowing prose becomes notes -- state the fact and stop.
-`system/` first, where every character is read in every session: a file
-that says the same thing in half the characters is the same memory at
-half the cost.
+characters, whole sentences. Flowing prose becomes notes -- state the
+fact and stop -- but a note is still a sentence: compression that grinds
+prose into fragments or coins shorthand for what a memory said loses the
+memory. `system/` first, where every character is read in every session:
+a file that says the same thing in half the characters is the same memory
+at half the cost.
 
 After any operation that adds, removes, or moves files, regenerate the
 affected `index.md` bodies with the index-md skill -- their generated

@@ -74,7 +74,8 @@ expect a store whose root lists exactly `main/` and `worktrees/`: `main/`
 holds the git dir, the three tiers with their reserved subdirectories
 (`system/human/`, `system/human/preferences/`, `system/core/`,
 `reference/projects/`, `reference/history/`, each with a `.gitkeep`), the
-template soul and human identity (`system/human/human.md`,
+template persona (`system/persona.md`, two headers, no model named,
+injected first) and human identity (`system/human/human.md`,
 injected under tag `identity`), seeded `index.md` files in
 `reference/projects/` and `reference/history/`, and one
 commit authored as the agent; the session worktree sits beside it with the
@@ -89,31 +90,52 @@ appears as a file entry, and its generated body is never injected.
 Dirty the worktree, then run the hook's exact shape:
 
 ```sh
-echo "$JSON" | $CTL validate && echo "$JSON" | $CTL system-delta \
-  && echo "$JSON" | $CTL commit
+echo "$JSON" | $CTL validate \
+  && out=$(echo "$JSON" | $CTL system-delta) \
+  && if [ -n "$out" ]; then printf '%s' "$out"; \
+     else echo "$JSON" | $CTL commit; fi
 ```
 
 Expect: with a contract violation present, validate exits 2 and no commit
 happens; once clean, the worktree's writes land as one commit on
 `session-t1`, author `<agent-id> <agent-id>@agents.local`, message
 `inline writes, session t1`, and the worktree reads clean. A second run is
-a no-op.
+a no-op. The chain's own exit code is 2 only when validate fails: a
+growth block is JSON on stdout, exit 0.
 
 ## The system/ growth check
 
-Add characters to a `system/` file in the worktree and run the chain
-again. Expect: `system-delta` exits 2 with a stderr report naming the
-file, the characters it added, and its new size against the
-{{ caps.system_file }}-char cap with a percentage, then the total added as a share of
-that same per-file budget and the question whether the additions respect
-the injection's budget; nothing is committed. Check the numbers against
-`git show HEAD:system/<file>` and `wc -c` on the working copy.
+Add a handful of characters to a `system/` file in the worktree and run
+the chain again. Under the floor -- fewer than {{ growth.floor }} net characters added
+across `system/`, no grown file crossing half its cap -- expect silence:
+`system-delta` prints nothing on either stream, exits 0, and the commit
+lands.
+
+Now add {{ growth.floor }} characters or more in total and run the chain again. Expect
+one JSON object on stdout, nothing on stderr, exit 0. Parse it:
+`decision` is `block`, `systemMessage` is the human's one-line notice,
+and `reason` is the report -- a line per grown file with the characters
+it added and its new size against the {{ caps.system_file }}-char cap with a percentage,
+the total added as a share of that same per-file budget, the question,
+the headroom sentence (all grown files under half cap: confirming is the
+expected answer; a file past half cap: that file is named), and the guard
+that a trim drops or moves content and keeps whole sentences whole. Check
+the numbers against `git show HEAD:system/<file>` and `wc -c` on the
+working copy. Commit is skipped while the block stands, so the worktree
+stays dirty and whatever the turn decides rides the continuation's
+commit.
+
+The crossing case: half the cap is {{ caps.system_file_half }} chars. Take a file just
+under it -- 1,090 -- and add 50. Expect a block although the total is far
+below the floor: approaching the cap is worth attention exactly once, at
+the crossing. Add 50 more to the same file, now already past half:
+silence again, until the floor itself is met.
 
 Re-run with `"stop_hook_active":true` added to the JSON: no report, exit
 0, and the commit lands -- this is the continuation the block produced,
 and it must be able to finish.
 
-No-ops, each exiting 0 with the commit landing: `system/` untouched;
+Silent, each exiting 0 with the commit landing: `system/` untouched;
 a `system/` file shrunk; text moved between two `system/` files, which
 nets zero. `MEMORY_ENABLED=0` and `MEMORY_SESSION=` (set empty) print
 nothing and exit 0, as does a session with no worktree.

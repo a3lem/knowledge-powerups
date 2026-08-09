@@ -35,7 +35,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "json=$(cat); printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" validate && printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" system-delta && printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" commit"
+            "command": "json=$(cat); printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" validate && out=$(printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" system-delta) && if [ -n \"$out\" ]; then printf '%s' \"$out\"; else printf '%s' \"$json\" | python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/memoryctl.py\" commit; fi"
           }
         ]
       }

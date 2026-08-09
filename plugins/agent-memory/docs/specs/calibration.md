@@ -22,9 +22,8 @@ the main loop converses with the human.
 - Confident-and-wrong outcomes are recorded (a self-correction under
   `system/core/` or a dated `reference/history/` note), not just
   corrected.
-- Scope: the human is the authority on facts about themselves and about
-  the world. Within the soul, a role they assigned is theirs outright: a
-  verdict on it is applied as given. The rest of the soul is the agent's
-  own to revise; feedback on it is input the agent weighs and folds in
-  itself, not a verdict applied mechanically.
+- Scope: the human is the authority on facts about themselves, about the
+  world, and over the whole persona -- told or agent-added, a verdict on
+  a persona line is applied as given. The persona exists to serve the
+  cooperation, so the human's needs decide it.
 - The pass ends with counts: confirmed, corrected, deleted, disputed.

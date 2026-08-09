@@ -17,8 +17,9 @@ Three layers, three kinds of authority:
   symlink), `env` (print the `MEMORY_DIR` and `MEMORY_*`
   export lines), `compile` (print the injection), `validate` (check the
   contract, exit 2 on violations), `system-delta` (report the turn's net
-  growth in `system/`, exit 2 to block once), `commit` (commit the session
-  worktree's writes, authored as the agent), `session-end` (drop the
+  growth in `system/` past a floor, blocking once as Stop-hook JSON),
+  `commit` (commit the session worktree's writes, authored as the agent),
+  `session-end` (drop the
   worktree's `.active` liveness lock), `index` (refresh the generated index.md
   bodies in the worktree's `reference/`, via the repo's shared
   `cli/generate_index.py`), `subagent-context` (print the
@@ -37,7 +38,7 @@ Three layers, three kinds of authority:
   the turn -- and, when clean, commits the session's writes. The model
   isn't trusted to respect its own limits; the harness compels them.
 - **skills and the agent** -- the judgment: `keeping-memories` carries the
-  save-side conventions (writing rules, links, tiers, the soul);
+  save-side conventions (writing rules, links, tiers, the persona);
   `mine-history`, `unify`, and `refine` carry each consolidation
   process's procedure,
   preloaded by the `memory` agent (`agents/memory.md`) and loadable by

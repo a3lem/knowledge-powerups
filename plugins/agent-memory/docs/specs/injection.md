@@ -15,10 +15,12 @@ skill.
 - The block opens with `<memory-instructions>`: the body is bare prose from
   the plugin's `prompts/injected-instructions.md`; compile adds the
   wrapping tag at render time, as it does for every other tag.
-- `system/` is rendered in full: `soul.md` first, then files before
+- `system/` is rendered in full: `persona.md` first, then files before
   subdirectories, directories as nested tags. Each file renders as
   `<{name}><path>$MEMORY_DIR/<rel></path><description>...</description>`
-  followed by its body verbatim.
+  followed by its body verbatim. A legacy `soul.md` gets no special
+  treatment: it renders as an ordinary `system/` file until the agent
+  migrates it.
 - `reference/` renders as `<memory-index>`: labels and descriptions only, no
   contents, with a note saying files are read on demand. A file's
   description comes from its own frontmatter; a directory's comes from the

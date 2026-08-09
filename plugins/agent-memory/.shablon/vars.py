@@ -29,7 +29,11 @@ print(
         {
             "caps": {
                 "system_file": f"{ctl.MAX_SYSTEM_FILE_CHARS:,}",
+                "system_file_half": f"{ctl.MAX_SYSTEM_FILE_CHARS // 2:,}",
                 "injection": f"{ctl.MAX_INJECTION_CHARS:,}",
+            },
+            "growth": {
+                "floor": f"{ctl.SYSTEM_GROWTH_FLOOR:,}",
             },
             "defaults": {
                 "root": ctl.DEFAULT_ROOT,

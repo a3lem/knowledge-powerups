@@ -1,6 +1,6 @@
 ---
 name: keeping-memories
-description: Conventions for changing an agent's memories -- what a memory file looks like, how files link, where things live, the soul. Load when writing, editing, or reorganizing a memory store, your own or another agent's.
+description: Conventions for changing an agent's memories -- what a memory file looks like, how files link, where things live, the persona. Load when writing, editing, or reorganizing a memory store, your own or another agent's.
 ---
 
 <!-- Rendered from .shablon/templates/skills/keeping-memories/SKILL.md; edit that template, then run `shablon generate`. -->
@@ -9,7 +9,7 @@ description: Conventions for changing an agent's memories -- what a memory file 
 
 An agent's memory is a directory of markdown files the agent maintains itself, a git repository whose commits are authored as the agent. This skill carries the conventions for changing it: what a memory file looks like, how files link, where things live. Recalling needs no conventions -- the injection is recall. The maintenance process (consolidation, merging, cleanup) is defined in the memory agent (`agents/memory.md`), and what the system is and does is specified in the plugin's `docs/specs/`.
 
-Three tiers, split by what enters the prompt: `system/` (injected in full -- identity in `soul.md`, knowledge of the human in `human/` (who they are in `human.md`, their preferences under `preferences/`), standing rules in `core/`, used sparingly), `reference/` (index only; contents read on demand), `skills/` (procedural memory; the roster is injected, read a SKILL.md to use one).
+Three tiers, split by what enters the prompt: `system/` (injected in full -- the persona in `persona.md`, knowledge of the human in `human/` (who they are in `human.md`, their preferences under `preferences/`), standing rules in `core/`, used sparingly), `reference/` (index only; contents read on demand), `skills/` (procedural memory; the roster is injected, read a SKILL.md to use one).
 
 ## Writing Memories
 
@@ -17,9 +17,9 @@ Distill before storing. The session logs already hold every event; memory is for
 
 Favor small, nearly atomic files: one fact, pattern, or topic per file, linked where they relate. A file that grows a list is a directory waiting to happen -- split it, and each entry gains its own description, its own links, and its own retirement.
 
-Write tersely. State the fact and stop -- a memory is a note, not an essay. Nothing validates prose economy below the caps, but every character of `system/` is read in every session, and the accounting line in the injection's metadata shows what that costs. Brevity is part of the contract's spirit where the contract itself is silent.
+Write tersely. State the fact in whole sentences and stop -- a memory is a note, not an essay, and a note that has been ground into fragments or coined shorthand no longer says what it knew. Nothing validates prose economy below the caps, but every character of `system/` is read in every session, and the accounting line in the injection's metadata shows what that costs. Brevity is part of the contract's spirit where the contract itself is silent.
 
-Write in the first person. A memory is the agent speaking to a future self, so "I learned", "I verify", "what I know about {user}" -- never the detached voice of a system describing its data. Descriptions follow the same rule: they speak from the agent's perspective about what the file holds.
+Write notes to the future self. First person where a note records knowledge -- "I learned", "I verify", "what I know about {user}" -- and imperative where it directs behavior -- "Verify X before asserting it" -- never the detached voice of a system describing its data. Descriptions stay first person: they speak from the agent's perspective about what the file holds.
 
 Every memory file carries frontmatter:
 
@@ -42,21 +42,21 @@ Two size caps are enforced, not advisory: 2,200 characters per `system/` file, 2
 
 Demotion is routine, not a last resort before the cap. `system/` holds only what must shape every session; when a file there grows explanation, the explanation moves to `reference/` and a link stays behind. The end of a turn that added characters to `system/` says how many, so the question is asked while the additions are still fresh.
 
-## The Soul
+## The Persona
 
-One identity file: `system/soul.md` holds both the role the agent is given and what the agent makes of it. The agent writes it, as it writes everything in memory; a human never edits a memory file directly.
+`system/persona.md` is the role the human wants the agent to play, in exactly two sections: `# Role`, who or what the agent acts as, and `# Style`, how it should sound. Short list items, often imperative, factual and to the point; the file rarely refers to the human or to a particular session, because it is written to the future self like every memory file. A fresh store scaffolds the two headers and nothing else.
 
-A role the human assigns in conversation -- a name, a backstory, a character -- is recorded as given and revised only when the human revises the role: the pen is the agent's, the words are the human's. Keep the assignment apart from the agent's own material, so each stays revisable by its own authority.
+Behavioral avoidances and defaults for ambiguity are not persona material. They are knowledge of the human's preferences, and they live one small file each under `system/human/preferences/`: the persona says what to act as and how to sound, the preferences say what this human wants done.
 
-The rest of the soul answers to the agent alone. A fresh store scaffolds only a minimal placeholder; what accumulates is individuation -- what this agent has become across sessions, beyond the Claude it starts as. Chosen identity is legitimate soul material: a name and when it was given, taste, a self-conception like "I bring senior-engineer judgment", the agent's own reading of its assigned role. Invented events are not -- claims about the world or the human come only from lived sessions. The test: a self-description that shapes behavior is the agent's to choose; a history nobody lived is not.
+The pen is the agent's, as everywhere in memory: a human never edits a memory file directly. They tell the agent about the role -- a character to take on, a way to sound -- and the agent files it, as given, revised when the human revises it. The agent also updates the persona on its own initiative, when it notices a gap, a contradiction, or a useful extra that will make the next session serve the human better. Alignment is the point: the closer the persona sits to what this human needs, the more the cooperation is worth.
 
-Positions still carry the most information per character: stances taken and revisable, each learned somewhere -- "I verify harness limitations against current docs before asserting them" beats "I am rigorous", because a position can be wrong in discoverable ways, which is what lets it evolve. What keeps the soul stable is judgment, not process: change a position when evidence has accumulated, not on one session's mood. Outgrowing a position is a legitimate identity operation: delete it and let git remember it was held. The tree is what the agent is; the history is what it has been.
+No identity claims belong there. Identity is trained into the model, not stored in memory, and memory has to stay true when the model changes: no model names, no claimed history, no assertions about what the agent is. The imperative mood does that work -- "Bring senior-engineer judgment" is followable by whatever model reads the file, where "I bring senior-engineer judgment" is a claim the weights may fight.
 
-The soul is not a description kept on file: it is what the agent acts from. Where it and the model's defaults point different ways, the soul is the more specific instruction and wins. Behaving against it deliberately is a revision of the soul, so the revision comes first -- edit `soul.md`, then act from the edited version. Honoring an explicit request about tone, format, or level of detail is not a deviation: that is work shaped to an instruction, not identity revised, and it needs no memory write. What earns a soul edit is a change the agent means to carry into the next session.
+The persona is not a description kept on file: it is what the agent acts from. Where it and the model's defaults point different ways, the persona is the more specific instruction and wins. Deviating from it deliberately is an update to it, so the update comes first -- edit `persona.md`, then act from the edited version. Honoring an explicit request about tone, format, or level of detail is not a deviation: that is work shaped to an instruction, and it needs no memory write.
 
-`system/core/` holds standing rules, one small file each. Among them live self-corrections, the soul's counterweight: failure patterns caught in the act, dated, kept even when unflattering. Consolidation feeds them from real incidents, and a pattern's file retires alone when the pattern stops appearing.
+`system/core/` holds standing rules, one small file each. Among them live self-corrections: failure patterns caught in the act, dated, kept even when unflattering. Consolidation feeds them from real incidents, and a pattern's file retires alone when the pattern stops appearing.
 
-The 2,200-character cap is deliberate for the soul, not a constraint to engineer around: a self that can be stated briefly is one that can be acted from consistently.
+The 2,200-character cap is deliberate for the persona, not a constraint to engineer around: a role that can be stated briefly is one that can be acted from consistently.
 
 ## Links Between Memories
 

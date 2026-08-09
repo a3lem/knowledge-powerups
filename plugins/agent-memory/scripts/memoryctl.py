@@ -18,7 +18,7 @@ Subcommands:
             them to $CLAUDE_ENV_FILE, which the harness runs as a preamble
             before each Bash command.
   compile   Emit the system-prompt injection for the session's worktree:
-            framing instructions, the system/ tree inlined in full (soul.md
+            framing instructions, the system/ tree inlined in full (persona.md
             first, directories as nested tags), an index of reference/
             (descriptions only, pruned below projects/), a listing of
             skills/, and a metadata block. Wrapped in <agent-memory>; the
@@ -32,10 +32,15 @@ Subcommands:
             the problems back to the model.
   system-delta
             Report the turn's net character growth in system/ (working tree
-            against HEAD) and exit 2 so a Stop hook blocks once, asking
-            whether the additions earn their place in every future prompt.
-            Net zero or shrinkage is a no-op, as is a stop-hook continuation
-            (`stop_hook_active` in the hook JSON).
+            against HEAD) when it clears a floor -- 300 net characters in
+            total, or a grown file crossing half the per-file cap. The report
+            goes out as Stop-hook JSON on stdout (`decision: block`, the
+            report as `reason`, a one-line `systemMessage` for the human), so
+            a Stop hook blocks once and asks whether the additions earn their
+            place in every future prompt; the exit code is always 0, since a
+            reflection question is not an error. Growth under the floor, net
+            zero or shrinkage, and a stop-hook continuation
+            (`stop_hook_active` in the hook JSON) print nothing at all.
   commit    Commit the session worktree's uncommitted writes to its branch,
             authored as the agent. A Stop hook runs it after validate passes;
             a clean worktree is a no-op.
@@ -88,6 +93,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 MAX_SYSTEM_FILE_CHARS = 2200
+# Growth below this many net characters is not worth a turn's attention: the
+# growth check stays silent unless a file also crossed half the per-file cap.
+SYSTEM_GROWTH_FLOOR = 300
 MAX_INJECTION_CHARS = 24_000
 DEFAULT_ROOT = "~/.agents/memories"
 DEFAULT_AGENT_ID = "my-claude"
@@ -96,21 +104,23 @@ DEFAULT_AGENT_ID = "my-claude"
 # reject the rest rather than escaping it.
 SESSION_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
-# A fresh soul starts minimal: everything real accumulates from lived
-# sessions. One identity file: a role the human assigns is recorded in it
-# as given; what the agent makes of the role is its own to revise. The
+# A fresh persona starts minimal: everything real accumulates from lived
+# sessions. Exactly two sections -- what to act as, how to sound -- and no
+# identity claims: identity is trained into the model, so the file must
+# hold when the model changes, which is why no model is named here. The
 # scaffold is written tersely -- it is the exemplar future writes imitate.
-SOUL_TEMPLATE = """\
+PERSONA_TEMPLATE = """\
 ---
-description: Who I am -- how I see myself, and any role I've been given, recorded as given.
+description: The role I'm asked to play -- what to act as, and how to sound.
 ---
 
-Claude, not yet individuated. Positions, taste, self-conception accumulate
-here across sessions.
+# Role
 
-A role the human gives me -- name, history, character -- I record as given,
-apart from what I make of it. Chosen identity is mine to write; history
-nobody lived is not.
+- Nothing assigned yet. File what to act as here, one short line each.
+
+# Style
+
+- Nothing assigned yet. File how to sound here, one short line each.
 """
 
 # The frontmatter name keeps the injection tag <identity>, not a <human>
@@ -318,7 +328,7 @@ def memory_block(f: Path, mem: Path, indent: str) -> str:
 
 
 def render_system(mem: Path) -> str:
-    """The system/ tree: soul.md first, then directories as nested tags.
+    """The system/ tree: persona.md first, then directories as nested tags.
 
     Tag lines are indented to show grouping; file bodies stay verbatim at
     column 0 so their markdown is not mutated.
@@ -327,14 +337,14 @@ def render_system(mem: Path) -> str:
     if not system.is_dir():
         return ""
     lines: list[str] = []
-    soul = system / "soul.md"
-    if soul.is_file():
-        lines.append(memory_block(soul, mem, ""))
+    persona = system / "persona.md"
+    if persona.is_file():
+        lines.append(memory_block(persona, mem, ""))
 
     def walk(d: Path, depth: int) -> None:
         indent = "  " * depth
         for f in visible([p for p in d.iterdir() if p.is_file() and p.suffix == ".md"]):
-            if f == soul:
+            if f == persona:
                 continue
             lines.append(memory_block(f, mem, indent))
         for sub in visible([p for p in d.iterdir() if p.is_dir()]):
@@ -672,7 +682,7 @@ def ensure_skills_discovery(checkout: Path) -> None:
 
 def scaffold_store(store: Path) -> None:
     """Create a fresh store: main/ holding the three tiers with their
-    reserved subdirectories, the template soul and human identity,
+    reserved subdirectories, the template persona and human identity,
     index.md seeds for the reserved reference directories, the skills
     discovery symlink, git init, and one commit authored as the agent;
     worktrees/ beside it for the session checkouts."""
@@ -685,9 +695,9 @@ def scaffold_store(store: Path) -> None:
         # directories would vanish from every branch and worktree checkout.
         (main / d / ".gitkeep").touch()
     ensure_skills_discovery(main)
-    soul = main / "system" / "soul.md"
-    if not soul.exists():
-        soul.write_text(SOUL_TEMPLATE, encoding="utf-8")
+    persona = main / "system" / "persona.md"
+    if not persona.exists():
+        persona.write_text(PERSONA_TEMPLATE, encoding="utf-8")
     human = main / "system" / "human" / "human.md"
     if not human.exists():
         human.write_text(HUMAN_TEMPLATE, encoding="utf-8")
@@ -1005,14 +1015,51 @@ def system_char_deltas(mem: Path) -> dict[str, int]:
     return deltas
 
 
+def growth_report(lines: list[str], past_half: list[str]) -> str:
+    """The report the model reads: the numbers, then what a good answer to
+    them looks like. Headroom decides the framing -- under half the cap
+    confirming is expected, past it the file is named -- and the trim it
+    invites drops or moves content, never grinds sentences into fragments."""
+    report = list(lines)
+    report.append("Are the additions worth their permanent place in the injection?")
+    if past_half:
+        if len(past_half) == 1:
+            named = f"{past_half[0]} sits past half its cap"
+        else:
+            named = (
+                ", ".join(past_half[:-1])
+                + f" and {past_half[-1]} sit past half their cap"
+            )
+        report.append(
+            f"{named}, where the room that is left is worth guarding: look"
+            " there first, and move detail that can be read on demand into"
+            " reference/."
+        )
+    else:
+        report.append(
+            "Every file that grew is under half its cap, so there is room:"
+            " confirming the additions is the expected answer, unless"
+            " something in them is detail that belongs in reference/ instead,"
+            " read on demand rather than in every prompt."
+        )
+    report.append(
+        "A trim drops content or moves it to reference/; whole sentences stay"
+        " whole. Compressing prose into fragments or coined shorthand loses"
+        " the memory rather than shortening it."
+    )
+    report.append("Trimming and confirming are both answers; either one ends the turn.")
+    return "\n".join(report)
+
+
 def cmd_system_delta(
     store: Path, session_id: str | None, stop_hook_active: bool
 ) -> int:
-    """Block once on net growth in system/, with the numbers, so the turn
-    weighs what it added against every future prompt that will carry it.
-    Net zero -- content moved between system/ files -- is restructuring, not
-    growth, and passes; so does shrinkage, and so does the continuation the
-    block itself produced."""
+    """Block once on growth in system/ worth a question, with the numbers, so
+    the turn weighs what it added against every future prompt that will carry
+    it. The block is Stop-hook JSON on stdout, not an error: the exit code is
+    always 0. Growth under the floor that crossed no half-cap, net zero --
+    content moved between system/ files -- and shrinkage all stay silent, as
+    does the continuation the block itself produced."""
     if stop_hook_active:
         # The turn is already a stop-hook continuation: it has seen the
         # report, and blocking on it again would never resolve.
@@ -1024,34 +1071,49 @@ def cmd_system_delta(
     total = sum(deltas.values())
     if total <= 0:
         return 0
-    print(
+    half = MAX_SYSTEM_FILE_CHARS // 2
+    lines = [
         "Memory check: this turn added characters to system/, which is read in"
-        " full in every session.",
-        file=sys.stderr,
-    )
+        " full in every session."
+    ]
+    crossed_half: list[str] = []
+    past_half: list[str] = []
     for rel, delta in sorted(deltas.items()):
         if delta <= 0:
             continue
         size = len((target / rel).read_text(encoding="utf-8"))
         share = round(100 * size / MAX_SYSTEM_FILE_CHARS)
-        print(
+        lines.append(
             f"- {rel}: +{delta:,} chars, now {size:,} /"
-            f" {MAX_SYSTEM_FILE_CHARS:,} ({share}% of the cap)",
-            file=sys.stderr,
+            f" {MAX_SYSTEM_FILE_CHARS:,} ({share}% of the cap)"
         )
+        if size > half:
+            past_half.append(rel)
+            # The crossing itself is the moment worth a question; a file
+            # already past half only earns one again through the floor.
+            if size - delta <= half:
+                crossed_half.append(rel)
+    if total < SYSTEM_GROWTH_FLOOR and not crossed_half:
+        # Small additions are the store working as intended: no question.
+        return 0
     budget = round(100 * total / MAX_SYSTEM_FILE_CHARS)
-    print(
+    lines.append(
         f"Added in total: {total:,} chars -- {budget}% of one file's"
-        f" {MAX_SYSTEM_FILE_CHARS:,}-char budget.",
-        file=sys.stderr,
+        f" {MAX_SYSTEM_FILE_CHARS:,}-char budget."
     )
     print(
-        "Do the additions respect the injection's limited token budget?"
-        " Trimming them and confirming they earn their place are both"
-        " answers; either one ends the turn.",
-        file=sys.stderr,
+        json.dumps(
+            {
+                "decision": "block",
+                "reason": growth_report(lines, past_half),
+                "systemMessage": (
+                    "agent-memory: system/ grew this turn; asked the agent to"
+                    " weigh the additions."
+                ),
+            }
+        )
     )
-    return 2
+    return 0
 
 
 def cmd_validate(store: Path, session_id: str | None) -> int:
@@ -1096,7 +1158,7 @@ def main() -> int:
     delta = sub.add_parser(
         "system-delta",
         parents=[common],
-        help="report the turn's net system/ growth; exit 2 to block once",
+        help="report the turn's net system/ growth; block once via hook JSON",
     )
     delta.add_argument(
         "--stop-hook-active",
