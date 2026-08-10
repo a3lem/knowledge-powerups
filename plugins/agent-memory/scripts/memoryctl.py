@@ -26,10 +26,10 @@ Subcommands:
             SessionStart hook.
   validate  Enforce the memory contract on the session's worktree (the main/
             checkout for manual runs): the per-file and total size caps, required
-            frontmatter in system/, reference/, and skills/, and wikilink
-            form (root-relative; unresolved targets are legal forward
-            pointers). Exits 2 on violations so a Stop hook blocks and feeds
-            the problems back to the model.
+            frontmatter in system/, reference/, and skills/, and link form
+            (markdown links with rooted hrefs; unresolved targets are legal
+            forward pointers). Exits 2 on violations so a Stop hook blocks and
+            feeds the problems back to the model.
   system-delta
             Report the turn's net character growth in system/ (working tree
             against HEAD) when it clears a floor -- 300 net characters in
@@ -135,7 +135,7 @@ Not learned yet. Name, role, and working context go here; preferences go
 one per file under system/human/preferences/.
 
 Their name lives only here. Elsewhere I write the
-[[system/human/human.md|human]] -- the word linked to this file, never the
+[human](/system/human/human.md) -- the word linked to this file, never the
 name.
 """
 
@@ -170,8 +170,16 @@ RESERVED_DIRS = (
 # A system file's tag must be a valid XML element name.
 TAG_RE = re.compile(r"^[A-Za-z][A-Za-z0-9._-]*$")
 
-# Store-internal links: [[path-from-root]] or [[path-from-root|label]]
-WIKILINK_RE = re.compile(r"\[\[([^\][|]+?)(?:\|[^\]]*)?\]\]")
+# Links are markdown links; the href decides what is checked. The capture
+# stops at whitespace or the closing paren, so an optional "title" after the
+# href is left out of it.
+MARKDOWN_LINK_RE = re.compile(r"\[[^\][]*\]\(([^()\s]*)")
+
+# The retired spelling. Any [[...]] is a violation now.
+LEGACY_WIKILINK_RE = re.compile(r"\[\[([^\]]*)\]\]")
+
+# An href carrying a URI scheme (https:, mailto:) points outside the store.
+URI_SCHEME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
 
 # The always-injected basics live as bare prose in prompts/. They may point at
 # skills for depth but never depend on one being loaded.
@@ -535,21 +543,37 @@ def strip_code(text: str) -> str:
     return re.sub(r"`[^`\n]*`", "", text)
 
 
-def wikilink_problems(mem: Path) -> list[str]:
-    """Every [[...]] must be in root-relative form: absolute paths and escapes
-    are violations. Resolution is not checked -- a link to a file not yet
-    written is a legal forward pointer, marking something worth writing."""
+def link_problems(mem: Path) -> list[str]:
+    """Every markdown link is checked by its href. An external href -- a URI
+    scheme or a protocol-relative // -- and a same-file anchor go unchecked.
+    A rooted href (leading /) is an in-store link: its normalized path must
+    stay inside the store, escapes are violations, and resolution is not
+    checked, since a link to a file not yet written is a legal forward
+    pointer. A relative href is a violation outside a generated index.md
+    body, whose child links the generator re-derives on every refresh. A
+    wikilink is the retired spelling and always a violation."""
     problems: list[str] = []
     for f in sorted(p for p in mem.rglob("*.md") if ".git" not in p.parts):
         rel = f.relative_to(mem)
-        for payload in WIKILINK_RE.findall(strip_code(f.read_text(encoding="utf-8"))):
-            target = payload.strip()
-            resolved = Path(os.path.normpath(mem / target))
-            inside = str(resolved).startswith(str(mem) + os.sep)
-            if target.startswith("/") or not inside:
-                problems.append(
-                    f"{rel}: [[{target}]] must be a path from the memory root"
-                )
+        text = strip_code(f.read_text(encoding="utf-8"))
+        for payload in LEGACY_WIKILINK_RE.findall(text):
+            problems.append(
+                f"{rel}: [[{payload}]] is a legacy wikilink"
+                " -- write [label](/path-from-root)"
+            )
+        for href in MARKDOWN_LINK_RE.findall(text):
+            if URI_SCHEME_RE.match(href) or href.startswith(("//", "#")):
+                continue
+            if not href.startswith("/"):
+                if f.name != "index.md":
+                    problems.append(
+                        f"{rel}: ({href}) must be a path from the memory root,"
+                        " written with a leading /"
+                    )
+                continue
+            resolved = Path(os.path.normpath(mem / href.lstrip("/")))
+            if not str(resolved).startswith(str(mem) + os.sep):
+                problems.append(f"{rel}: ({href}) escapes the memory root")
     return problems
 
 
@@ -595,7 +619,7 @@ def validate_memory(mem: Path) -> list[str]:
                     problems.append(
                         f"skills/{d.name}/SKILL.md: missing '{field}' frontmatter"
                     )
-    problems.extend(wikilink_problems(mem))
+    problems.extend(link_problems(mem))
     compiled = compile_memory(mem)
     if len(compiled) > MAX_INJECTION_CHARS:
         problems.append(

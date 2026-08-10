@@ -16,13 +16,13 @@ imperative for direction. Every memory file needs a frontmatter 'description'
 saying what the file holds, from your perspective; a tag-safe 'name' is
 optional and overrides the file stem, read relative to its directory
 (system/human/human.md is named identity, so it reads as 'identity', not
-'human'). Link memory files with [[path]] wikilinks, path from the memory root
-([[path|label]] when a sentence needs to flow); a link may point at a file not
-yet written -- it marks something worth writing. Markdown links are for
-targets outside memory. A memory that mentions the human writes the
-[[system/human/human.md|human]], the word linked to their identity file --
-never their name; the name lives only in human.md. human.md holds who they
-are; their preferences live one per file under system/human/preferences/.
+'human'). Link memory files with markdown links whose href is rooted at the
+memory root, extension included; label with the linked word. A link may point
+at a file not yet written -- it marks something worth writing. Relative hrefs
+are for generated index.md bodies, full URLs for external targets. A memory
+mentioning the human writes the [human](/system/human/human.md), never their
+name, which lives only in human.md. human.md holds who they are; their
+preferences live one per file under system/human/preferences/.
 Never file a secret -- credentials, API keys, tokens: this store is a git
 repository that may leave the machine, so leave the secret where it lives and
 refer to it by name.

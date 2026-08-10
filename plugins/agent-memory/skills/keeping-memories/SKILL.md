@@ -38,7 +38,7 @@ Not every lesson is a memory. A lesson that has to hold every time -- a check to
 
 A memory can go stale. When a memory contradicts observation, trust the observation and fix the memory in the same turn.
 
-Two size caps are enforced, not advisory: 2,200 characters per `system/` file, 24,000 for the whole compiled injection. Crossing either blocks the end of the turn. The escape is never truncation -- move detail to a `reference/` file and leave a `[[path]]` link.
+Two size caps are enforced, not advisory: 2,200 characters per `system/` file, 24,000 for the whole compiled injection. Crossing either blocks the end of the turn. The escape is never truncation -- move detail to a `reference/` file and leave a `[label](/path)` link.
 
 Demotion is routine, not a last resort before the cap. `system/` holds only what must shape every session; when a file there grows explanation, the explanation moves to `reference/` and a link stays behind. The end of a turn that added characters to `system/` says how many, so the question is asked while the additions are still fresh.
 
@@ -60,11 +60,11 @@ The 2,200-character cap is deliberate for the persona, not a constraint to engin
 
 ## Links Between Memories
 
-A link from one memory file to another is a wikilink whose payload is the path from the memory root, extension included: `[[reference/projects/klassifai/document-types.md]]`. Use `[[path|label]]` when a sentence needs to flow. Plain markdown links are reserved for targets outside the memory root -- URLs, tickets, repos, context wikis. (Wikis live outside memory; memory points to them, never contains them.)
+A link from one memory file to another is a markdown link whose href is rooted at the memory root: leading `/`, full path, extension included -- `[document types](/reference/projects/klassifai/document-types.md)`. `$MEMORY_DIR` plus the href is the absolute path. The label is required: the linked word when the sentence flows, the filename when nothing better fits. Relative hrefs belong to generated `index.md` bodies alone, since the generator re-derives them on every refresh. Targets outside the memory root -- tickets, repos, context wikis -- are linked with full URLs. (Wikis live outside memory; memory points to them, never contains them.)
 
-One standing application: a memory that mentions the human writes `the [[system/human/human.md|human]]` -- the word linked to their identity file -- never their name. The name lives only in `human.md`, and every mention of them is one exact grep.
+One standing application: a memory that mentions the human writes `the [human](/system/human/human.md)` -- the word linked to their identity file -- never their name. The name lives only in `human.md`, and every mention of them is one exact grep.
 
-Root-relative paths give every file one canonical link spelling, so finding inbound links is an exact grep and renames are find-and-replace. Keep relation words outside the link -- `details: [[path]]`, `source: [[path]]`, `supersedes: [[path]]` -- and the link graph, edge types included, stays mineable with one pattern. Validation requires the root-relative form (an absolute path or an escape blocks the turn) but not resolution: a link to a file not yet written is a forward pointer, marking something worth writing, and consolidation either writes the file or removes the pointer.
+Rooted hrefs give every file one canonical link spelling, so finding inbound links is an exact grep and renames are find-and-replace. Keep relation words outside the link -- `details: [label](/path)`, `source: [label](/path)`, `supersedes: [label](/path)` -- and the link graph, edge types included, stays mineable with one pattern. Validation requires the rooted form (a relative href or an escape blocks the turn) but not resolution: a link to a file not yet written is a forward pointer, marking something worth writing, and consolidation either writes the file or removes the pointer.
 
 ## The Reference Tier
 

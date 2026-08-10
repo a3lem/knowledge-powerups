@@ -197,12 +197,15 @@ follows the directory-level symlink; pipe the prompt on stdin, since
 Each violation must exit 2 naming the file, and exit 0 once fixed:
 an oversized `system/` file (>2,200 chars); a compiled injection over
 24,000 chars total (a dozen near-cap `system/` files trigger it); a memory
-file without `description` frontmatter; an absolute or root-escaping
-`[[wikilink]]`; a `skills/` entry without `SKILL.md` or missing `name` or
-`description` frontmatter. A dangling-but-root-relative wikilink must
-exit 0 -- forward pointers are legal. Validate with session JSON on stdin
-binds to that session's worktree; a manual run (no stdin) binds to `main/`,
-and a violation in a session worktree must not implicate it.
+file without `description` frontmatter; a legacy `[[wikilink]]`; a
+root-escaping href (`/../x.md`); a relative href in a memory file; a
+`skills/` entry without `SKILL.md` or missing `name` or `description`
+frontmatter. These must exit 0: a rooted href to a file not yet written
+(forward pointers are legal), a relative href inside an `index.md` body,
+a full URL or a `#` anchor, and any link inside fenced or inline code.
+Validate with session JSON on stdin binds to that session's worktree; a
+manual run (no stdin) binds to `main/`, and a violation in a session
+worktree must not implicate it.
 
 ## The consolidation choreography
 

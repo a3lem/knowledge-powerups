@@ -22,8 +22,8 @@ description: memory-system jargon, defined in one place
   the session's writes are committed to its branch, authored as the agent.
 - **inline habits** -- memory maintenance the session does itself, without
   ceremony: file a fact, fix a stale memory, leave a forward pointer.
-- **forward pointer** -- a wikilink to a file not yet written; legal, and a
-  marker for consolidation to write the file or drop the link.
+- **forward pointer** -- a rooted link to a file not yet written; legal, and
+  a marker for consolidation to write the file or drop the link.
 - **index.md** -- a reference directory's table of contents: authored
   frontmatter `description` (the injected index's source for the
   directory's entry), generated body (for on-disk traversal; never

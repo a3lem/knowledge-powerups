@@ -25,9 +25,15 @@ same hook commits the session's writes (see the session-lifecycle spec).
 - A `skills/` entry without a `SKILL.md`, or one missing frontmatter `name`
   or `description`, is a violation: these are agent skills, and the roster
   renders from those fields.
-- Every wikilink anywhere in the store (fenced and inline code excluded)
-  must be in root-relative form: absolute paths and escapes are violations
-  ("must be a path from the memory root"). Resolution is not checked -- a
-  link to a file not yet written is a legal forward pointer.
+- Every markdown link anywhere in the store (fenced and inline code
+  excluded) is checked by its href. An href with a URI scheme or a
+  protocol-relative `//`, and a same-file anchor (`#...`), are external
+  or local and unchecked. A rooted href (leading `/`) is an in-store
+  link: its normalized path must stay inside the store -- escapes are
+  violations. Resolution is not checked: a link to a file not yet
+  written is a legal forward pointer. A relative href is a violation in
+  a memory file and legal in an `index.md`, whose generated body links
+  its children relatively. A wikilink (`[[...]]`) is a legacy violation:
+  rewrite as `[label](/path-from-root)`.
 - When the store or its `system/` directory does not exist, validate checks
   what exists and otherwise passes: a missing store never blocks a turn.

@@ -21,7 +21,7 @@ Scope: the human is the authority on facts about themselves, about the world, an
 
 4. **Act on each verdict in the same turn.**
    - Confirmed: the memory stands, untouched.
-   - False: fix it to what the human said, or delete it outright. On a deletion, grep the store for the file's root-relative path and rewrite the inbound `[[links]]` yourself -- a dangling link is legal (it reads as a forward pointer), so validation will not flag stragglers.
+   - False: fix it to what the human said, or delete it outright. On a deletion, grep the store for the file's rooted path and rewrite the inbound `[label](/path)` links yourself -- a dangling link is legal (it reads as a forward pointer), so validation will not flag stragglers.
    - Unresolved: when the human can't say either way, mark the claim disputed where it lives, so the next pass raises it again instead of trusting it.
 
 5. **Record the confident misses.** When a claim held with high confidence turns out false, correcting the fact is not the whole lesson -- the calibration error is. Record it: a self-correction file under `system/core/` when it names a pattern worth heeding every session, or a dated note in `reference/history/` when it is a one-off worth remembering. A hedged guess that missed needs no such note; the confidence matched the outcome.
