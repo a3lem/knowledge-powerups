@@ -77,17 +77,6 @@ Replaces the wikilink rule, same exclusions (fenced and inline code):
   respelled: a rooted link to a file not yet written.
 - Rendered surfaces via `shablon generate` at the plugin root.
 
-## Migration
-
-Live stores still carry wikilinks, and the new validate blocks the
-first post-upgrade turn until they are gone -- designed pressure, but a
-store with many links deserves one mechanical pass, not piecemeal
-blocked turns. That pass is authored agent work in a session, run
-inside the store checkout with the store's own commit flow:
-`[[path|label]]` becomes `[label](/path)`, `[[path]]` becomes
-`[stem](/path)`. No machinery ships for it; upgrade and migration
-should land in the same session.
-
 ## Constraints
 
 - Prose style: spaced double hyphen ` -- `, never an em-dash; each

@@ -63,7 +63,7 @@ They tell a reader what the file is about without opening it, and they make inde
           plan.md  # goal + approach in one file, for simple work items only
           goal.md  # problem context, desired outcome, success criteria -- the why and the what
           approach.md  # the how: assumptions, decisions, verification
-          status.md  # snapshot: where are we now?
+          status.md  # recommended: few sentences explaining where are we now. Useful when revisiting work.
           requirements.md  # only when acceptance criteria outgrow goal.md, or when no specs are in use
           research.md  # what the agent learns from web searches
           gotchas.md  # sharp edges encountered while working
