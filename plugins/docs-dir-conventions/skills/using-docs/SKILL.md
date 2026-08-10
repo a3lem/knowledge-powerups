@@ -7,14 +7,18 @@ description: A standard layout for the docs/ directory of a code base, where a f
 
 Always use the standard layout for `docs/` below, so that a file's role and authority can be inferred from its path in the file tree.
 
-- **'role'**: the kind of document -- e.g. a spec, ADR, how-to, work item, etc. -- and therefore whether it refers to state of affairs in the past or in the present. The path determines the role.
+- **'role'**: the kind of document -- e.g. a spec, ADR, how-to, work item, etc. The path determines the role.
 - **'authority'**: Whether you can build on the file's content without re-verifying it against the code. Everything in docs/ outside docs/dev/ carries high authority.
 
-## Reference vs. workspace
+## The journey and the present
 
-Everything in `docs/` outside `dev/` is reference material and may be built on without re-verification. Human and agent both take pains to keep it current: drift between docs and code is a bug and gets corrected, stale files are removed, and 'less is more' thinking is applied to avoid churn.
+`dev/` holds the journey: the work in flight, and the record of work already done. Everything in `docs/` outside `dev/` describes the present state of the world.
 
-`dev/` is the workspace for doing the work, e.g. decomposing a complex plan into multiple files, even multiple 'slices' (sub-plans). Files here make no authority promise. Finished work moves to `work/completed/`, dropped work to `work/abandoned/`.
+Files outside `dev/` are reference material and may be built on without re-verification. Human and agent both take pains to keep them current: drift between docs and code is a bug and gets corrected, stale files are removed, and 'less is more' thinking is applied to avoid churn. A reference file that has stopped being true is wrong. Delete it; git keeps the copy. Before deleting, promote whatever outlives it -- the reason a thing went away is usually an ADR.
+
+`dev/` makes no authority promise. It is the workspace for doing the work, e.g. decomposing a complex plan into multiple files, even multiple 'slices' (sub-plans). Live work sits directly in `dev/work/`; finished and dropped work moves to `dev/archive/work/`.
+
+Only the journey is archived. A reference file is current or it is gone, so nothing from outside `dev/` moves into `archive/`.
 
 ## Frontmatter
 
@@ -50,28 +54,29 @@ They tell a reader what the file is about without opening it, and they make inde
       <slug>.md  # e.g. issue-deletion.md
     adrs/  # optional. decision records
       <NNNN>-<slug>.md  # e.g. 0001-no-soft-deletions.md
-    dev/  # developer workspace -- no authority promise (see 'Reference vs. workspace')
-      work/  # work items, e.g. plans, investigations 
-        active/
-          <slug>/  # e.g. fix-bad-exception-handling/. every file within is optional:
-            slices/  # optional. split large work items into 'slices' (sub-items, same files)
-              <slug>/
-            index.md  # only needed in case of non-obvious files
-            plan.md  # goal + approach in one file, for simple work items only
-            goal.md  # problem context, desired outcome, success criteria -- the why and the what
-            approach.md  # the how: assumptions, decisions, verification
-            status.md  # snapshot: where are we now?
-            requirements.md  # only when acceptance criteria outgrow goal.md, or when no specs are in use
-            research.md  # what the agent learns from web searches
-            gotchas.md  # sharp edges encountered while working
-            specs/  # if the work affects reference specs in docs/specs/
-              # Note: load /incremental-specs:using-specs skill when working with specs.
-              <spec-name>.delta.md  # 'delta' because only *difference* w.r.t. spec is described.
-        completed/
-          <iso-date>-<work-slug>/  # e.g. 2026-03-20-fix-bad-exception-handling/ (prepend date to previously active work slug)
-        abandoned/
-          <iso-date>-<work-slug>/  # dropped or superseded; describes code that was never written
+    dev/  # the journey -- no authority promise (see 'The journey and the present')
+      work/  # work in flight, e.g. plans, investigations. holds live items only
+        <slug>/  # e.g. fix-bad-exception-handling/. every file within is optional:
+          slices/  # optional. split large work items into 'slices' (sub-items, same files)
+            <slug>/
+          index.md  # only needed in case of non-obvious files
+          plan.md  # goal + approach in one file, for simple work items only
+          goal.md  # problem context, desired outcome, success criteria -- the why and the what
+          approach.md  # the how: assumptions, decisions, verification
+          status.md  # snapshot: where are we now?
+          requirements.md  # only when acceptance criteria outgrow goal.md, or when no specs are in use
+          research.md  # what the agent learns from web searches
+          gotchas.md  # sharp edges encountered while working
+          specs/  # if the work affects reference specs in docs/specs/
+            # Note: load /incremental-specs:using-specs skill when working with specs.
+            <spec-name>.delta.md  # 'delta' because only *difference* w.r.t. spec is described.
         backlog.md  # optional. a good place to log ideas for future improvements
+      archive/  # the journey, once it is over. created on demand
+        work/
+          completed/
+            <iso-date>-<work-slug>/  # e.g. 2026-03-20-fix-bad-exception-handling/ (prepend date to the live work slug)
+          abandoned/
+            <iso-date>-<work-slug>/  # dropped or superseded; describes code that was never written
       references/
         ...  # fetched material, e.g. pydantic-llms.txt from https://pydantic.dev/llms.txt
         generated/  # fetched and synthesized by agent
@@ -84,15 +89,17 @@ The files listed under `<slug>/` are suggestions; a work item may contain any fi
 
 ### States
 
-A work item sits in exactly one of three directories, and that directory is its status:
+A work item sits in exactly one of three places, and that place is its status:
 
-- `active/` -- being worked on. Blocked, paused, and waiting-on-someone all count as active; record the reason in status.md.
-- `completed/` -- the work landed. The item describes code that exists, though it may have drifted since.
-- `abandoned/` -- the work stopped and won't resume. Superseded counts. The item describes code that was never written, so never read it as a record of the codebase.
+- `dev/work/<slug>/` -- being worked on. Blocked, paused, and waiting-on-someone all count as live; record the reason in status.md.
+- `dev/archive/work/completed/<iso-date>-<slug>/` -- the work landed. The item describes code that exists, though it may have drifted since.
+- `dev/archive/work/abandoned/<iso-date>-<slug>/` -- the work stopped and won't resume. Superseded counts. The item describes code that was never written, so never read it as a record of the codebase.
 
 Three states, no more. Extra directories for finer status turn the file tree into a state machine somebody has to maintain, and status.md already covers the nuance.
 
-Before abandoning, promote whatever outlives the item: "we decided not to do X because Y" is an ADR, and a sharp edge someone will hit again belongs in reference docs. Then move the item and move on. `abandoned/` exists to keep `active/` accurate at the cost of one `git mv` -- it isn't there to preserve plans.
+Live items sit directly in `work/`, so `ls docs/dev/work/` is the list of what is in flight and a search under `work/` returns live material only. The two archive buckets sit outside `work/` so that a bucket name can never collide with a work slug.
+
+Before abandoning, promote whatever outlives the item: "we decided not to do X because Y" is an ADR, and a sharp edge someone will hit again belongs in reference docs. Then move the item and move on. `abandoned/` exists to keep `work/` accurate at the cost of one `git mv` -- it isn't there to preserve plans.
 
 ## Principles
 

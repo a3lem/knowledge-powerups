@@ -23,7 +23,7 @@ The test for where a piece of knowledge belongs is what it answers to: a docs fi
 ### Docs layout
 
 - Reference material (glossary, architecture, `explanation/`, `how-to-guides/`, `specs/`, `adrs/` with `NNNN-slug` numbering) is held to "less is more": more content means more to correct when the code changes.
-- Work items live under `docs/dev/work/active/<slug>/` and move to `docs/dev/work/completed/<iso-date>-<slug>/` on completion. This was decided over a `history/work/` archive: a work item stays under `work/` its whole life, completion changes status not category, and there was no second category to justify `history/`. Datestamp is added at completion. (Precedent: OpenAI's harness-engineering post uses the same active/completed split.)
+- Live work items sit directly in `docs/dev/work/<slug>/` and move to `docs/dev/archive/work/{completed,abandoned}/<iso-date>-<slug>/`. Datestamp is added at completion. This reverses an earlier decision to keep `active/`, `completed/` and `abandoned/` as siblings under `work/`: flattening live items into `work/` means a bucket name could collide with a work slug, so the buckets have to leave `work/`, and a search under `work/` then returns live material only. Named `archive/` rather than `history/` because agent-memory already uses `history/` for staging that gets emptied. The `work/` level under `archive/` is room for other journey material later; nothing from outside `dev/` is ever archived.
 - Reference knowledge learned during a work item gets reiterated in the docs when it's about this code, or filed in the wiki when it's true beyond this repo.
 - `docs/dev/references/` holds fetched and generated material (e.g. `pydantic-llms.txt`, `generated/db-schema.md`).
 

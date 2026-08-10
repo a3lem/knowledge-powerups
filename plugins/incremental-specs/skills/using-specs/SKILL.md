@@ -60,7 +60,7 @@ openspec/  # top-level folder in repo
 
 ### Adriaan's conventional docs
 
-Specs belong in `docs/`. Name of the spec is in the file name, not folder name. Specs are identified by their context. Reference specs belong in `docs/specs/`. Spec deltas are found in `docs/dev/work/active/<work-item>/specs/`. Deltas are marked with a `.delta.` infix in the name.
+Specs belong in `docs/`. Name of the spec is in the file name, not folder name. Specs are identified by their context. Reference specs belong in `docs/specs/`. Spec deltas are found in `docs/dev/work/<work-item>/specs/`. Deltas are marked with a `.delta.` infix in the name.
 
 ```
 ./docs/
@@ -105,7 +105,7 @@ Two rules keep the statements testable. Use concrete values ('12 characters', '2
 
 ### Spec Delta
 
-A delta for a planned change (work item `harden-signup`) to the spec above, at `docs/dev/work/active/harden-signup/specs/user-registration.delta.md`. The file name identifies the target spec, so the delta contains only the operations:
+A delta for a planned change (work item `harden-signup`) to the spec above, at `docs/dev/work/harden-signup/specs/user-registration.delta.md`. The file name identifies the target spec, so the delta contains only the operations:
 
 ```markdown
 ## ADD

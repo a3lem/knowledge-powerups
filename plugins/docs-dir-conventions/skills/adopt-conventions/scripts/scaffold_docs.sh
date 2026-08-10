@@ -6,7 +6,9 @@
 # Idempotent: creates only what is missing, never overwrites or truncates
 # an existing file. Safe to re-run. Optional reference dirs (explanation/,
 # how-to-guides/, specs/, adrs/) are deliberately not created here; they
-# are created on demand when the first file needs one. No index.md either:
+# are created on demand when the first file needs one. Same for
+# dev/archive/, which appears when the first work item is completed or
+# abandoned. No index.md either:
 # whether the project keeps one, and how, is the user's call. Seed files
 # carry the frontmatter keys but no prefilled wording.
 set -euo pipefail
@@ -51,9 +53,7 @@ make_keep() {
 }
 
 make_dir "$docs"
-make_dir "$docs/dev/work/active"
-make_dir "$docs/dev/work/completed"
-make_dir "$docs/dev/work/abandoned"
+make_dir "$docs/dev/work"
 make_dir "$docs/dev/references/generated"
 
 make_file "$docs/glossary.md" "$(cat <<'EOF'
@@ -80,9 +80,7 @@ description:
 EOF
 )"
 
-make_keep "$docs/dev/work/active"
-make_keep "$docs/dev/work/completed"
-make_keep "$docs/dev/work/abandoned"
+make_keep "$docs/dev/work"
 make_keep "$docs/dev/references/generated"
 
 echo "Created:"
