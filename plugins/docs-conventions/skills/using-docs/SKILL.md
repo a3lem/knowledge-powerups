@@ -1,6 +1,6 @@
 ---
 name: using-docs
-description: A standard layout for the docs/ directory of a code base, where a file's path tells you its role (spec, ADR, how-to, work item) and its authority (whether it can be built on without re-verifying against the code). Use when creating, moving, or organizing documentation, when deciding where a new document belongs, or when judging whether an existing doc is trustworthy.
+description: A standard layout for the docs/ directory of a code base, where a file's path tells you its role (spec, ADR, how-to, work item) and its authority (whether it can be built on without re-verifying against the code). Use when creating, moving, or organizing documentation, when deciding where a new document belongs, when judging whether an existing doc is trustworthy, or when creating, picking up, resuming, or archiving a work item under docs/dev/work/.
 ---
 
 # Using docs/
@@ -63,7 +63,7 @@ They tell a reader what the file is about without opening it, and they make inde
           plan.md  # goal + approach in one file, for simple work items only
           goal.md  # problem context, desired outcome, success criteria -- the why and the what
           approach.md  # the how: assumptions, decisions, verification
-          status.md  # recommended: few sentences explaining where are we now. Useful when revisiting work.
+          status.md  # recommended: few sentences on where the work stands (see 'Revisiting an item')
           requirements.md  # only when acceptance criteria outgrow goal.md, or when no specs are in use
           research.md  # what the agent learns from web searches
           gotchas.md  # sharp edges encountered while working
@@ -100,6 +100,16 @@ Three states, no more. Extra directories for finer status turn the file tree int
 Live items sit directly in `work/`, so `ls docs/dev/work/` is the list of what is in flight and a search under `work/` returns live material only. The two archive buckets sit outside `work/` so that a bucket name can never collide with a work slug.
 
 Before abandoning, promote whatever outlives the item: "we decided not to do X because Y" is an ADR, and a sharp edge someone will hit again belongs in reference docs. Then move the item and move on. `abandoned/` exists to keep `work/` accurate at the cost of one `git mv` -- it isn't there to preserve plans.
+
+### Revisiting an item
+
+Read status.md first when returning to an item. Keep it short and easy to read -- a few sentences on where the work stands -- and update it before leaving the item. On every revisit, answer three questions:
+
+1. Is there outstanding work?
+2. If the work required changes to reference docs, were those changes applied?
+3. Can the item be archived?
+
+When nothing is outstanding and any reference-doc changes have been applied, archive the item instead of leaving it in `work/`.
 
 ## Principles
 

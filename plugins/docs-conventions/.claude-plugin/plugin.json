@@ -1,0 +1,8 @@
+{
+  "name": "docs-conventions",
+  "version": "0.1.0",
+  "description": "Documentation conventions for a repository: a standard layout where a file's path tells you its role (spec, ADR, how-to, work item) and its authority",
+  "author": {
+    "name": "a3lem"
+  }
+}

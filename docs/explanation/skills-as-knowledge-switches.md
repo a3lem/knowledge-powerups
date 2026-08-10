@@ -18,5 +18,5 @@ Mode 2 exists whenever practice leaves artifacts that a later agent needs the sk
 
 ## Consequences
 
-- **Names**: the canonical full name is `plugin:skill`. The plugin carries the noun that names the knowledge (`docs-dir-conventions`, `index-md`); a skill name only distinguishes a skill from its siblings (`using-docs`, `architecture-md`, `adopt-conventions`). "Using" suits the catch-all skill because it excludes neither mode; a more specific verb would commit to mode 1.
+- **Names**: the canonical full name is `plugin:skill`. The plugin carries the noun that names the knowledge (`docs-conventions`, `index-md`); a skill name only distinguishes a skill from its siblings (`using-docs`, `architecture-md`, `adopt-conventions`). "Using" suits the catch-all skill because it excludes neither mode; a more specific verb would commit to mode 1.
 - **Descriptions**: triggering runs on the description, so the description must name both modes. Compare using-docs: "...or when judging whether an existing doc is trustworthy."

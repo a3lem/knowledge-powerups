@@ -1,8 +1,0 @@
-{
-  "name": "docs-dir-conventions",
-  "version": "0.1.0",
-  "description": "A standard layout for docs/ where a file's path tells you its role (spec, ADR, how-to, work item) and its authority",
-  "author": {
-    "name": "a3lem"
-  }
-}

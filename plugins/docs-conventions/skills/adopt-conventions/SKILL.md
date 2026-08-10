@@ -1,6 +1,6 @@
 ---
 name: adopt-conventions
-description: Sets up the docs-dir-conventions layout in a repository's docs/ directory. Use when the user asks to set up, initialize, or scaffold docs/, to adopt the docs-dir-conventions layout in an existing project, or to create a standard documentation structure for a new one.
+description: Sets up the docs-conventions layout in a repository's docs/ directory. Use when the user asks to set up, initialize, or scaffold docs/, to adopt the docs-conventions layout in an existing project, or to create a standard documentation structure for a new one.
 ---
 
 # Adopt the Conventions

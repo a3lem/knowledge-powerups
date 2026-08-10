@@ -5,7 +5,7 @@ description: Load this skill when creating, using, or managing specs for spec-dr
 
 **Prerequisite skills**:
 
--  /docs-dir-conventions:using-docs
+-  /docs-conventions:using-docs
 
 # Using Incremental Specs
 
