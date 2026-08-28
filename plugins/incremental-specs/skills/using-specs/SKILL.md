@@ -1,6 +1,6 @@
 ---
 name: using-specs
-description: Load this skill when creating, using, or managing specs for spec-driven development, or when encountering spec files or .delta.md files in a repo.
+description: Load this skill when creating, using, or managing specs for spec-driven development, or when encountering spec files, .delta.md files, statement codes like [2b342], or "spec:" reference comments in a repo.
 ---
 
 **Prerequisite skills**:
@@ -35,6 +35,42 @@ A spec delta is just a markdown file with sections matching different update ope
 4. `## RENAME` -- Rename the spec and any titles, file names, etc.
 
 Write deltas so that applying them is mechanical: quote enough of the reference spec that each operation matches without judgment. A delta that says 'clarify the expiry wording' forces whoever applies it to improvise; a delta that quotes the old line and gives the new one does not.
+
+## Statement Codes
+
+A behavior statement in a reference spec ends with a code in square brackets: a random 5-character lowercase alphanumeric tag with at least one letter and one digit, so it reads as a code rather than a word or a number.
+
+Codes are a linking tool, not ceremony. Give new statements a code as you write them; it costs seven characters and keeps the statement referenceable the moment a test, an implementation site, or a delta needs to name it. But don't backfill: in an existing spec written without codes, add a code to a statement when something first references it, and leave the unreferenced statements alone.
+
+```markdown
+- Verification links expire after 24 hours; using an expired link offers a
+  resend. [2b342]
+```
+
+The code gives the statement a stable, greppable identity, so code can point at the requirement it implements. Tests reference the statement they verify with a fixed `spec:` marker, the code, and the spec's path:
+
+```python
+def test_expired_link_offers_resend() -> None:
+    # spec: 2b342 (docs/specs/user-registration.md)
+    ...
+```
+
+The marker makes every reference findable with one grep, the code pins the statement, and the path leads back to the spec. Add references in implementation code only where it enforces one specific rule (a limit, a duration, a threshold); elsewhere a module-level pointer to the spec file is enough.
+
+Codes are random, so there is no registry to maintain. Generate them with the bundled generator, which prints one code per line:
+
+```
+${CLAUDE_PLUGIN_ROOT}/skills/using-specs/scripts/gen-spec-codes.py -k 3
+```
+
+Collisions are unlikely, but grep a fresh code before using it.
+
+Codes and deltas interact through quoting: delta operations quote statements verbatim, codes included, so a delta names exactly which codes it touches.
+
+- `## ADD` statements get fresh codes, generated when the delta is written. Tests for the new behavior can then reference the code during implementation, before the reference spec is updated.
+- `## REPLACE` keeps the old statement's code in `### NEW` -- same requirement, changed content.
+- `## DELETE` retires the code with the statement.
+- `## RENAME` leaves codes untouched, but references carry the spec's path, so the rename edits update them.
 
 ## Where Everything Goes
 
@@ -88,18 +124,18 @@ Always check with the user if the preferred convention cannot be inferred from t
 A visitor registers with an email address and a password and ends up with an
 account they can log in to.
 
-- Registration requires an email address and a password.
-- The email address must not already belong to an account.
-- The registration form tells the visitor when an address is already taken.
-- The password must be at least 12 characters.
-- On success, the system sends a verification email with a one-time link.
+- Registration requires an email address and a password. [k4v2n]
+- The email address must not already belong to an account. [8xq1d]
+- The registration form tells the visitor when an address is already taken. [w3jp5]
+- The password must be at least 12 characters. [e9m4t]
+- On success, the system sends a verification email with a one-time link. [p6c8r]
 - An account stays unverified until its link is opened; unverified accounts
-  cannot log in.
+  cannot log in. [a5hz3]
 - Verification links expire after 24 hours; using an expired link offers a
-  resend.
+  resend. [2b342]
 ```
 
-That is the whole template: a title, a sentence of context, and testable behavior statements. Add sections only when a capability has too many statements for a flat list.
+That is the whole template: a title, a sentence of context, and testable behavior statements, each ending in a statement code. Add sections only when a capability has too many statements for a flat list.
 
 Two rules keep the statements testable. Use concrete values ('12 characters', '24 hours'), not vague ones ('sufficiently long', 'promptly'). And don't over-specify: pin down required behavior, not implementation detail, and leave out features nobody has asked for yet.
 
@@ -110,23 +146,23 @@ A delta for a planned change (work item `harden-signup`) to the spec above, at `
 ```markdown
 ## ADD
 
-- At most three verification emails may be sent per address per hour.
+- At most three verification emails may be sent per address per hour. [f7s0q]
 
 ## REPLACE
 
 ### OLD
 
 - Verification links expire after 24 hours; using an expired link offers a
-  resend.
+  resend. [2b342]
 
 ### NEW
 
 - Verification links expire after 1 hour; using an expired link offers a
-  resend.
+  resend. [2b342]
 
 ## DELETE
 
-- The registration form tells the visitor when an address is already taken.
+- The registration form tells the visitor when an address is already taken. [w3jp5]
 
 Reason: the message leaks which addresses have an account.
 
@@ -135,6 +171,8 @@ Reason: the message leaks which addresses have an account.
 user-registration -> signup
 ```
 
+The `ADD` statement carries a fresh code (`f7s0q`), generated when the delta was written. The `REPLACE` keeps `2b342`: the requirement changed, but it is the same requirement.
+
 Once `harden-signup` is implemented and verified, these edits are applied to `docs/specs/user-registration.md` -- which the rename turns into `docs/specs/signup.md` -- and the delta is archived with the rest of the work item.
 
 ## Finishing Up: Apply The Deltas
@@ -142,5 +180,13 @@ Once `harden-signup` is implemented and verified, these edits are applied to `do
 When the work item's change is implemented and verified -- not before -- apply each delta to its reference spec. Applying early would make the spec describe behavior that doesn't exist yet.
 
 Application is mechanical: perform the operations as written. If an `### OLD` or `## DELETE` string doesn't match the reference spec, the reference has drifted since the delta was written (perhaps another work item touched it first); stop and resolve with the user instead of improvising. `## RENAME` covers the file name, the title, and any references to either.
+
+Applying a delta also syncs `spec:` references in code. Collect the codes the delta touched and grep each one across the repo:
+
+- For `## REPLACE`, check that each referencing test or implementation site still matches the new statement; update the ones that don't.
+- For `## DELETE`, remove the references along with the behavior.
+- For `## RENAME`, update the spec path inside every `spec:` reference.
+
+A reference that can't be resolved mechanically is flagged to the user, like a delta that no longer matches.
 
 Then archive the delta along with the rest of the work item. A delta under an active work item is pending; an archived one has been applied. Don't leave an applied delta in the active tree -- the next reader can't tell it's already in the spec.

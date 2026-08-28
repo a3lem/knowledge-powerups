@@ -1,25 +1,19 @@
 ---
 title: Memory link style
-description: Why links inside an agent's memory are root-relative [[path]] wikilinks while wikis keep markdown links -- the audience rule, canonical spellings, and typed edges
+description: Why links inside an agent's memory are markdown links with hrefs rooted at the store -- path over name, root-relative over file-relative, and why the wikilink form was retired
 ---
 
 # Memory link style
 
-Inside an agent's memory, a link to another memory file is a wikilink whose payload is the path from the memory root, extension included:
+Inside an agent's memory, a link to another memory file is a markdown link whose href is rooted at the store checkout: leading `/`, full path, extension included.
 
 ```
-[[reference/projects/klassifai/document-types.md]]
+[details](/reference/projects/klassifai/document-types.md)
 ```
 
-An optional alias serves sentences that need to flow: `[[reference/projects/klassifai/document-types.md|the document-types notes]]`. Ordinary markdown links are reserved for targets outside the memory root -- URLs, tickets, files in some repo. The `[[name]]` form is not used at all. One authored style, applied consistently; mixing styles is disallowed.
+The label is required -- the linked word when the sentence flows, the filename when nothing better fits. `$MEMORY_DIR` plus the href is the absolute path on disk. Relative hrefs belong only to generated `index.md` bodies; targets outside the store use full URLs.
 
-Three decisions are folded into that rule -- path over name, root-relative over file-relative, wikilink over markdown link -- and each has its own reason.
-
-## The audience rule
-
-Who reads a store decides its link style. A context wiki is read by humans through standard renderers, so it uses standard markdown links. Memory is read by the agent and rewritten by machinery -- consolidation, defragmentation, validation -- so it uses the form those tools can treat mechanically. The same rule decides the two stores in opposite directions; the difference is deliberate (for now, at least).
-
-The one part of memory meant for human and navigational reading, the generated `index.md` files, keeps markdown links. Those are regenerated whenever the tree changes, so they cannot go stale, and the consistency rule governs authored prose, not generated navigation.
+Three decisions are folded into that rule -- path over name, root-relative over file-relative, markdown link over wikilink -- and each has its own reason. The first two have held since the beginning. The third reversed on 2026-08-10; the last section says why.
 
 ## Path, not name
 
@@ -32,31 +26,28 @@ Root-relative paths give every file exactly one link spelling in the whole tree.
 - Finding all inbound links to a file is a single exact-string grep.
 - Moving or renaming a file during defragmentation is a find-and-replace: rewrite the one spelling, done. Applying the change requires no judgment -- the same property spec deltas demand of their operations.
 
-File-relative paths have neither property. A file's inbound links are spelled differently by every linker (`../a.md`, `../../x/a.md`), so finding them means resolving each candidate. And a move silently breaks the moved file's own outgoing links, which root-relative links survive.
+File-relative paths have neither property. A file's inbound links are spelled differently by every linker (`../a.md`, `../../x/a.md`), so finding them means resolving each candidate. And a move silently breaks the moved file's own outgoing links, which root-relative links survive. Rooted hrefs also survive a text transplant: a paragraph moved between files carries working links with it.
 
-## Wikilink, not markdown link
+## Markdown link, not wikilink
 
-**Syntax partitions link-space.** Memory files legitimately contain markdown links to the outside world. If store-internal references used the same syntax, every tool that touches the link graph -- link validation, the defrag rewriter, a graph builder -- would have to classify each markdown link by probing its target: memory edge or external pointer? Reserving `[[...]]` for memory edges makes the rule syntactic. Every wikilink must resolve under the memory root; every markdown link is ignored by memory tooling. One regex separates the jurisdictions.
+The store used `[[root/relative/path.md]]` until 2026-08-10. The argument for it was syntactic partitioning: memory files legitimately link to the outside world, so reserving `[[...]]` for store-internal edges let one regex separate the jurisdictions, and a bare wikilink carried no label to drift after a rename.
 
-**No label residue.** A markdown label is mandatory, and in practice it usually restates the filename: `[document types](reference/.../document-types.md)` buys no readability, and after a rename the label drifts silently -- a mechanical rewriter updates the path but cannot know whether the words still describe the file. A bare wikilink contains zero judgment; rewriting `[[old-path]]` to `[[new-path]]` is a total substitution with nothing left to go stale. Labeling is opt-in via the alias, so an aliased link marks the one place where words were chosen deliberately -- exactly the links worth a second look after a rename.
+Both benefits turned out to be available more cheaply.
 
-**Relation words stay in the document's voice.** Compare:
+**Every tool already reads an href as a path.** Renderers disagree only on the base a leading `/` resolves against: GitHub and Gitea use the repository root, site generators the site root, a shell the OS root, where it fails loudly. Wikilink resolution fragments instead of shifting -- Obsidian searches the vault, GitHub wiki uses flat page titles, Logseq resolves names rather than paths, MediaWiki reads a leading slash as a subpage. A wrong base is a systematic offset a reader corrects once; a different resolution rule per tool cannot be corrected at all.
 
-```
-details: [[reference/projects/klassifai/document-types.md]]
+**The href shape partitions link-space just as well.** External targets carry a URI scheme or a protocol-relative `//`, in-store links carry a leading `/`, and a same-file anchor starts with `#`. Validation classifies by inspecting the first characters of the href -- no probing of targets, no ambiguity -- so the wikilink syntax was buying a partition the href already provided.
 
-[details](reference/projects/klassifai/document-types.md)
-```
-
-In the first line, the word and the link have separate jobs: "details" names the relation in prose, and the link mentions the file by address. In the second, the word moves into the anchor slot, which collapses what the target is and why it is pointed at into a single word. A wikilink is an identifier; a markdown link is a display string with a pointer attached.
-
-The separation yields typed edges for free: `details:`, `source:`, `supersedes:`, `see also:` -- relation words sitting as plain prose next to identical link tokens, all mineable with one pattern. A consolidation pass can build the memory graph, edge types included, from a single regex. Anchor text offers a miner nothing to hold, because it stores the relation word and the target name in the same slot.
+**One syntax replaced two.** The old rule needed an exception for generated `index.md` bodies, which link their children relatively; that made the store a two-dialect document set, and every tool touching it had to know which dialect a given file spoke. Rooted hrefs for authored links, relative hrefs in generated index bodies, full URLs outward: the dialect and its exception retired together.
 
 ## Costs accepted
 
-- GitHub and plain markdown renderers do not linkify `[[...]]`, so browsing raw memory loses click-through navigation. The reader that matters is the agent, and the generated indexes cover human navigation.
-- Prose integration costs an alias. In memory this is the minority case: system files are capped at 2,200 characters, and their links are mostly trailing pointers or related-file lists, not clauses woven into argument.
+The label is now mandatory, and a mechanical rewriter can update the path but cannot know whether the words still describe the file. That is the one piece of judgment the wikilink form removed and this one restores; consolidation catches drift, validation does not check labels at all.
+
+Typed edges survive the change. `details: [document types](/reference/.../document-types.md)` still puts the relation word in the document's voice, next to a link that mentions the file by address, and still mines with one pattern. The anchor slot now holds a display string as well, so a miner reads two words where it used to read one.
 
 ## Enforcement
 
-The convention is part of the memory contract, but validation enforces the form, not resolution: every `[[...]]` in the store must be a root-relative path -- an absolute path or an escape blocks the turn -- while the target may not exist yet. A dangling link is a forward pointer: it marks a file worth writing, and consolidation either writes the file or drops the pointer. The cost of allowing them: a `[[name]]`-form link is mechanically indistinguishable from a forward pointer, so the path form is kept by convention and by consolidation's sweep, not by the validator. Run from a Stop hook, form violations block the turn instead of accumulating.
+Validation enforces form, not resolution. Every markdown link in the store is checked by its href, with fenced and inline code excluded: rooted hrefs must normalize to a path inside the store, escapes are violations, and a relative href is a violation in a memory file but legal in an `index.md`. A `[[...]]` anywhere is a legacy violation naming its replacement.
+
+Resolution is deliberately unchecked. A dangling link is a forward pointer: it marks a file worth writing, and consolidation either writes the file or drops the pointer. Run from a Stop hook, form violations block the turn instead of accumulating.

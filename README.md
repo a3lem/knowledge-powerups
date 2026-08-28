@@ -1,50 +1,66 @@
-A collection of AI agent plugins for storing and organizing new information, so that
-knowledge compounds over consecutive agent sessions.
+# Agent Knowledge Plugins
 
-# Knowledge Management Plugins
+Claude Code plugins for storing and organizing what an agent learns, so that
+knowledge compounds across sessions instead of being re-derived in each one.
 
-## A Principled Approach
+## Why
 
-The brains of an AI agent, the LLM, is a static artifact, unchanging through use.
-All an LLM 'knows' is what was trained into its weights and what is available
-in the token context window.
+An LLM is a static artifact. It knows what was trained into its weights and
+what fits in the context window, and it forgets a session the moment the
+session ends. Every agent harness answers this with some form of simulated
+memory, and a cottage industry of memory products offers to do it better.
 
-This intrinsic weakness of LLMs is addressed by the 'harness' of the agent,
-i.e. the software wrapping the model and turning it into a functional agent.
-This is an active area of work, with nearly all agent harnesses offering one or
-more kinds of simulated memory, and with a whole cottage industry of memory SaaS
-products offering to do even better.
+What users actually want is narrower than "memory": never onboarding an agent
+onto the same thing twice, never re-explaining a particularity of their
+context, never paying again for exploration already done.
 
-The dream is to never have to onboard an agent onto the same thing twice, to
-never have to explain a particularity of your context before starting, to never
-have to kindly request that the agent burns more tokens on re-exploring the
-files in a project.
+These plugins take a conventions-first approach. Knowledge lives in plain
+markdown in git, and the convention -- where a file sits, what its path
+implies -- carries the meaning that a database schema would otherwise carry.
+Two rules drive the layouts:
 
-All users of AI agents want more or less the same thing: to feel that their agent
-is getting smarter across sessions by reusing knowledge it gained previously.
+1. For any piece of knowledge, there is exactly one obvious place to put it,
+   so nothing is duplicated.
+2. A file's location says whether it can be trusted without re-checking.
 
-[...]
+## The plugins
 
-### Goals
+Three knowledge stores, each answerable to something different:
 
-1. For any piece of knowledge, there is exactly *one* obvious place to store it.
-2. Following from (1), information shall not be duplicated.
-3. Distinguish between stable, authoritative information and [...]
-4. ...
+- **[docs-conventions](plugins/docs-conventions/)** -- a standard layout for a
+  repository's `docs/`, where a file's path tells you its role and its
+  authority. A docs file is wrong when it disagrees with the code.
+- **[context-wikis](plugins/context-wikis/)** -- git-tracked wikis that
+  accumulate knowledge across projects, shareable and layerable. A wiki note
+  is wrong when it disagrees with the world. *Not yet written.*
+- **[agent-memory](plugins/agent-memory/)** -- the agent's own store,
+  compiled into its system prompt each session and maintained by the agent
+  itself. A memory is wrong when it disagrees with the agent's history or the
+  human's preferences.
 
+Two supporting conventions:
 
-## Three pillars
+- **[incremental-specs](plugins/incremental-specs/)** -- reference specs kept
+  current through spec deltas, for code bases that are never done.
+- **[index-md](plugins/index-md/)** -- generated per-directory tables of
+  contents, so a file tree is navigable without opening every file.
 
-### 1. Conventional Code Docs
+## Getting started
 
-AI agents make great assistants for software engineers. When working in a
-code base, these 'coding agents' are happy to write files to the documentation
-folder, usually abbreviated to `docs/`.
+Add the marketplace, then install what you need:
 
-### 2. Context Wikis
+```
+/plugin marketplace add a3lem/knowledge-powerups
+/plugin install docs-conventions
+```
 
+The plugins are independent. Installing one without its siblings loses
+guidance, never function; each plugin's README states what it expects.
 
-### 3. Auto-memory
+## Docs
 
-
-## 
+- [docs/architecture.md](docs/architecture.md) -- what this repository holds
+  and how the plugins relate.
+- [docs/glossary.md](docs/glossary.md) -- the cross-cutting vocabulary.
+- [docs/explanation/](docs/explanation/) -- the reasoning behind particular
+  design decisions.

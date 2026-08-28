@@ -5,7 +5,7 @@ description: Handover items not yet addressed, as of 2026-07-21
 
 # Still to do
 
-Unaddressed items from [HANDOVER.md](HANDOVER.md). Where a ticket exists, details live there.
+Unaddressed items from [handover.md](handover.md). Where a ticket exists, details live there.
 
 ## Wiki (context-wikis)
 
