@@ -30,4 +30,4 @@ step by splitting them:
 
 Requires **docs-conventions**: `using-specs` declares
 `docs-conventions:using-docs` as a prerequisite skill, and the file locations
-it uses (`docs/specs/`, `docs/dev/work/<slug>/specs/`) come from that layout.
+it uses (`docs/specs/`, `docs/wip/<slug>/specs/`) come from that layout.

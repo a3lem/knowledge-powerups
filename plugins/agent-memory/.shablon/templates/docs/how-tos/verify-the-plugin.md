@@ -3,7 +3,7 @@ title: Verify the plugin
 description: Scripted checks that prove memoryctl, the hooks, and the consolidation choreography behave to spec
 ---
 
-<!-- Rendered from .shablon/templates/docs/how-to-guides/verify-the-plugin.md; edit that template, then run `shablon generate`. -->
+<!-- Rendered from .shablon/templates/docs/how-tos/verify-the-plugin.md; edit that template, then run `shablon generate`. -->
 
 # How To Verify The Plugin
 
@@ -42,7 +42,7 @@ none reaches git status); the env file has `MEMORY_DIR` (worktree
 path) plus `MEMORY_ROOT_DIR` and `MEMORY_AGENT_ID`; compile's
 `root` attribute is the worktree and
 `<memory-metadata>` shows the `MEMORY_DIR:` line, the accounting line
-(`injection: <n> / 24,000 chars, system/: <n>`, the total within a few
+(`injection: <n> / {{ caps.injection }} chars, system/: <n>`, the total within a few
 characters of `$CTL compile | wc -c` and the system/ figure matching the
 inlined tier), and the consolidation queue depth.
 
@@ -106,16 +106,16 @@ growth block is JSON on stdout, exit 0.
 ## The system/ growth check
 
 Add a handful of characters to a `system/` file in the worktree and run
-the chain again. Under the floor -- fewer than 300 net characters added
+the chain again. Under the floor -- fewer than {{ growth.floor }} net characters added
 across `system/`, no grown file crossing half its cap -- expect silence:
 `system-delta` prints nothing on either stream, exits 0, and the commit
 lands.
 
-Now add 300 characters or more in total and run the chain again. Expect
+Now add {{ growth.floor }} characters or more in total and run the chain again. Expect
 one JSON object on stdout, nothing on stderr, exit 0. Parse it:
 `decision` is `block`, `systemMessage` is the human's one-line notice,
 and `reason` is the report -- a line per grown file with the characters
-it added and its new size against the 2,200-char cap with a percentage,
+it added and its new size against the {{ caps.system_file }}-char cap with a percentage,
 the total added as a share of that same per-file budget, the question,
 the headroom sentence (all grown files under half cap: confirming is the
 expected answer; a file past half cap: that file is named), and the guard
@@ -125,7 +125,7 @@ working copy. Commit is skipped while the block stands, so the worktree
 stays dirty and whatever the turn decides rides the continuation's
 commit.
 
-The crossing case: half the cap is 1,100 chars. Take a file just
+The crossing case: half the cap is {{ caps.system_file_half }} chars. Take a file just
 under it -- 1,090 -- and add 50. Expect a block although the total is far
 below the floor: approaching the cap is worth attention exactly once, at
 the crossing. Add 50 more to the same file, now already past half:
@@ -195,8 +195,8 @@ follows the directory-level symlink; pipe the prompt on stdin, since
 ## The contract
 
 Each violation must exit 2 naming the file, and exit 0 once fixed:
-an oversized `system/` file (>2,200 chars); a compiled injection over
-24,000 chars total (a dozen near-cap `system/` files trigger it); a memory
+an oversized `system/` file (>{{ caps.system_file }} chars); a compiled injection over
+{{ caps.injection }} chars total (a dozen near-cap `system/` files trigger it); a memory
 file without `description` frontmatter; a legacy `[[wikilink]]`; a
 root-escaping href (`/../x.md`); a relative href in a memory file; a
 `skills/` entry without `SKILL.md` or missing `name` or `description`

@@ -16,20 +16,26 @@ defined in that plugin's own glossary, e.g.
   (the agent's own store, wrong when it disagrees with the agent's history
   and the human's preferences). What a file answers to decides which store
   it belongs in.
-- **role** -- what kind of document a file is: spec, ADR, how-to,
-  explanation, work item. The path assigns it; nothing in the file declares
-  it.
+- **role** -- what kind of document a file is: spec, decision record,
+  how-to, explanation, work item. The path assigns it; nothing in the file
+  declares it.
 - **authority** -- whether a file may be built on without re-verifying it
-  against the code. Everything in `docs/` outside `dev/` carries full
-  authority; `dev/` promises nothing. Chosen over "reliability".
+  against the code. Everything in `docs/` carries full authority except
+  `wip/`, `archive/` and `resources/`, which promise nothing. Chosen over
+  "reliability".
 - **work item** -- a unit of work in flight, held as a directory under
-  `docs/dev/work/<slug>/`. Its location is its status: live in `work/`,
-  otherwise under `dev/archive/work/completed/` or `.../abandoned/` with an
-  ISO date prepended to the slug.
+  `docs/wip/<slug>/`. Its location is its status: live in `wip/`, otherwise
+  under `docs/archive/completed/` with an ISO date prepended to the slug.
+  Dropped work is not archived -- what outlives it is promoted, and the
+  directory is deleted.
 - **slice** -- a sub-item of a large work item, in
   `<slug>/slices/<slug>/`, holding the same files as its parent.
 - **reference spec** -- a spec in `docs/specs/` describing a capability's
   current behavior. Current or deleted; never archived.
+- **decision record** -- a numbered file in `docs/decisions/` recording that
+  a decision was made and why. An ADR without the assumption that the
+  decision is architectural. Never edited in place: a reversal is a new
+  record naming the one it supersedes.
 - **spec delta** -- a `<spec-name>.delta.md` inside a work item, describing
   only the *difference* a planned change makes to a reference spec, in
   `ADD` / `REPLACE` / `DELETE` / `RENAME` operations quoted closely enough

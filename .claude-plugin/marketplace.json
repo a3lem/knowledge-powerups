@@ -10,7 +10,7 @@
     {
       "name": "docs-conventions",
       "source": "./plugins/docs-conventions",
-      "description": "Documentation conventions for a repository: a standard layout where a file's path tells you its role (spec, ADR, how-to, work item) and its authority"
+      "description": "Documentation conventions for a repository: a standard layout where a file's path tells you its role (spec, decision record, how-to, work item) and its authority"
     },
     {
       "name": "index-md",

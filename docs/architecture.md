@@ -28,9 +28,9 @@ non-engineer can install the wiki and memory plugins alone.
   frontmatter, merging additively rather than overwriting. Stdlib-only, so
   any plugin can shell out to it without an install step.
 - **docs-conventions** -- knowledge-only. `using-docs` holds the layout
-  itself; `architecture-md`, `changelog-md`, and `adrs` cover individual
-  parts of it; `adopt-conventions` is the one procedural skill, and the
-  repository's only shell script sits under it.
+  itself; `architecture-md`, `changelog-md`, and `decision-records` cover
+  individual parts of it; `adopt-conventions` is the one procedural skill,
+  and the repository's only shell script sits under it.
 - **incremental-specs** -- knowledge-only. One skill, `using-specs`, which
   declares `docs-conventions:using-docs` as a prerequisite. This is the one
   hard dependency between plugins.

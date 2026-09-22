@@ -7,6 +7,6 @@ description: Documentation for the agent-memory plugin
 
 - [Architecture](architecture.md): what the plugin consists of and how the pieces connect
 - [Glossary](glossary.md): memory-system jargon, defined in one place
-- [how-to-guides](how-to-guides/): goal-focused procedures, e.g. verifying the plugin
+- [how-tos](how-tos/): goal-focused procedures, e.g. verifying the plugin
 - [specs](specs/): reference specs -- verified, current behavior per capability
-- [dev](dev/): developer workspace -- work items and spec deltas; no authority promise
+- [archive](archive/): completed work items and their spec deltas; no authority promise

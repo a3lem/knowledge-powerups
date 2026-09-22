@@ -1,13 +1,15 @@
 ---
-name: adrs
-description: Guidance for writing architecture decision records under docs/adrs/ -- when a decision is worth recording, how they are numbered, and the minimal format. Use when recording a decision, adding or superseding an ADR, or judging whether a decision warrants one.
+name: decision-records
+description: Guidance for writing decision records under docs/decisions/ -- when a decision is worth recording, how they are numbered, and the minimal format. Use when recording a decision, adding or superseding a decision record, or judging whether a decision warrants one.
 ---
 
-# docs/adrs/
+# docs/decisions/
 
-An ADR records that a decision was made and why. The value is in the record, not in filling out sections: a single paragraph is a complete ADR.
+A decision record records that a decision was made and why. The value is in the record, not in filling out sections: a single paragraph is a complete record.
 
-Files are `docs/adrs/<NNNN>-<slug>.md`, e.g. `0001-no-soft-deletions.md`. The number is the highest existing one plus one, zero-padded to four. Create `docs/adrs/` when the first ADR needs it, not before.
+Files are `docs/decisions/<NNNN>-<slug>.md`, e.g. `0001-no-soft-deletions.md`. The number is the highest existing one plus one, zero-padded to four. Create `docs/decisions/` when the first record needs it, not before.
+
+These are ADRs (architecture decision records) without the assumption that every decision worth recording is architectural. Half of what belongs here is not: a compliance constraint, a deliberate deviation from the obvious path, a rejected library. Hence `decisions/`.
 
 ## When to write one
 
@@ -29,7 +31,7 @@ What usually qualifies:
 - **Constraints invisible in the code** -- a compliance rule, a partner API's latency budget.
 - **Rejected alternatives whose rejection is subtle** -- record why GraphQL lost to REST, or someone proposes GraphQL again in six months.
 
-Abandoned work is a common source: "we decided not to do X because Y" outlives the work item it came from.
+Dropped work is a common source: "we decided not to do X because Y" outlives the work item it came from, and the item itself gets deleted (see /using-docs skill).
 
 ## Format
 
@@ -44,15 +46,21 @@ description: Why deleted rows leave the database instead of being flagged
 <1-3 sentences: the context, the decision, and the reason.>
 ```
 
-Add a section only when it earns its place; most ADRs need none:
+Add a section only when it earns its place; most records need none:
 
 - **Considered options** -- when the rejected alternatives are worth remembering.
 - **Consequences** -- when the downstream effects are non-obvious.
 - **`status:` frontmatter** (`proposed`, `accepted`, `superseded by 0007`) -- when decisions get revisited.
 
+## Drafting inside a work item
+
+A decision taken while doing a piece of work is drafted at `docs/wip/<work-slug>/decisions/<slug>.md` and promoted to `docs/decisions/` when the work lands. Drafts carry no number: assigning it at promotion keeps two concurrent work items from claiming the same one. Promote with `git mv` and add the number to the filename then.
+
 ## Superseding
 
-An ADR records a decision at a point in time, so it stays true even after the decision is reversed. This is the exception to the rule that a stale reference file gets deleted. Don't rewrite an ADR to match a newer decision and don't delete it: write a new ADR, and note in the old one which ADR replaced it.
+A decision record records a decision at a point in time, so it stays true even after the decision is reversed. This is the exception to the rule that a stale reference file gets deleted. Don't rewrite a record to match a newer decision and don't delete it: write a new record, and note in the old one which record replaced it.
+
+Because records are never edited in place, they have no delta form. A draft that reverses `0003` is an ordinary draft that says so.
 
 ## Further reading
 

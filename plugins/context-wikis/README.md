@@ -13,7 +13,7 @@ a company one in the same session.
 **Not yet written.** Both skills below exist as empty files, so installing
 this plugin currently gives you nothing. The conventions are decided but
 unencoded; they are recorded in the `starting-from-handover` work item under
-this repository's [docs/dev/work/](../../docs/dev/work/).
+this repository's [docs/wip/](../../docs/wip/).
 
 ## Skills
 
