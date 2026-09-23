@@ -18,5 +18,5 @@ Mode 2 exists whenever practice leaves artifacts that a later agent needs the sk
 
 ## Consequences
 
-- **Names**: the canonical full name is `plugin:skill`. The plugin carries the noun that names the knowledge (`docs-conventions`, `index-md`); a skill name only distinguishes a skill from its siblings (`using-docs`, `architecture-md`, `adopt-conventions`). "Using" suits the catch-all skill because it excludes neither mode; a more specific verb would commit to mode 1.
-- **Descriptions**: triggering runs on the description, so the description must name both modes. Compare using-docs: "...or when judging whether an existing doc is trustworthy."
+- **Names**: every skill ships in the one plugin, so the full name is `knowledge-powerups:<skill>` and the skill name alone must carry the noun that names the knowledge (`docs-folder`, `index-md`, `incremental-specs`). A noun commits to neither mode. A verb such as "adopt" or "generate" would commit to mode 1, which is why a procedure lives inside its knowledge skill as a reference file rather than as a skill of its own.
+- **Descriptions**: triggering runs on the description, so the description must name both modes. Compare docs-folder: "...or when judging whether an existing doc is trustworthy."

@@ -1,6 +1,6 @@
-# Agent Knowledge Plugins
+# Knowledge Powerups
 
-Claude Code plugins for storing and organizing what an agent learns, so that
+Skills for storing and organizing what a coding agent learns, so that
 knowledge compounds across sessions instead of being re-derived in each one.
 
 ## Why
@@ -14,7 +14,7 @@ What users actually want is narrower than "memory": never onboarding an agent
 onto the same thing twice, never re-explaining a particularity of their
 context, never paying again for exploration already done.
 
-These plugins take a conventions-first approach. Knowledge lives in plain
+These skills take a conventions-first approach. Knowledge lives in plain
 markdown in git, and the convention -- where a file sits, what its path
 implies -- carries the meaning that a database schema would otherwise carry.
 Two rules drive the layouts:
@@ -23,44 +23,77 @@ Two rules drive the layouts:
    so nothing is duplicated.
 2. A file's location says whether it can be trusted without re-checking.
 
-## The plugins
+## The skills
 
-Three knowledge stores, each answerable to something different:
+One plugin, `knowledge-powerups`, holds every skill. They are grouped by the
+knowledge store they serve.
 
-- **[docs-conventions](plugins/docs-conventions/)** -- a standard layout for a
-  repository's `docs/`, where a file's path tells you its role and its
-  authority. A docs file is wrong when it disagrees with the code.
-- **[context-wikis](plugins/context-wikis/)** -- git-tracked wikis that
-  accumulate knowledge across projects, shareable and layerable. A wiki note
-  is wrong when it disagrees with the world. *Not yet written.*
+**[code-docs](skills/code-docs/)** -- a repository's `docs/`. A docs file is
+wrong when it disagrees with the code.
+
+- `docs-folder` -- a standard layout for `docs/`, where a file's path tells
+  you its role (spec, decision record, how-to, work item) and its authority
+  (whether you can build on it without re-verifying against the code). Also
+  how work items under `docs/wip/` are created, resumed and archived, and
+  how to adopt the layout in a new or existing repository, with a scaffold
+  script for the baseline files.
+- `architecture-md` -- what belongs in `docs/architecture.md`, following
+  matklad's ARCHITECTURE.md.
+- `changelog-md` -- maintaining `CHANGELOG.md` per Keep a Changelog 1.1.0.
+- `decision-records` -- when a decision is worth recording, and the minimal
+  format for `docs/decisions/<NNNN>-<slug>.md`.
+- `incremental-specs` -- spec-driven development for code bases that are
+  never done. Reference specs in `docs/specs/` describe current behavior;
+  spec deltas ride along with a planned change and describe only the
+  difference; statement codes such as `[2b342]` link tests and code to the
+  statements they enforce. Bundles a generator for the codes.
+
+**[tools](skills/tools/)** -- skills the others lean on.
+
+- `index-md` -- per-directory `index.md` tables of contents that make a file
+  tree discoverable without opening every file. The title and description
+  are written by hand; the list is generated and merged additively, so
+  hand-written labels survive. The generator is stdlib-only Python and ships
+  inside the skill.
+
+**[context-wiki](skills/context-wiki/)** -- a git-tracked wiki that
+accumulates knowledge across projects, shareable and layerable. A wiki note
+is wrong when it disagrees with the world. *Not yet written.*
+
+## Companion plugins
+
+Optional plugins that hook into the agent harness, each a separate
+marketplace entry under [plugins/](plugins/). They build on the base skills
+and lose guidance, never function, when those are absent.
+
 - **[agent-memory](plugins/agent-memory/)** -- the agent's own store,
-  compiled into its system prompt each session and maintained by the agent
-  itself. A memory is wrong when it disagrees with the agent's history or the
-  human's preferences.
-
-Two supporting conventions:
-
-- **[incremental-specs](plugins/incremental-specs/)** -- reference specs kept
-  current through spec deltas, for code bases that are never done.
-- **[index-md](plugins/index-md/)** -- generated per-directory tables of
-  contents, so a file tree is navigable without opening every file.
+  compiled into its system prompt each session by hooks and maintained by
+  the agent itself. A memory is wrong when it disagrees with the agent's
+  history or the human's preferences.
 
 ## Getting started
 
-Add the marketplace, then install what you need:
+As a Claude Code plugin:
 
 ```
 /plugin marketplace add a3lem/knowledge-powerups
-/plugin install docs-conventions
+/plugin install knowledge-powerups
+/plugin install agent-memory      # optional companion
 ```
 
-The plugins are independent. Installing one without its siblings loses
-guidance, never function; each plugin's README states what it expects.
+As plain skills, for any agent that reads `SKILL.md` files:
+
+```
+npx skills add a3lem/knowledge-powerups
+```
 
 ## Docs
 
 - [docs/architecture.md](docs/architecture.md) -- what this repository holds
-  and how the plugins relate.
+  and how the base plugin, the shared CLIs and the companions relate.
 - [docs/glossary.md](docs/glossary.md) -- the cross-cutting vocabulary.
+- [docs/specs/](docs/specs/) -- reference specs, e.g. for the index
+  generator.
+- [docs/decisions/](docs/decisions/) -- decision records.
 - [docs/explanation/](docs/explanation/) -- the reasoning behind particular
   design decisions.

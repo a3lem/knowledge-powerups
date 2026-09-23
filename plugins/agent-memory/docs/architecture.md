@@ -21,8 +21,8 @@ Three layers, three kinds of authority:
   `commit` (commit the session worktree's writes, authored as the agent),
   `session-end` (drop the
   worktree's `.active` liveness lock), `index` (refresh the generated index.md
-  bodies in the worktree's `reference/`, via the repo's shared
-  `cli/generate_index.py`), `subagent-context` (print the
+  bodies in the worktree's `reference/`, via the bundled
+  `scripts/generate_index.py`), `subagent-context` (print the
   SubagentStart JSON that carries the injection to subagents). Stdlib-only,
   run with plain `python3`, silent no-op when memory is disabled or no
   store exists. The surface stays deliberately small: a new verb only when

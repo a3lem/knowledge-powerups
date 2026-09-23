@@ -66,7 +66,7 @@ run, and a run for a session with no worktree, exit 0 silently.
 worktree's `reference/` and prints nothing to stdout (at SessionStart,
 stdout belongs to the injection). It never creates an index.md -- drop a
 described file into a directory without one and assert none appears --
-and with the shared `cli/generate_index.py` missing it skips with a
+and with its `scripts/generate_index.py` missing it skips with a
 stderr note, exit 0.
 
 Bootstrap: point `MEMORY_ROOT_DIR` at an empty temp dir, run the chain,
