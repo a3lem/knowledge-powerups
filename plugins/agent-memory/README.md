@@ -31,9 +31,10 @@ The same configuration can live per project in `<cwd>/.agents/memory.conf`
 No further setup: the first session scaffolds the store, and hooks handle
 injection, validation, and end-of-turn commits from then on.
 
-The index-md plugin is a companion: reference directories keep generated
-`index.md` tables of contents. The hooks refresh them at SessionStart and
-SessionEnd through the repo's shared `cli/generate_index.py`, and the
+The index-md skill from the base plugin is a companion: reference
+directories keep generated `index.md` tables of contents. The hooks refresh
+them at SessionStart and SessionEnd through the bundled
+`scripts/generate_index.py`, a copy of the repo's `clis/index-gen`, and the
 memory skills invoke the index-md skill for creation and manual
 regeneration.
 

@@ -1,0 +1,1 @@
+../../../../clis/index-gen/generate_index.py

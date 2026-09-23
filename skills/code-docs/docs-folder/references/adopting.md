@@ -1,0 +1,30 @@
+# Adopting the layout
+
+Set up a repository's `docs/` directory to follow the standard layout. The layout itself is defined in SKILL.md one level up; it is not repeated here.
+
+## Steps
+
+1. **Inspect first.** Look at the target repo's `docs/` (if any) before changing anything.
+
+2. **Greenfield** -- no `docs/`, or an empty one: run the companion script, `scripts/scaffold_docs.sh` in this skill's base directory.
+
+   ```sh
+   <skill-base-dir>/scripts/scaffold_docs.sh <repo-root>
+   ```
+
+   It creates the baseline (glossary.md, architecture.md, the `wip/` and `resources/` workspaces) and nothing more: the optional reference dirs (explanation/, how-tos/, specs/, decisions/) are created on demand, when the first file needs one. No index.md: whether the project keeps one is the human's call, and /knowledge-powerups:index-md can generate it from the tree if they want it. Seed files carry the frontmatter keys with no values -- the wording is the human's, not the script's. The script is idempotent and never overwrites an existing file.
+
+3. **Brownfield** -- `docs/` exists with content: follow 'Adopting in an existing project' below. Nothing moves before the human approves the plan.
+
+4. **Finish by hand.** The script leaves placeholders only. Fill in each file's `description`, and seed `architecture.md` with the project's actual high-level structure -- read the code first, don't fabricate.
+
+## Adopting in an existing project
+
+Existing docs were written with intent, and the human knows which files still matter. Input from the human is valued here: adoption is a collaboration, not an autonomous cleanup.
+
+1. **Survey.** List every file under the existing `docs/` and infer each one's role (reference, how-to, explanation, spec, decision record, work notes, stale).
+2. **Draft a migration plan.** For each file: keep in place, move to a named new path, or flag. A file whose role is unclear gets a question, not a guess. Content that looks stale is flagged as a removal candidate -- removal is the human's call.
+3. **Present the plan and request approval.** Clearly convey what will change: what moves where, what stays, what is flagged and why. Wait for approval before touching anything.
+4. **Execute.** Apply the approved moves (`git mv` where possible, to preserve history), run the companion script to fill in the missing baseline, then finish by hand (step 4 above).
+
+Mind authority when placing files: everything outside `wip/`, `archive/`, and `resources/` promises to be current. A file that has not been verified against the code goes under `wip/` (or stays flagged), not into the reference tree.

@@ -49,7 +49,7 @@ Subcommands:
             SessionEnd hook runs it, so clean-up can tell an ended
             session from a running one without guessing from timestamps.
   index     Refresh the generated index.md bodies in the worktree's
-            reference/ tree (shared cli/generate_index.py, refresh-only:
+            reference/ tree (the bundled generate_index.py, refresh-only:
             never creates). SessionStart and SessionEnd hooks run it, so
             the on-disk indexes track the tree at session boundaries.
   subagent-context
@@ -188,11 +188,11 @@ INSTRUCTIONS_FILE = PROMPTS_DIR / "injected-instructions.md"
 SUBAGENT_PREAMBLE_FILE = PROMPTS_DIR / "subagent-preamble.md"
 SESSIONLESS_PREAMBLE_FILE = PROMPTS_DIR / "sessionless-preamble.md"
 
-# The index.md body generator, shared across plugins in the repo's cli/
-# directory (plugins/agent-memory/scripts -> repo root). Absent -- e.g. an
-# installed copy without the checkout -- the index refresh degrades to a
-# skipped step, never a failure.
-INDEX_GENERATOR = Path(__file__).resolve().parents[3] / "cli" / "generate_index.py"
+# The index.md list generator, shared through the repo's clis/index-gen/. It
+# sits next to this file: a symlink in the checkout, a copy in an installed
+# plugin (the installer dereferences links within the marketplace). Absent,
+# the index refresh degrades to a skipped step, never a failure.
+INDEX_GENERATOR = Path(__file__).resolve().parent / "generate_index.py"
 
 
 def prompt_block(path: Path) -> str:

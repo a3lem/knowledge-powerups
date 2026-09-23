@@ -1,36 +1,21 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "agent-knowledge-plugins",
+  "name": "knowledge-powerups",
   "owner": {
     "name": "Adriaan",
     "email": "a3lem@pm.me"
   },
-  "metadata": {"description": "Plugins for AI-assisted knowledge work in software engineering"},
+  "metadata": {"description": "Knowledge conventions for coding agents, as skills, plus optional companion plugins that hook into the harness"},
   "plugins": [
     {
-      "name": "docs-conventions",
-      "source": "./plugins/docs-conventions",
-      "description": "Documentation conventions for a repository: a standard layout where a file's path tells you its role (spec, decision record, how-to, work item) and its authority"
-    },
-    {
-      "name": "index-md",
-      "source": "./plugins/index-md",
-      "description": "Per-directory index.md tables of contents that make file trees discoverable to agents -- generated, not maintained"
-    },
-    {
-      "name": "context-wikis",
-      "source": "./plugins/context-wikis",
-      "description": "Git-tracked context wikis in the Open Knowledge Format -- shareable, layered knowledge stores"
+      "name": "knowledge-powerups",
+      "source": "./",
+      "description": "The base plugin: every knowledge skill -- docs/ layout, incremental specs, index.md generation, context wikis"
     },
     {
       "name": "agent-memory",
       "source": "./plugins/agent-memory",
-      "description": "Persistent agent memory: storage layout and conventions for what belongs in it"
-    },
-    {
-      "name": "incremental-specs",
-      "source": "./plugins/incremental-specs",
-      "description": "Spec-driven development for iterative code bases: reference specs kept current through spec deltas"
+      "description": "Companion plugin. Persistent agent memory: storage layout, conventions for what belongs in it, and hooks that compile it into each session"
     }
   ]
 }

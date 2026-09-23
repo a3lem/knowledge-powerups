@@ -1,0 +1,17 @@
+{
+  "name": "knowledge-powerups",
+  "version": "0.1.0",
+  "description": "Knowledge conventions for coding agents: a standard docs/ layout, incremental specs, generated index.md files, and context wikis -- plain markdown in git, where a file's path tells you its role and whether to trust it",
+  "author": {
+    "name": "a3lem"
+  },
+  "skills": [
+    "./skills/code-docs/docs-folder",
+    "./skills/code-docs/architecture-md",
+    "./skills/code-docs/changelog-md",
+    "./skills/code-docs/decision-records",
+    "./skills/code-docs/incremental-specs",
+    "./skills/tools/index-md",
+    "./skills/context-wiki"
+  ]
+}
