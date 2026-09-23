@@ -24,9 +24,12 @@ non-engineer can install the wiki and memory plugins alone.
   five plugin entries and their descriptions. Each plugin carries its own
   `plugin.json` with an independent version.
 - **generate_index.py** (`cli/`) -- the only shared executable in the repo.
-  It regenerates the body of a directory's `index.md` from the child files'
-  frontmatter, merging additively rather than overwriting. Stdlib-only, so
-  any plugin can shell out to it without an install step.
+  It regenerates the list in a directory's `index.md` from the directory's
+  members, merging additively rather than overwriting: a hand-written label
+  or description survives, and a `<!-- pinned -->` block is copied through
+  untouched. Stdlib-only, so any plugin can shell out to it without an
+  install step. Covered by `cli/test_generate_index.py`, whose tests cite
+  the statements they verify in `plugins/index-md/docs/specs/`.
 - **docs-conventions** -- knowledge-only. `using-docs` holds the layout
   itself; `architecture-md`, `changelog-md`, and `decision-records` cover
   individual parts of it; `adopt-conventions` is the one procedural skill,

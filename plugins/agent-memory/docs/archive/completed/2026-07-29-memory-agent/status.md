@@ -1,6 +1,6 @@
 # Status: The Memory Agent
 
-Built. Stacks on [session-worktrees](../session-worktrees/goal.md), whose
+Built. Stacks on [session-worktrees](../2026-07-27-session-worktrees/goal.md), whose
 session-lifecycle spec has landed.
 
 Correction (2026-07-29, at archive time): soul proposals were dropped after
