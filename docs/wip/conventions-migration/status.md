@@ -7,6 +7,12 @@ description: Where the migration design stands
 
 Drafting. Nothing implemented; no files outside this work item have changed.
 
+Names in this item predate the 2026-09-23 reorg (see
+`docs/archive/completed/2026-09-23-fundamental-reorg/`). Read `using-docs`
+as the `docs-folder` skill at `skills/code-docs/docs-folder/`, and
+`adopt-conventions` as its reference file `references/adopting.md` plus
+`scripts/scaffold_docs.sh`. The plugin prefix is now `knowledge-powerups:`.
+
 The shape is agreed: a version marker in the adopting repo, a version stated
 in the skill body, and a newest-first log of executable migration steps in a
 reference file under `using-docs/`. No new skill, and `adopt-conventions`
