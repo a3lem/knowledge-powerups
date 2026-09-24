@@ -14,7 +14,7 @@
     },
     {
       "name": "agent-memory",
-      "source": "./plugins/agent-memory",
+      "source": "./extra-plugins/agent-memory",
       "description": "Companion plugin. Persistent agent memory: storage layout, conventions for what belongs in it, and hooks that compile it into each session"
     }
   ]
