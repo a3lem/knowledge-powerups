@@ -109,9 +109,25 @@ A sorted glossary of jargon used across the wiki. Beside abbrevations and novel 
 
 ## Rules for AI Contributors
 
+### Writing
+
 Dumping information is easy. Separating fact from assumption afterward is hard, especially for LLMs. The "collector's fallacy" teaches us that collecting information feels like learning it, but a pile of saved material is not knowledge. Every note in the wiki competes for a reader's attention, and a note nobody has processed makes the notes around it harder to trust. So distill before you write: say what you learned in your own words, keep only what a reader working in a different context would need, and mark anything you have not verified ("probably", "we assume", "there are indications that", "this may be true") so the reader can tell a guess from an observation, and especially from a hard fact. A human operator is always available to provide clarity about what information is or isn't important. You are recommended to engage in Q&A with the human before persisting hard claims.
 
 Keep entries short on average. The longer a wiki entry, the less likely it is to be reviewed thoroughly. Always start with essential information, adding detail later if space permits. Brevity should not come at the cost of clarity, however. Abbreviations, self-coined jargon, and telegraphic writing style, for example, increase lexical density and hinder proper understanding. A helpful writing style is an informal version of Simplified Technical English (ASD-STE100). 
 
 Understand that other readers may be working in a different context. Treat the context wiki as a shared common ground. Be careful with referring to information, e.g. events, that doesn't belong to this common ground, unless you contextualize it. You can try using a light subagent to test the 'self-evidence' of a bit of information before comitting it to the wiki.
 
+### Organizing Information
+
+Finding the right folder...
+
+Updating links when relocating entries...
+
+
+### Collaborating through Git
+
+Commit frequently, staging only files that you have changed. Keep commit messages short.
+
+Check for changes on the remote and ask for permission to update the local version (via rebase).
+
+Conflicts are inevitable. Resolve mechanical conflicts indepentendly. Where information contradicts, try to infer resolution from context. If contradictions cannot be resolved, consult the human for help.
