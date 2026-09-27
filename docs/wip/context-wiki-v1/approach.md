@@ -18,6 +18,9 @@ and the description of ticket akps-468d wherever they disagree.
 [specs/context-wiki.delta.md](specs/context-wiki.delta.md) states what the
 draft implies as a spec.
 
+Design as though agent-memory does not exist; Adriaan has used it less than
+he expected. Nothing in v1 defers to it or coordinates with it.
+
 Left out of v1, though the handover settled them. Each returns only if a
 real need shows up:
 
@@ -28,24 +31,26 @@ real need shows up:
 - A whole-wiki index CLI (ticket akps-efa9).
 - The name "wiki" in place of "context wiki".
 
-## Reconciled with existing conventions
+## Reading of the work-item analysis
 
-- The draft requires frontmatter on "every note file". `index.md` carries
-  no frontmatter under `docs/specs/directory-index.md` [er5xx], and the
-  draft's README template has none either, so the spec defines a note as
-  any markdown file other than `index.md` and `README.md`. Unconfirmed by
-  Adriaan.
-- The draft accepts file-relative links as well as links rooted at the
-  wiki root. Agent memory allows only rooted links. The wiki follows the
-  draft; the difference is deliberate.
+Adriaan's comments on
+[resources/work-item-knowledge-analysis.md](resources/work-item-knowledge-analysis.md),
+2026-09-27. Leanings, not yet spec:
 
-## Open
-
-- What happens to the glossary's OKF entry, which the draft never
-  mentions.
+- Facts about external systems fit a context wiki owned by the dev team.
+- Facts about the organization fit a context wiki.
+- Lessons about the human-agent collaboration fit the user's personal
+  context wiki.
+- Empirical results are a tricky case, close to a research log. A quoted
+  result means little once it is detached from its context.
+- Uncertainty belongs in the wording ("probably", "we assume"), not in a
+  confidence field.
+- A correction replaces the old belief rather than keeping it marked as
+  superseded. A model that reads the old belief can be misled by it even
+  when it is flagged.
 
 ## Verification
 
 Read `SKILL.md` against the spec, statement by statement. Then have a
-fresh agent, given only the skill, add a note to a scratch wiki, and check
+fresh agent, given only the skill, add an entry to a scratch wiki, and check
 the result against the spec.

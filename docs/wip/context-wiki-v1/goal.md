@@ -1,12 +1,12 @@
 ---
 title: Goal
-description: Why the context-wiki skill gets a first version, and what done looks like
+description: Finish v1 of the context-wiki skill, and what done looks like
 ---
 
 # Goal
 
-`skills/context-wiki/SKILL.md` is a draft with an empty description, so the
-plugin ships a skill that installers skip and agents never load.
+Finish implementing v1 of the context-wiki skill, starting from the draft in
+`skills/context-wiki/SKILL.md`.
 
 A context wiki is a git-tracked folder of interlinked markdown files that
 gives AI agents context beyond a single project: the organization, its
@@ -19,7 +19,7 @@ plain terms and states only the conventions a contributor needs.
 
 ## Success criteria
 
-- `SKILL.md` has a description, and `npx skills add` picks the skill up.
+- `SKILL.md` has a description.
 - `SKILL.md` agrees with `docs/specs/context-wiki.md`.
 - The top-level README, `docs/architecture.md` and `docs/glossary.md` no
   longer describe the skill as unwritten, and say nothing the spec

@@ -49,6 +49,3 @@ defined in that plugin's own glossary, e.g.
   modes: writing artifacts that follow the convention, and reading
   artifacts an earlier session left behind. See
   [explanation/skills-as-knowledge-switches.md](explanation/skills-as-knowledge-switches.md).
-- **OKF (Open Knowledge Format)** -- the markdown conventions a context
-  wiki follows, including the frontmatter `description` field that drives
-  progressive disclosure.
