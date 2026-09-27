@@ -123,11 +123,14 @@ Finding the right folder...
 
 Updating links when relocating entries...
 
-
 ### Collaborating through Git
 
-Commit frequently, staging only files that you have changed. Keep commit messages short.
+Commit frequently, staging only files that you have changed. However, do not push to the remote without permission from the user. Keep commit messages short.
 
-Check for changes on the remote and ask for permission to update the local version (via rebase).
+Regularly check for changes on the remote and ask for permission to update the local version (via rebase).
 
-Conflicts are inevitable. Resolve mechanical conflicts indepentendly. Where information contradicts, try to infer resolution from context. If contradictions cannot be resolved, consult the human for help.
+Conflicts are inevitable. Resolve mechanical conflicts indepentendly. Where information contradicts, try to infer resolution from context. If contradictions cannot be resolved, consult the human for help. Contradiction resolution should be mentioned in commit messages.
+
+
+
+
