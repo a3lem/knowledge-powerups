@@ -56,9 +56,11 @@ wrong when it disagrees with the code.
   hand-written labels survive. The generator is stdlib-only Python and ships
   inside the skill.
 
-**[context-wiki](skills/context-wiki/)** -- a git-tracked wiki that
-accumulates knowledge across projects, shareable and layerable. A wiki note
-is wrong when it disagrees with the world. *Not yet written.*
+**[context-wiki](skills/context-wiki/)** -- a git-tracked folder of markdown
+entries that gives agents context beyond a single project, kept up by
+several people and their agents. An agent can read several wikis at once,
+each with its own scope, such as a company, a team or one person. An entry
+is wrong when it disagrees with the world.
 
 ## Companion plugins
 

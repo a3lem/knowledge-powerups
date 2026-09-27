@@ -68,6 +68,11 @@ discovery.
   launch needs a restart to be watched.
 - Other configuration (commands, output styles, CLAUDE.md by default) is
   NOT loaded from added directories.
+- With `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1`, Claude Code loads
+  `CLAUDE.md`, `.claude/CLAUDE.md`, `.claude/rules/*.md` and
+  `CLAUDE.local.md` from each added directory. `AGENTS.md` in an added
+  directory is not documented as loaded. (Memory docs, verified
+  2026-09-27, for the context-wiki skill.)
 - `--add-dir` takes multiple values: a trailing positional prompt after it
   is swallowed. In `-p` mode, pipe the prompt on stdin instead.
 
