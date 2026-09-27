@@ -36,8 +36,11 @@ marketplace entry, so the base plugin stays knowledge-only.
 - **skills/tools/index-md/** -- one skill wrapping the index generator. Its
   `scripts/generate_index.py` is a symlink into `clis/index-gen/`; an
   installed copy of the skill carries the file itself.
-- **skills/context-wiki/** -- one skill, still empty. The conventions are
-  decided but unwritten; see ticket akps-468d.
+- **skills/context-wiki/** -- one skill. `SKILL.md` holds the conventions.
+  `references/` covers setup: the `CONTEXT_WIKI_DIRS` variable, loading
+  wikis into Claude Code, and creating a wiki, with `init-wiki.sh` under
+  `scripts/`. It has no spec in `docs/specs/`: the skill is itself the
+  natural-language statement of the conventions.
 - **clis/index-gen/** -- `generate_index.py`, the only shared executable in
   the repo. It regenerates the list in a directory's `index.md` from the
   directory's members, merging additively rather than overwriting: a
