@@ -39,7 +39,7 @@ marketplace entry, so the base plugin stays knowledge-only.
 - **skills/context-wiki/** -- one skill. `SKILL.md` holds the conventions.
   `references/` covers setup: the `CONTEXT_WIKI_DIRS` variable, loading
   wikis into Claude Code, and creating a wiki, with `init-wiki.sh` under
-  `scripts/`. It has no spec in `docs/specs/`: the skill is itself the
+  `scripts/`. It also holds the lint checklist. It has no spec in `docs/specs/`: the skill is itself the
   natural-language statement of the conventions.
 - **clis/index-gen/** -- `generate_index.py`, the only shared executable in
   the repo. It regenerates the list in a directory's `index.md` from the

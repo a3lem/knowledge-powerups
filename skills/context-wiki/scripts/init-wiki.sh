@@ -52,8 +52,8 @@ make_file() {
 }
 
 # make_keep <dir> -- empty .gitkeep so git tracks the folder. Without it a
-# fresh clone of a wiki with no skills or rules has no skills/ or rules/,
-# and the symlinks to them point at nothing.
+# fresh clone of a wiki with no skills has no agent-skills/, and the
+# symlinks to it point at nothing.
 make_keep() {
   if [ -e "$root/$1/.gitkeep" ]; then
     skipped+=("$1/.gitkeep")
@@ -75,16 +75,17 @@ make_link() {
   fi
 }
 
-make_dir skills
-make_dir rules
+make_dir agent-skills
+make_dir sources
+make_dir inbox
 make_dir .agents
 make_dir .claude
-make_keep skills
-make_keep rules
+make_keep agent-skills
+make_keep sources
+make_keep inbox
 
-make_link .agents/skills ../skills
-make_link .claude/skills ../skills
-make_link .claude/rules ../rules
+make_link .agents/skills ../agent-skills
+make_link .claude/skills ../agent-skills
 
 make_file AGENTS.md "$(cat <<'EOF'
 This folder is a context wiki. Load the context-wiki skill before you read
@@ -94,6 +95,21 @@ EOF
 make_link CLAUDE.md AGENTS.md
 
 make_file TAGS.md "# Tags"
+
+# inbox/* rather than inbox/: git does not look inside an ignored folder, so
+# the .gitkeep exception would have no effect.
+make_file .gitignore "$(cat <<'EOF'
+# Raw material waiting for ingestion. Stays on this machine.
+inbox/*
+!inbox/.gitkeep
+
+# Personal Claude Code settings and instructions
+CLAUDE.local.md
+.claude/settings.local.json
+
+.DS_Store
+EOF
+)"
 
 echo "Created:"
 if [ "${#created[@]}" -eq 0 ]; then

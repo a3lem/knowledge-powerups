@@ -7,8 +7,7 @@ shares it.
 1. Ask the human three things:
    - the folder for the wiki,
    - its scope: who reads it, and what belongs in it,
-   - whether other people share it. If so, ask for the URL of the remote
-     repository.
+   - whether other people share it.
 
 2. Run the script, `scripts/init-wiki.sh` in this skill's base directory:
 
@@ -19,12 +18,12 @@ shares it.
    The script:
 
    - creates the wiki folder if it is missing, and runs `git init`,
-   - creates `skills/` and `rules/`, each with an empty `.gitkeep` file so
-     that git tracks the folder until it holds something,
-   - creates the symlinks `.agents/skills`, `.claude/skills`,
-     `.claude/rules` and `CLAUDE.md`. They are relative, so they work in
-     every clone.
-   - creates the files `AGENTS.md` and `TAGS.md`.
+   - creates `agent-skills/`, `sources/` and `inbox/`, each with an empty
+     `.gitkeep` file so that git tracks the folder until it holds
+     something,
+   - creates the symlinks `.agents/skills`, `.claude/skills` and
+     `CLAUDE.md`. They are relative, so they work in every clone.
+   - creates the files `AGENTS.md`, `TAGS.md` and `.gitignore`.
 
    The script never overwrites a file, so you can run it again safely. It
    stops if the folder is inside another git repository, because the wiki
@@ -51,3 +50,19 @@ shares it.
 If the folder already holds markdown files, the script leaves them alone.
 Each of them becomes an entry and needs a `title` and a `description` in its
 frontmatter.
+
+## Recommended: .gitignore
+
+Keeps the inbox and personal settings out of the repository:
+
+```gitignore
+# Raw material waiting for ingestion. Stays on this machine.
+inbox/*
+!inbox/.gitkeep
+
+# Personal Claude Code settings and instructions
+CLAUDE.local.md
+.claude/settings.local.json
+
+# Other ...
+```

@@ -8,28 +8,21 @@ session. Repeat the flag for each wiki.
 command line, put it before `--add-dir`. Otherwise Claude Code reads the
 prompt as another directory.
 
-What Claude Code loads from an added folder:
-
-- Skills in `.claude/skills/` load by default. The wiki only needs a
-  `.claude/skills` symlink to `skills/`.
-- `CLAUDE.md`, `.claude/CLAUDE.md`, `.claude/rules/*.md` and
-  `CLAUDE.local.md` load only when the environment variable
-  `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD` is `1`. Without it, Claude
-  Code ignores these files and does not say so. The wiki's `AGENTS.md` and
-  rules reach the session only through these files.
+Claude Code loads skills in `.claude/skills/` from an added folder. The
+wiki's `.claude/skills` is a symlink to `agent-skills/`, so its skills load
+with nothing else to set up.
 
 `permissions.additionalDirectories` in `settings.json` gives file access
-only. It loads no skills, rules or `CLAUDE.md`.
+only. It loads no skills.
 
 ## Starting Claude Code with every wiki
 
-A launcher that starts Claude Code with every wiki does three things:
+A launcher that starts Claude Code with every wiki passes one
+`--add-dir <folder>` flag for each folder in `CONTEXT_WIKI_DIRS` (see
+[context-wiki-dirs.md](context-wiki-dirs.md)):
 
-- It passes one `--add-dir <folder>` flag for each folder in
-  `CONTEXT_WIKI_DIRS` (see [context-wiki-dirs.md](context-wiki-dirs.md)).
-  It splits the list at colons only, not at spaces, because a folder path
+- It splits the list at colons only, not at spaces, because a folder path
   can contain spaces.
-- It sets `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1`.
 - It puts the `--add-dir` flags after the user's own arguments. This way, a
   prompt typed on the command line still works as a prompt.
 

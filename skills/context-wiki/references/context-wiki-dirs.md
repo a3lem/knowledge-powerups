@@ -22,6 +22,5 @@ project. Load the context-wiki skill, then start at each wiki's README.md.
 ```
 
 This works with any agent that can run a shell command. The agent can read
-the wikis' files, but a wiki's skills, rules and AGENTS.md do not load on
-their own. For Claude Code, [claude-integration.md](claude-integration.md)
-loads them too.
+the wikis' files, but a wiki's skills do not load on their own. For Claude
+Code, [claude-integration.md](claude-integration.md) loads them too.
