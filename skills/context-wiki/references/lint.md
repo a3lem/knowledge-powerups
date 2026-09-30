@@ -27,8 +27,8 @@ to those files.
 - [ ] `.agents/skills` and `.claude/skills` are symlinks to
       `../agent-skills`.
 - [ ] `CLAUDE.md` is a symlink to `AGENTS.md`.
-- [ ] `.gitignore` contains the lines from the `.gitignore` section of
-      SKILL.md.
+- [ ] Git does not track personal Claude Code settings
+      (`CLAUDE.local.md`, `.claude/settings.local.json`).
 - [ ] Git tracks nothing in `inbox/` except `.gitkeep`
       (`git ls-files inbox`).
 - [ ] `README.md` exists and has a Scope section.

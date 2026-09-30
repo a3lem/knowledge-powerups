@@ -5,20 +5,9 @@ description: Interact with a 'context wiki' as a reader or contributor to build 
 
 # Context Wiki
 
-Capture and refine knowledge in bundles of collaboratively edited, interlinked markdown files,
-with the primary purpose of providing additional contextual information to LLM-based AI agents.
+A context wiki is a git repository of interlinked markdown files that humans and their AI agents write together. It holds knowledge that applies across projects, such as an organization, its customers, its domain, its constraints and its external systems, so that nobody has to explain these to their agent again. Several people and their agents may edit the same wiki.
 
-We denote these bundles of knowledge as 'context wikis'.
-
-Context wikis are co-creative, maintained by both humans and AI agents. They are also multiplayer,
-maintained by multiple humans and those humans' AI agents at once.
-
-They are the ideal place for knowledge that generalizes across individual projects or code repositories. They provide an alternative to inefficient scenarios such as these:
-
-1. A human explaining their working context over and over to the AI: e.g., organization, customers, domain, constraints, external systems, etc.
-2. The previous point (1) multiplied by each human member of the same team.
-
-An agent can have access to multiple context wikis, each with a different scope. A first wiki could be shared among all employees of a company. A second wiki could be meant only for the company's software engineers. And a third, final wiki could belong to an individual software engineer.
+An agent can have several context wikis with different scopes: for example, one for the whole company, one for its software engineers, and one for a single engineer.
 
 ## Setup
 
@@ -98,27 +87,7 @@ Every (sub)directory with two or more children has an INDEX.md, except `agent-sk
 
 #### README.md
 
-Every context wiki should have a top-level README.md.
-
-Suggested format (all sections are optional):
-
-```
-# [Wiki Name]
-
-[Intro sentence]
-
-## Scope
-
-[What belongs here, what doesn't]
-
-## Tips for Readers
-
-[Help your audience]
-
-## Rules for Contributors
-
-[Guard against noise]
-```
+Every context wiki has a top-level README.md. Its Scope section says what belongs in the wiki and what does not. Contributors read it to choose a wiki.
 
 #### AGENTS.md
 
@@ -131,7 +100,7 @@ It should include:
 - the folder is a context wiki
 - agents should load the context-wiki skill
 
-It may also give instructions about working in this wiki, such as how it organizes its entries. In can also serve as a more general 'memory' for AI agents.
+It may also give instructions about working in this wiki, such as how it organizes its entries. It can also serve as a more general 'memory' for AI agents.
 
 Do not repeat what README.md already says.
 
