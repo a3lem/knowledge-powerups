@@ -111,11 +111,14 @@ When the human asks for a review, or after a large change such as a reorganizati
 
 When a wiki adopts one of these, write it in the wiki's AGENTS.md, so that other contributors follow it too.
 
-Two of them concern raw material: information as it arrives, before anyone has distilled it, such as a journal article, a meeting transcript or an exported chat thread. Raw material is transient. It usually enters through the inbox, and it is deleted once it has been distilled. What stays is a note about it, usually in `sources/`, and the updates you made to other notes with what you learned from it.
-
 - **`agent-skills/`** holds agent skills (agentskills.io): procedures, especially for tasks that took several attempts to get right. Write one when you want to remember how to do a task. `.claude/skills` and `.agents/skills` must be relative symlinks to `agent-skills/`, so that agent harnesses find the skills when the wiki folder is added to a session. A skill's description names a specific task. New wikis have this folder.
-- **`inbox/`** holds raw material until someone distills it. Create it with an empty `.gitkeep`, and make git ignore the rest of its contents (`inbox/*` and `!inbox/.gitkeep` in `.gitignore`), so that raw material stays on each person's machine and out of git history. Add `--exclude inbox/` to the index command in AGENTS.md. Take one file at a time: distill it into new or existing notes, commit them, then delete the file.
-- **`sources/`** holds a note for each source that other notes cite, such as a journal article, a book, a talk or a meeting. A source note says in your own words what the source contains, links to the original if it has a URL, and has a `date` field for when the source was published or the meeting took place. Most source notes come from distilling raw material.
 - **Rooted links.** Use standard markdown links, not `[[name]]` links, and start the path with `/`, the wiki root: `/customers/acme.md`. Each note then has one link spelling, so a search for its path finds every link to it, and links still work when the note that contains them moves.
 - **GLOSSARY.md** at the root: a note whose body is a sorted list of jargon with definitions, in the form `- <term>: <definition>`. Jargon includes abbreviations, new terms, and ordinary words used in a narrower meaning.
 - **Tags.** A `tags: [<tag>, ...]` frontmatter field, with every tag defined in a TAGS.md note at the root, in the same form as the glossary. Reuse a tag before you add one, and define a new tag in the same commit.
+
+### Raw Material
+
+Raw material is information as it arrives, before anyone has distilled it: a journal article, a meeting transcript, an exported chat thread. It is transient. It usually enters the wiki through an inbox, and it is deleted once it has been distilled. Distilling it produces a note about the source, usually in `sources/`, and updates to the notes it concerns.
+
+- **`inbox/`** holds raw material until someone distills it. Create it with an empty `.gitkeep`, and make git ignore the rest of its contents (`inbox/*` and `!inbox/.gitkeep` in `.gitignore`), so that raw material stays on each person's machine and out of git history. Add `--exclude inbox/` to the index command in AGENTS.md. Take one file at a time: distill it into new or existing notes, commit them, then delete the file.
+- **`sources/`** holds a note for each source that other notes cite, such as a journal article, a book, a talk or a meeting. A source note says in your own words what the source contains, links to the original if it has a URL, and has a `date` field for when the source was published or the meeting took place. Most source notes come from distilling raw material.
