@@ -18,13 +18,13 @@ Skills are grouped by the knowledge store they serve. `skills/code-docs/`
 serves a code base's `docs/` and concerns engineers; `skills/context-wiki/`
 serves a store that outlives any single repository; `skills/tools/` holds
 what the other groups lean on. Plugins that need harness integration
-(hooks, agents) live under `plugins/` as optional companions, each its own
+(hooks, agents) live under `extra-plugins/` as optional companions, each its own
 marketplace entry, so the base plugin stays knowledge-only.
 
 ## Codemap
 
 - **.claude-plugin/** -- `marketplace.json` lists the base plugin with
-  source `./` and each companion with source `./plugins/<name>`.
+  source `./` and each companion with source `./extra-plugins/<name>`.
   `plugin.json` names every skill directory explicitly, because grouped
   skills sit one level deeper than Claude Code scans on its own.
 - **skills/code-docs/** -- five knowledge skills for `docs/`. `docs-folder`
@@ -49,7 +49,7 @@ marketplace entry, so the base plugin stays knowledge-only.
   is copied through untouched. Stdlib-only, so a copy runs anywhere
   `python3` does. Covered by `test_generate_index.py`, whose tests cite the
   statements they verify in `docs/specs/directory-index.md`.
-- **plugins/agent-memory/** -- the companion with moving parts.
+- **extra-plugins/agent-memory/** -- the companion with moving parts.
   `memoryctl.py` holds the deterministic verbs, `hooks.json` compels them at
   session boundaries, and the skills plus the `memory` agent carry the
   judgment. It reaches the generator through a symlink in its `scripts/`
@@ -81,6 +81,6 @@ marketplace entry, so the base plugin stays knowledge-only.
   enforcing code is their single source. Those files carry a header saying
   so. Edit the template, then run `shablon generate`.
 - **This repository follows its own conventions.** `docs-folder` governs
-  the `docs/` trees here. A companion under `plugins/` is a project of its
+  the `docs/` trees here. A companion under `extra-plugins/` is a project of its
   own and keeps its own `docs/`; this top-level one carries the base
   plugin's material and anything cross-cutting.

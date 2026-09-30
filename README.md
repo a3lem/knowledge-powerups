@@ -66,10 +66,10 @@ the rest; each wiki's `AGENTS.md` says which suggestions it follows.
 ## Companion plugins
 
 Optional plugins that hook into the agent harness, each a separate
-marketplace entry under [plugins/](plugins/). They build on the base skills
+marketplace entry under [extra-plugins/](extra-plugins/). They build on the base skills
 and lose guidance, never function, when those are absent.
 
-- **[agent-memory](plugins/agent-memory/)** -- the agent's own store,
+- **[agent-memory](extra-plugins/agent-memory/)** -- the agent's own store,
   compiled into its system prompt each session by hooks and maintained by
   the agent itself. A memory is wrong when it disagrees with the agent's
   history or the human's preferences.

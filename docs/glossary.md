@@ -7,7 +7,7 @@ description: cross-cutting jargon used across the plugins, defined in one place
 
 Terms that span the plugins. Vocabulary belonging to a single plugin is
 defined in that plugin's own glossary, e.g.
-[plugins/agent-memory/docs/glossary.md](../plugins/agent-memory/docs/glossary.md).
+[extra-plugins/agent-memory/docs/glossary.md](../extra-plugins/agent-memory/docs/glossary.md).
 
 - **knowledge store** -- one of the three places knowledge is kept, each
   answerable to something different: **docs** (a repository's `docs/`, wrong
