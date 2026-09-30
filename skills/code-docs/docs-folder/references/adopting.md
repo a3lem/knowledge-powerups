@@ -12,7 +12,7 @@ Set up a repository's `docs/` directory to follow the standard layout. The layou
    <skill-base-dir>/scripts/scaffold_docs.sh <repo-root>
    ```
 
-   It creates the baseline (glossary.md, architecture.md, the `wip/` and `resources/` workspaces) and nothing more: the optional reference dirs (explanation/, how-tos/, specs/, decisions/) are created on demand, when the first file needs one. No index.md: whether the project keeps one is the human's call, and /knowledge-powerups:index-md can generate it from the tree if they want it. Seed files carry the frontmatter keys with no values -- the wording is the human's, not the script's. The script is idempotent and never overwrites an existing file.
+   It creates the baseline (glossary.md, architecture.md, the `wip/` and `resources/` workspaces) and nothing more: the optional reference dirs (explanation/, how-tos/, specs/, decisions/) are created on demand, when the first file needs one. No INDEX.md: whether the project keeps one is the human's call, and /knowledge-powerups:index-md can generate it from the tree if they want it. Seed files carry the frontmatter keys with no values -- the wording is the human's, not the script's. The script is idempotent and never overwrites an existing file.
 
 3. **Brownfield** -- `docs/` exists with content: follow 'Adopting in an existing project' below. Nothing moves before the human approves the plan.
 

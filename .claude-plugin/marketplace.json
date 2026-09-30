@@ -10,7 +10,7 @@
     {
       "name": "knowledge-powerups",
       "source": "./",
-      "description": "The base plugin: every knowledge skill -- docs/ layout, incremental specs, index.md generation, context wikis"
+      "description": "The base plugin: every knowledge skill -- docs/ layout, incremental specs, INDEX.md generation, context wikis"
     },
     {
       "name": "agent-memory",

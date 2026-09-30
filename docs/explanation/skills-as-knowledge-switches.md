@@ -14,7 +14,7 @@ When a knowledge skill is active, "use it" can mean two things:
 1. **Practitioner**: create or change artifacts following the convention -- lay out docs/, write a spec delta.
 2. **Cognizant reader**: correctly interpret artifacts an earlier session left behind -- a `.delta.md` is not the reference spec; a file under `dev/` carries no authority promise.
 
-Mode 2 exists whenever practice leaves artifacts that a later agent needs the skill to interpret. Spec deltas qualify. index.md files do not: a table of contents explains itself.
+Mode 2 exists whenever practice leaves artifacts that a later agent needs the skill to interpret. Spec deltas qualify. INDEX.md files do not: a table of contents explains itself.
 
 ## Consequences
 

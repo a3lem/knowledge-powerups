@@ -1,12 +1,15 @@
 ---
 name: index-md
-description: Create or refresh index.md files -- per-directory tables of contents that make file trees discoverable to agents. Use when a directory should be navigable without opening every file, when files were added, removed, or renamed in a directory that has an index.md, or when asked to improve discoverability of docs/, a wiki, agent memory, or a reference collection.
+description: Create or refresh INDEX.md files -- per-directory tables of contents that make file trees discoverable to agents. Use when a directory should be navigable without opening every file, when files were added, removed, or renamed in a directory that has an INDEX.md, when migrating an older lowercase index.md, or when asked to improve discoverability of docs/, a wiki, agent memory, or a reference collection.
 ---
 
 # Index Files
 
-An `index.md` gives its directory a table of contents, so a reader opens only
-what is relevant instead of crawling the tree. It is plain markdown -- no
+An `INDEX.md` gives its directory a table of contents, so a reader opens only
+what is relevant instead of crawling the tree. The name is uppercase, like
+`README.md` and `AGENTS.md`: the file describes the directory rather than being
+one of its documents, it sorts to the top of a listing, and a lowercase
+`index.md` stays free for ordinary use. It is plain markdown -- no
 frontmatter -- and it has four parts with three different owners:
 
 ```markdown
@@ -58,7 +61,7 @@ to anything that is not a file in this directory.
    ```
 
    `--refresh-only` regenerates existing files and never creates one -- the
-   mode for machinery, since a new `index.md` needs its description authored.
+   mode for machinery, since a new `INDEX.md` needs its description authored.
    `--max-desc-len N` sets the description budget (default 250).
 
 2. Write the description paragraph for any index the run reports without one.
@@ -67,15 +70,15 @@ to anything that is not a file in this directory.
    the right place depends on what the entry points at:
 
    - a `.md` file -> `description` in its frontmatter
-   - a subdirectory -> the paragraph in that directory's own `index.md`
+   - a subdirectory -> the paragraph in that directory's own `INDEX.md`
    - anything else -> here in this index, since the file cannot carry text
 
 ## Where labels and descriptions come from
 
-- A subdirectory contributes the H1 and first paragraph of its own `index.md`.
+- A subdirectory contributes the H1 and first paragraph of its own `INDEX.md`.
 - A `.md` file contributes its frontmatter `title` and `description`. Without a
   `title` the label falls back to its first H1, then its filename. A first
-  paragraph is **not** read as a description outside an `index.md` -- lifting a
+  paragraph is **not** read as a description outside an `INDEX.md` -- lifting a
   sentence out of someone's prose would fill the index with descriptions nobody
   wrote.
 - Any other file is labelled with its filename minus the last suffix
@@ -88,7 +91,7 @@ to anything that is not a file in this directory.
   wins when both exist -- the file is the authority on itself -- and the run
   reports both strings without claiming which one moved.
 - A label you typed is kept, unless the member names itself through frontmatter,
-  an H1, or its own `index.md`.
+  an H1, or its own `INDEX.md`.
 - Above the marker the list indexes this directory's members and nothing else.
   An entry for a member that still exists is never dropped, not even one outside
   the `--include` set. Everything else goes: a vanished member, a `../` path, a
@@ -101,14 +104,14 @@ to anything that is not a file in this directory.
   `<!-- pinned -->` marker is a fatal error -- the generator will not guess
   where to put your text.
 
-## When an index.md is created
+## When an INDEX.md is created
 
 - Without `-r`, the named directory simply gets one; the request was explicit.
 - With `-r`, a directory is skipped unless it holds something index-worthy: a
-  subdirectory with an `index.md`, or a `.md` file carrying both a title and a
+  subdirectory with an `INDEX.md`, or a `.md` file carrying both a title and a
   description. Otherwise the index would say no more than `ls` does.
 - Bottom-up order makes worthiness propagate: one documented file deep in the
-  tree pulls `index.md` files up its ancestor chain, and unrelated directories
+  tree pulls `INDEX.md` files up its ancestor chain, and unrelated directories
   stay untouched.
 - `-r --no-strict` indexes every directory.
 
@@ -117,16 +120,31 @@ to anything that is not a file in this directory.
 `changed:` is what the run did to text that already existed. `needs attention:`
 is what you may want to fix -- an index without a description, a placeholder
 still to fill, a dropped entry, a description over the budget, two files whose
-labels collide, a pinned link whose target is missing.
+labels collide, a pinned link whose target is missing, a subdirectory whose
+index still carries the old `index.md` name.
 
 A pinned link to a file that no longer exists is reported and never removed.
-That is the one way an `index.md` can end up pointing at nothing, so fix it when
+That is the one way an `INDEX.md` can end up pointing at nothing, so fix it when
 you see it.
 
 ## Legacy files
 
-An `index.md` that still carries frontmatter is a fatal error naming
-`--migrate`. That flag converts it in the same pass that regenerates it: the
-frontmatter block is removed, and it supplies only what the body lacks. The body
-wins, and anything the frontmatter did not contribute is quoted in the report
-before it is discarded.
+Two kinds of older index are fatal errors naming `--migrate`: one still named
+`index.md`, and one carrying frontmatter. That flag converts either, or both at
+once, in the same pass that regenerates the file. `index.md` is renamed to
+`INDEX.md`. The frontmatter block is removed, and it supplies only what the body
+lacks. The body wins, and anything the frontmatter did not contribute is quoted
+in the report before it is discarded. A file the generator cannot parse is left
+exactly as it was, name included.
+
+On a case-insensitive filesystem, git (with `core.ignorecase`, the default
+there) does not notice a rename that only changes case. Record it by hand:
+
+```sh
+git rm --cached -q <dir>/index.md && git add <dir>/INDEX.md
+```
+
+Next to an `INDEX.md`, a lowercase `index.md` is an ordinary member, listed like
+any other `.md` file. That can only happen on a case-sensitive filesystem. On a
+case-insensitive one (macOS by default), a file spelled `Index.md` or similar
+holds the name, so the generator refuses to write `INDEX.md` over it.

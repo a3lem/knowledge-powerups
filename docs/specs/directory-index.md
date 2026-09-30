@@ -1,11 +1,11 @@
 ---
 title: Directory index
-description: Per-directory index.md files, generated from what a directory contains.
+description: Per-directory INDEX.md files, generated from what a directory contains.
 ---
 
 # Directory Index
 
-A directory carries an `index.md` listing what it contains, so a reader opens
+A directory carries an `INDEX.md` listing what it contains, so a reader opens
 only what is relevant instead of crawling the tree. The list is generated from
 the directory's members; the descriptions come from the members themselves.
 
@@ -15,8 +15,21 @@ description short enough to skim, and no prose around the list.
 
 ## Format
 
-- An index file is named `index.md` and sits in the directory it describes. [cy7d8]
-- An `index.md` carries no frontmatter. It is plain markdown throughout: an
+- An index file is named `INDEX.md` and sits in the directory it describes.
+  The name is uppercase, like `README.md` and `AGENTS.md`, because the file
+  describes the directory rather than being one of its documents. It also
+  sorts to the top of a listing, and a lowercase `index.md` stays free for
+  ordinary use, such as a static site's home page. [cy7d8]
+- The name is matched exactly, by the entries the directory lists, never by
+  asking the filesystem whether a path exists. On a case-insensitive
+  filesystem that question answers yes for `INDEX.md` when only `index.md`
+  is there. `Index.md` and every other spelling is an ordinary file. [730xy]
+- On a case-insensitive filesystem, a file with another spelling, such as
+  `Index.md`, occupies the name, and writing `INDEX.md` would overwrite it.
+  When the generator would write the index, such a file is a fatal error
+  naming it. The legacy `index.md` is the exception, handled under
+  Migration. [fa97n]
+- An `INDEX.md` carries no frontmatter. It is plain markdown throughout: an
   H1, an optional description paragraph, the list, and whatever the pinned
   block holds. [er5xx]
 - The body is an H1, an optional one-paragraph description, and a flat list of
@@ -29,7 +42,7 @@ description short enough to skim, and no prose around the list.
   name there when it creates the file and never touches it again; from then on
   it is hand-written. The parent directory's index reads it as the label for
   this directory's entry. [v2b9h]
-- An `index.md` with no H1 has one restored as the directory's own name, noted
+- An `INDEX.md` with no H1 has one restored as the directory's own name, noted
   under `changed:`. The generator declines to overwrite a title someone chose;
   it does not decline to replace one that is not there, since the parent's
   listing depends on it. [iw1z3]
@@ -47,11 +60,11 @@ description short enough to skim, and no prose around the list.
 ## Which members are listed
 
 - A subdirectory is listed, with href `<name>/`. [gc28b]
-- A `.md` file other than `index.md` is listed, with href `<name>`. [0xe5b]
+- A `.md` file other than `INDEX.md` is listed, with href `<name>`. [0xe5b]
 - Any other file is listed only when it matches an `--include` glob, or when
   it already appears in the index. [zpon0]
 - A member whose name starts with a dot is never listed, and neither is
-  `index.md` itself. [cck6q]
+  `INDEX.md` itself. [cck6q]
 - Above the marker an entry names a direct member of this directory: one path
   segment, with a trailing slash for a directory. An entry whose href is
   anything else -- a path into a subdirectory, a `../` path, a URL -- is
@@ -61,7 +74,7 @@ description short enough to skim, and no prose around the list.
 
 ## Where label and description come from
 
-- A subdirectory's label comes from the H1 of its own `index.md`, and its
+- A subdirectory's label comes from the H1 of its own `INDEX.md`, and its
   description from that file's first paragraph. A directory with no
   description has no paragraph: the H1 is followed straight by the
   list. [ht9j1]
@@ -69,7 +82,7 @@ description short enough to skim, and no prose around the list.
   else its filename. [w768b]
 - `name` is accepted as a lenient alias for `title` in frontmatter. [em1ax]
 - A `.md` file's description comes from its frontmatter `description`. [87rk6]
-- A first paragraph is read as a description only in an `index.md`, whose
+- A first paragraph is read as a description only in an `INDEX.md`, whose
   format defines it as one. In any other markdown file the paragraph is
   ignored: it was not written for this tool, and a sentence lifted out of
   prose would enter the index as a description nobody wrote or
@@ -147,29 +160,42 @@ description short enough to skim, and no prose around the list.
 - The pinned block holds entry lines only. Prose or a section heading below
   the marker is the same fatal error as prose above it. [3ibxv]
 
-## When an index.md is created
+## When an INDEX.md is created
 
-- An existing `index.md` is always regenerated. [1t1n1]
-- Without `-r`, the named directory gets an `index.md` whether or not it
+- An existing `INDEX.md` is always regenerated. [1t1n1]
+- Without `-r`, the named directory gets an `INDEX.md` whether or not it
   already has one. [6a8xt]
 - With `-r`, every subdirectory is processed, bottom-up. [6f4vl]
-- With `-r`, a directory without an `index.md` gets one only when it holds
-  something index-worthy: a subdirectory that has an `index.md`, or a `.md`
+- With `-r`, a directory without an `INDEX.md` gets one only when it holds
+  something index-worthy: a subdirectory that has an `INDEX.md`, or a `.md`
   file carrying both a title and a description. [6w3gg]
 - Bottom-up order propagates worthiness: one documented file deep in the tree
-  pulls `index.md` files up its ancestor chain, and unrelated directories stay
+  pulls `INDEX.md` files up its ancestor chain, and unrelated directories stay
   untouched. [ijy2l]
-- `-r --no-strict` creates an `index.md` in every directory, worthy or
+- `-r --no-strict` creates an `INDEX.md` in every directory, worthy or
   not. [vcv98]
-- `--refresh-only` regenerates existing `index.md` files and never creates
+- `--refresh-only` regenerates existing `INDEX.md` files and never creates
   one. [u417b]
 
 ## Migration
 
-- Frontmatter in an `index.md` is a fatal validation error naming the file and
+- A directory holding `index.md` and no `INDEX.md` has a legacy index,
+  written under the old name. Processing it is a fatal error naming the file
+  and the `--migrate` flag, as frontmatter is. [2m10w]
+- `--migrate` renames a legacy `index.md` to `INDEX.md` and regenerates it in
+  the same pass, reporting the rename under `changed:`. A legacy file that
+  also carries frontmatter has both converted at once. [gjr1n]
+- A directory holding both `index.md` and `INDEX.md`, which only a
+  case-sensitive filesystem allows, has no legacy index: `INDEX.md` is the
+  index and `index.md` is an ordinary member. [6nvhr]
+- A subdirectory with a legacy index is reported under `needs attention:`,
+  naming `--migrate`, when its parent is indexed. The parent does not read
+  the legacy file; the entry it already carries keeps its label and
+  description. [kwt4a]
+- Frontmatter in an `INDEX.md` is a fatal validation error naming the file and
   the `--migrate` flag. The generator never converts a file's structure
   without being asked. [s1lmg]
-- `--migrate` converts each `index.md` it processes: the frontmatter block is
+- `--migrate` converts each `INDEX.md` it processes: the frontmatter block is
   removed, and it supplies only what the body lacks -- the `title` becomes the
   H1 when there is no H1, the `description` becomes the paragraph when there is
   no paragraph. The body wins wherever both carry something, and whatever the
@@ -177,8 +203,9 @@ description short enough to skim, and no prose around the list.
   conversion, so no text disappears unrecorded. The run then regenerates as
   usual, so migrating and refreshing are one pass. [6g8s7]
 - `--migrate` converts only a file whose body is otherwise parseable. One
-  carrying both frontmatter and unmergeable content is the same fatal error as
-  before, so no file is left half-converted. [vew0l]
+  carrying unmergeable content is the same fatal error as before, and it is
+  neither renamed nor stripped of its frontmatter, so no file is left
+  half-converted. [vew0l]
 
 ## Reporting
 
@@ -195,6 +222,6 @@ description short enough to skim, and no prose around the list.
 - An entry carrying the `<!-- to-do -->` placeholder is reported whatever the
   member's file type, so the report is the list of descriptions still to
   write. Each one names where its description belongs: a subdirectory's in
-  that directory's own `index.md`, a `.md` file's in its frontmatter, and any
+  that directory's own `INDEX.md`, a `.md` file's in its frontmatter, and any
   other file's in this index, since the file cannot carry one. The placeholder
   itself stays uniform -- the entry's href already says which case it is. [8rs97]

@@ -50,7 +50,7 @@ wrong when it disagrees with the code.
 
 **[tools](skills/tools/)** -- skills the others lean on.
 
-- `index-md` -- per-directory `index.md` tables of contents that make a file
+- `index-md` -- per-directory `INDEX.md` tables of contents that make a file
   tree discoverable without opening every file. The title and description
   are written by hand; the list is generated and merged additively, so
   hand-written labels survive. The generator is stdlib-only Python and ships

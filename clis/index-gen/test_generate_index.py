@@ -6,11 +6,7 @@ Run from this directory so that `import generate_index` resolves:
     cd clis/index-gen && python3 -m unittest test_generate_index -v
 
 Every test method names the spec statement it encodes on its first line. The
-statements live in docs/specs/directory-index.md, with the
-in-flight changes in
-docs/specs/directory-index.md.
-These tests encode the TARGET behaviour: the reference spec with that delta
-applied.
+statements live in docs/specs/directory-index.md.
 """
 
 from __future__ import annotations
@@ -165,9 +161,9 @@ class IndexDocumentFormat(GeneratorTestCase):
         # spec: er5xx (docs/specs/directory-index.md)
         self.write_tree({"docs/alpha.md": md("Alpha", "the alpha file")})
         self.run_generator("docs")
-        text = self.read("docs/index.md")
+        text = self.read("docs/INDEX.md")
         self.assertFalse(
-            text.lstrip().startswith("---"), f"index.md opens with frontmatter:\n{text}"
+            text.lstrip().startswith("---"), f"INDEX.md opens with frontmatter:\n{text}"
         )
 
     def test_a_regenerated_index_carries_no_frontmatter(self) -> None:
@@ -175,18 +171,18 @@ class IndexDocumentFormat(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": "# docs\n\n- [Alpha](alpha.md): the alpha file\n",
+                "docs/INDEX.md": "# docs\n\n- [Alpha](alpha.md): the alpha file\n",
             }
         )
         self.run_generator("docs")
-        self.assertFalse(self.read("docs/index.md").lstrip().startswith("---"))
+        self.assertFalse(self.read("docs/INDEX.md").lstrip().startswith("---"))
 
     def test_body_is_h1_then_list_when_there_is_no_description(self) -> None:
         # spec: r6han (docs/specs/directory-index.md)
         self.write_tree({"docs/alpha.md": md("Alpha", "the alpha file")})
         self.run_generator("docs")
         self.assertFileText(
-            "docs/index.md",
+            "docs/INDEX.md",
             "# docs\n\n- [Alpha](alpha.md): the alpha file\n",
         )
 
@@ -195,7 +191,7 @@ class IndexDocumentFormat(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "Project documentation and specs.\n"
@@ -206,7 +202,7 @@ class IndexDocumentFormat(GeneratorTestCase):
         )
         self.run_generator("docs")
         self.assertFileText(
-            "docs/index.md",
+            "docs/INDEX.md",
             "# docs\n"
             "\n"
             "Project documentation and specs.\n"
@@ -219,7 +215,7 @@ class IndexDocumentFormat(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -230,7 +226,7 @@ class IndexDocumentFormat(GeneratorTestCase):
             }
         )
         self.run_generator("docs")
-        text = self.read("docs/index.md")
+        text = self.read("docs/INDEX.md")
         self.assertIn(PINNED, text)
         self.assertIn("- [Upstream](https://example.com/): the upstream project", text)
         self.assertLess(
@@ -245,13 +241,13 @@ class IndexDocumentFormat(GeneratorTestCase):
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
                 "docs/bravo.md": md(body="# Bravo\n"),
-                "docs/sub/index.md": "# Sub\n",
+                "docs/sub/INDEX.md": "# Sub\n",
             }
         )
         self.run_generator("docs")
         lines = [
             line
-            for line in self.read("docs/index.md").splitlines()
+            for line in self.read("docs/INDEX.md").splitlines()
             if line.startswith("- ")
         ]
         self.assertEqual(len(lines), 3, lines)
@@ -270,19 +266,19 @@ class IndexHeading(GeneratorTestCase):
         # spec: v2b9h (docs/specs/directory-index.md)
         self.write_tree({"docs/alpha.md": md("Alpha", "the alpha file")})
         self.run_generator("docs")
-        self.assertEqual(self.read("docs/index.md").splitlines()[0], "# docs")
+        self.assertEqual(self.read("docs/INDEX.md").splitlines()[0], "# docs")
 
     def test_a_hand_written_h1_is_never_touched_again(self) -> None:
         # spec: v2b9h (docs/specs/directory-index.md)
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": "# Project Documentation\n\n- [Alpha](alpha.md): the alpha file\n",
+                "docs/INDEX.md": "# Project Documentation\n\n- [Alpha](alpha.md): the alpha file\n",
             }
         )
         self.run_generator("docs")
         self.assertEqual(
-            self.read("docs/index.md").splitlines()[0], "# Project Documentation"
+            self.read("docs/INDEX.md").splitlines()[0], "# Project Documentation"
         )
 
     def test_a_missing_h1_is_restored_as_the_directory_name(self) -> None:
@@ -290,12 +286,12 @@ class IndexHeading(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": "- [Alpha](alpha.md): the alpha file\n",
+                "docs/INDEX.md": "- [Alpha](alpha.md): the alpha file\n",
             }
         )
         self.run_generator("docs")
         self.assertFileText(
-            "docs/index.md", "# docs\n\n- [Alpha](alpha.md): the alpha file\n"
+            "docs/INDEX.md", "# docs\n\n- [Alpha](alpha.md): the alpha file\n"
         )
 
     def test_restoring_a_missing_h1_is_reported_under_changed(self) -> None:
@@ -303,24 +299,24 @@ class IndexHeading(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": "- [Alpha](alpha.md): the alpha file\n",
+                "docs/INDEX.md": "- [Alpha](alpha.md): the alpha file\n",
             }
         )
         report = self.run_generator("docs")
         self.assertIn("changed:", report)
-        self.assertIn(str(self.path("docs/index.md")), report)
+        self.assertIn(str(self.path("docs/INDEX.md")), report)
 
     def test_an_h1_that_no_longer_matches_the_directory_name_is_left_alone(self) -> None:
         # spec: 054pu (docs/specs/directory-index.md)
         self.write_tree(
             {
                 "wip/alpha.md": md("Alpha", "the alpha file"),
-                "wip/index.md": "# Work in progress\n\n- [Alpha](alpha.md): the alpha file\n",
+                "wip/INDEX.md": "# Work in progress\n\n- [Alpha](alpha.md): the alpha file\n",
             }
         )
         self.run_generator("wip")
         self.assertFileText(
-            "wip/index.md",
+            "wip/INDEX.md",
             "# Work in progress\n\n- [Alpha](alpha.md): the alpha file\n",
         )
 
@@ -331,7 +327,7 @@ class BodyValidation(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -341,14 +337,14 @@ class BodyValidation(GeneratorTestCase):
             }
         )
         message = self.run_generator_expecting_exit("docs")
-        self.assertIn(str(self.path("docs/index.md")), message)
+        self.assertIn(str(self.path("docs/INDEX.md")), message)
 
     def test_a_section_heading_is_a_fatal_error_naming_the_file(self) -> None:
         # spec: y5kyl (docs/specs/directory-index.md)
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "## Specs\n"
@@ -358,14 +354,14 @@ class BodyValidation(GeneratorTestCase):
             }
         )
         message = self.run_generator_expecting_exit("docs")
-        self.assertIn(str(self.path("docs/index.md")), message)
+        self.assertIn(str(self.path("docs/INDEX.md")), message)
 
     def test_a_second_paragraph_is_a_fatal_error_naming_the_file(self) -> None:
         # spec: y5kyl (docs/specs/directory-index.md)
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "The first paragraph is the description.\n"
@@ -377,14 +373,14 @@ class BodyValidation(GeneratorTestCase):
             }
         )
         message = self.run_generator_expecting_exit("docs")
-        self.assertIn(str(self.path("docs/index.md")), message)
+        self.assertIn(str(self.path("docs/INDEX.md")), message)
 
     def test_a_second_pinned_marker_is_a_fatal_error_naming_the_file(self) -> None:
         # spec: y5kyl (docs/specs/directory-index.md)
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -398,14 +394,14 @@ class BodyValidation(GeneratorTestCase):
             }
         )
         message = self.run_generator_expecting_exit("docs")
-        self.assertIn(str(self.path("docs/index.md")), message)
+        self.assertIn(str(self.path("docs/INDEX.md")), message)
 
     def test_a_single_pinned_marker_is_accepted(self) -> None:
         # spec: y5kyl (docs/specs/directory-index.md)
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -422,7 +418,7 @@ class BodyValidation(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "---\n"
                     "title: docs\n"
                     "description: Project documentation.\n"
@@ -435,26 +431,26 @@ class BodyValidation(GeneratorTestCase):
             }
         )
         message = self.run_generator_expecting_exit("docs")
-        self.assertIn(str(self.path("docs/index.md")), message)
+        self.assertIn(str(self.path("docs/INDEX.md")), message)
         self.assertIn("--migrate", message)
 
 
 class SubdirectoryLabelAndDescription(GeneratorTestCase):
     def test_a_subdirectory_label_comes_from_the_h1_of_its_own_index(self) -> None:
         # spec: ht9j1 (docs/specs/directory-index.md)
-        self.write_tree({"docs/sub/index.md": "# Subsection\n"})
+        self.write_tree({"docs/sub/INDEX.md": "# Subsection\n"})
         self.run_generator("docs")
-        label, _ = self.entry("docs/index.md", "sub/")
+        label, _ = self.entry("docs/INDEX.md", "sub/")
         self.assertEqual(label, "Subsection")
 
     def test_a_subdirectory_description_comes_from_its_first_paragraph(self) -> None:
         # spec: ht9j1 (docs/specs/directory-index.md)
         self.write_tree(
-            {"docs/sub/index.md": "# Subsection\n\nAll about the subsection.\n"}
+            {"docs/sub/INDEX.md": "# Subsection\n\nAll about the subsection.\n"}
         )
         self.run_generator("docs")
         self.assertFileText(
-            "docs/index.md",
+            "docs/INDEX.md",
             "# docs\n\n- [Subsection](sub/): All about the subsection.\n",
         )
 
@@ -463,7 +459,7 @@ class SubdirectoryLabelAndDescription(GeneratorTestCase):
         self.write_tree({"docs/sub/alpha.md": md("Alpha", "the alpha file")})
         self.run_generator("docs/sub")
         self.assertFileText(
-            "docs/sub/index.md", "# sub\n\n- [Alpha](alpha.md): the alpha file\n"
+            "docs/sub/INDEX.md", "# sub\n\n- [Alpha](alpha.md): the alpha file\n"
         )
 
     def test_a_first_paragraph_is_not_a_description_outside_an_index(self) -> None:
@@ -474,7 +470,7 @@ class SubdirectoryLabelAndDescription(GeneratorTestCase):
             }
         )
         self.run_generator("docs")
-        label, description = self.entry("docs/index.md", "notes.md")
+        label, description = self.entry("docs/INDEX.md", "notes.md")
         self.assertEqual(label, "Notes")
         self.assertEqual(description, TODO)
 
@@ -484,39 +480,39 @@ class DescriptionPlaceholder(GeneratorTestCase):
         # spec: ltfx3 (docs/specs/directory-index.md)
         self.write_tree({"docs/alpha.md": md(body="# Alpha\n")})
         self.run_generator("docs")
-        _, description = self.entry("docs/index.md", "alpha.md")
+        _, description = self.entry("docs/INDEX.md", "alpha.md")
         self.assertEqual(description, TODO)
 
     def test_a_subdirectory_with_no_description_gets_the_todo_placeholder(self) -> None:
         # spec: ltfx3 (docs/specs/directory-index.md)
-        self.write_tree({"docs/sub/index.md": "# Subsection\n"})
+        self.write_tree({"docs/sub/INDEX.md": "# Subsection\n"})
         self.run_generator("docs")
-        _, description = self.entry("docs/index.md", "sub/")
+        _, description = self.entry("docs/INDEX.md", "sub/")
         self.assertEqual(description, TODO)
 
     def test_nothing_beyond_the_placeholder_is_invented(self) -> None:
         # spec: 7fv84 (docs/specs/directory-index.md)
         self.write_tree({"docs/alpha.md": md(body="# Alpha\n")})
         self.run_generator("docs")
-        self.assertFileText("docs/index.md", f"# docs\n\n- [Alpha](alpha.md): {TODO}\n")
+        self.assertFileText("docs/INDEX.md", f"# docs\n\n- [Alpha](alpha.md): {TODO}\n")
 
     def test_the_placeholder_survives_regeneration_unchanged(self) -> None:
         # spec: yf2xo (docs/specs/directory-index.md)
         self.write_tree({"docs/alpha.md": md(body="# Alpha\n")})
         self.run_generator("docs")
         self.run_generator("docs")
-        self.assertFileText("docs/index.md", f"# docs\n\n- [Alpha](alpha.md): {TODO}\n")
+        self.assertFileText("docs/INDEX.md", f"# docs\n\n- [Alpha](alpha.md): {TODO}\n")
 
     def test_the_placeholder_is_not_read_back_as_a_description(self) -> None:
         # spec: yf2xo (docs/specs/directory-index.md)
         self.write_tree(
             {
                 "docs/alpha.md": md(body="# Alpha\n"),
-                "docs/index.md": f"# docs\n\n- [Alpha](alpha.md): {TODO}\n",
+                "docs/INDEX.md": f"# docs\n\n- [Alpha](alpha.md): {TODO}\n",
             }
         )
         report = self.run_generator("docs")
-        _, description = self.entry("docs/index.md", "alpha.md")
+        _, description = self.entry("docs/INDEX.md", "alpha.md")
         self.assertEqual(description, TODO)
         self.assertIn(
             "alpha.md",
@@ -530,11 +526,11 @@ class DescriptionPlaceholder(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md(body="# Alpha\n"),
-                "docs/index.md": "# docs\n\n- [Alpha](alpha.md): written by a human\n",
+                "docs/INDEX.md": "# docs\n\n- [Alpha](alpha.md): written by a human\n",
             }
         )
         self.run_generator("docs")
-        _, description = self.entry("docs/index.md", "alpha.md")
+        _, description = self.entry("docs/INDEX.md", "alpha.md")
         self.assertEqual(description, "written by a human")
 
 
@@ -548,22 +544,22 @@ class IndexFileLocation(GeneratorTestCase):
         # spec: cy7d8 (docs/specs/directory-index.md)
         self.write_tree({"docs/alpha.md": md("Alpha", "the alpha file")})
         self.run_generator("docs")
-        self.assertTrue(self.path("docs/index.md").is_file())
-        self.assertFalse(self.path("index.md").exists())
+        self.assertTrue(self.path("docs/INDEX.md").is_file())
+        self.assertFalse(self.path("INDEX.md").exists())
 
 
 class MembersListed(GeneratorTestCase):
     def test_a_subdirectory_is_listed_with_a_trailing_slash_href(self) -> None:
         # spec: gc28b (docs/specs/directory-index.md)
-        self.write_tree({"docs/sub/index.md": "# Sub\n"})
+        self.write_tree({"docs/sub/INDEX.md": "# Sub\n"})
         self.run_generator("docs")
-        self.assertHrefs("docs/index.md", ["sub/"])
+        self.assertHrefs("docs/INDEX.md", ["sub/"])
 
     def test_a_markdown_file_is_listed_under_its_filename(self) -> None:
         # spec: 0xe5b (docs/specs/directory-index.md)
         self.write_tree({"docs/alpha.md": md("Alpha", "the alpha file")})
         self.run_generator("docs")
-        self.assertHrefs("docs/index.md", ["alpha.md"])
+        self.assertHrefs("docs/INDEX.md", ["alpha.md"])
 
     def test_another_file_is_not_listed_without_an_include_glob(self) -> None:
         # spec: zpon0 (docs/specs/directory-index.md)
@@ -571,7 +567,7 @@ class MembersListed(GeneratorTestCase):
             {"docs/alpha.md": md("Alpha", "the alpha file"), "docs/diagram.png": "png"}
         )
         self.run_generator("docs")
-        self.assertHrefs("docs/index.md", ["alpha.md"])
+        self.assertHrefs("docs/INDEX.md", ["alpha.md"])
 
     def test_another_file_is_listed_when_an_include_glob_matches(self) -> None:
         # spec: zpon0 (docs/specs/directory-index.md)
@@ -579,18 +575,18 @@ class MembersListed(GeneratorTestCase):
             {"docs/alpha.md": md("Alpha", "the alpha file"), "docs/diagram.png": "png"}
         )
         self.run_generator("docs", "--include", "*.png")
-        self.assertHrefs("docs/index.md", ["alpha.md", "diagram.png"])
+        self.assertHrefs("docs/INDEX.md", ["alpha.md", "diagram.png"])
 
     def test_another_file_is_listed_when_it_already_appears_in_the_index(self) -> None:
         # spec: zpon0 (docs/specs/directory-index.md)
         self.write_tree(
             {
                 "docs/run.sh": "#!/bin/sh\n",
-                "docs/index.md": "# docs\n\n- [Release runner](run.sh): runs a release\n",
+                "docs/INDEX.md": "# docs\n\n- [Release runner](run.sh): runs a release\n",
             }
         )
         self.run_generator("docs")
-        self.assertIn("run.sh", self.entries("docs/index.md"))
+        self.assertIn("run.sh", self.entries("docs/INDEX.md"))
 
     def test_dotfiles_and_the_index_itself_are_never_listed(self) -> None:
         # spec: cck6q (docs/specs/directory-index.md)
@@ -602,7 +598,7 @@ class MembersListed(GeneratorTestCase):
             }
         )
         self.run_generator("docs")
-        self.assertHrefs("docs/index.md", ["alpha.md"])
+        self.assertHrefs("docs/INDEX.md", ["alpha.md"])
 
 
 class LabelSources(GeneratorTestCase):
@@ -612,21 +608,21 @@ class LabelSources(GeneratorTestCase):
             {"docs/alpha.md": md("From frontmatter", "d", body="# From heading\n")}
         )
         self.run_generator("docs")
-        label, _ = self.entry("docs/index.md", "alpha.md")
+        label, _ = self.entry("docs/INDEX.md", "alpha.md")
         self.assertEqual(label, "From frontmatter")
 
     def test_a_markdown_label_falls_back_to_the_first_h1(self) -> None:
         # spec: w768b (docs/specs/directory-index.md)
         self.write_tree({"docs/alpha.md": "# From heading\n"})
         self.run_generator("docs")
-        label, _ = self.entry("docs/index.md", "alpha.md")
+        label, _ = self.entry("docs/INDEX.md", "alpha.md")
         self.assertEqual(label, "From heading")
 
     def test_a_markdown_label_falls_back_to_the_filename(self) -> None:
         # spec: w768b (docs/specs/directory-index.md)
         self.write_tree({"docs/alpha.md": "just some text, no heading\n"})
         self.run_generator("docs")
-        label, _ = self.entry("docs/index.md", "alpha.md")
+        label, _ = self.entry("docs/INDEX.md", "alpha.md")
         self.assertEqual(label, "alpha.md")
 
     def test_name_is_a_lenient_alias_for_title(self) -> None:
@@ -635,7 +631,7 @@ class LabelSources(GeneratorTestCase):
             {"docs/alpha.md": "---\nname: Aliased\ndescription: the alpha file\n---\n"}
         )
         self.run_generator("docs")
-        label, _ = self.entry("docs/index.md", "alpha.md")
+        label, _ = self.entry("docs/INDEX.md", "alpha.md")
         self.assertEqual(label, "Aliased")
 
 
@@ -644,7 +640,7 @@ class DescriptionSources(GeneratorTestCase):
         # spec: 87rk6 (docs/specs/directory-index.md)
         self.write_tree({"docs/alpha.md": md("Alpha", "the alpha file")})
         self.run_generator("docs")
-        _, description = self.entry("docs/index.md", "alpha.md")
+        _, description = self.entry("docs/INDEX.md", "alpha.md")
         self.assertEqual(description, "the alpha file")
 
     def test_a_members_own_description_wins_over_the_index(self) -> None:
@@ -652,11 +648,11 @@ class DescriptionSources(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the authoritative description"),
-                "docs/index.md": "# docs\n\n- [Alpha](alpha.md): the stale description\n",
+                "docs/INDEX.md": "# docs\n\n- [Alpha](alpha.md): the stale description\n",
             }
         )
         self.run_generator("docs")
-        _, description = self.entry("docs/index.md", "alpha.md")
+        _, description = self.entry("docs/INDEX.md", "alpha.md")
         self.assertEqual(description, "the authoritative description")
 
     def test_a_description_that_exists_only_in_the_index_is_kept(self) -> None:
@@ -664,11 +660,11 @@ class DescriptionSources(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha"),
-                "docs/index.md": "# docs\n\n- [Alpha](alpha.md): written into the index\n",
+                "docs/INDEX.md": "# docs\n\n- [Alpha](alpha.md): written into the index\n",
             }
         )
         self.run_generator("docs")
-        _, description = self.entry("docs/index.md", "alpha.md")
+        _, description = self.entry("docs/INDEX.md", "alpha.md")
         self.assertEqual(description, "written into the index")
 
 
@@ -679,7 +675,7 @@ class EntryLifetime(GeneratorTestCase):
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
                 "docs/run.sh": "#!/bin/sh\n",
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -688,7 +684,7 @@ class EntryLifetime(GeneratorTestCase):
             }
         )
         self.run_generator("docs")  # no --include: run.sh is outside the include set
-        _, description = self.entry("docs/index.md", "run.sh")
+        _, description = self.entry("docs/INDEX.md", "run.sh")
         self.assertEqual(description, "runs a release")
 
     def test_an_existing_index_is_always_regenerated(self) -> None:
@@ -697,11 +693,11 @@ class EntryLifetime(GeneratorTestCase):
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
                 "docs/bravo.md": md("Bravo", "the bravo file"),
-                "docs/index.md": "# docs\n\n- [Alpha](alpha.md): the alpha file\n",
+                "docs/INDEX.md": "# docs\n\n- [Alpha](alpha.md): the alpha file\n",
             }
         )
         self.run_generator("docs")
-        self.assertHrefs("docs/index.md", ["alpha.md", "bravo.md"])
+        self.assertHrefs("docs/INDEX.md", ["alpha.md", "bravo.md"])
 
 
 class CreationModes(GeneratorTestCase):
@@ -709,7 +705,7 @@ class CreationModes(GeneratorTestCase):
         # spec: 6a8xt (docs/specs/directory-index.md)
         self.write_tree({"docs/notes.txt": "nothing index-worthy here\n"})
         self.run_generator("docs")
-        self.assertTrue(self.path("docs/index.md").is_file())
+        self.assertTrue(self.path("docs/INDEX.md").is_file())
 
     def test_with_r_every_subdirectory_is_processed(self) -> None:
         # spec: 6f4vl (docs/specs/directory-index.md)
@@ -720,28 +716,28 @@ class CreationModes(GeneratorTestCase):
             }
         )
         self.run_generator("docs", "-r")
-        self.assertTrue(self.path("docs/one/index.md").is_file())
-        self.assertTrue(self.path("docs/two/index.md").is_file())
-        self.assertTrue(self.path("docs/index.md").is_file())
+        self.assertTrue(self.path("docs/one/INDEX.md").is_file())
+        self.assertTrue(self.path("docs/two/INDEX.md").is_file())
+        self.assertTrue(self.path("docs/INDEX.md").is_file())
 
     def test_with_r_an_unworthy_directory_gets_no_index(self) -> None:
         # spec: 6w3gg (docs/specs/directory-index.md)
         self.write_tree({"docs/sub/notes.txt": "nothing index-worthy here\n"})
         self.run_generator("docs", "-r")
-        self.assertFalse(self.path("docs/sub/index.md").exists())
-        self.assertFalse(self.path("docs/index.md").exists())
+        self.assertFalse(self.path("docs/sub/INDEX.md").exists())
+        self.assertFalse(self.path("docs/INDEX.md").exists())
 
     def test_with_r_a_documented_markdown_file_makes_a_directory_worthy(self) -> None:
         # spec: 6w3gg (docs/specs/directory-index.md)
         self.write_tree({"docs/sub/alpha.md": md("Alpha", "the alpha file")})
         self.run_generator("docs", "-r")
-        self.assertTrue(self.path("docs/sub/index.md").is_file())
+        self.assertTrue(self.path("docs/sub/INDEX.md").is_file())
 
     def test_with_r_a_title_without_a_description_is_not_worthy(self) -> None:
         # spec: 6w3gg (docs/specs/directory-index.md)
         self.write_tree({"docs/sub/alpha.md": md("Alpha")})
         self.run_generator("docs", "-r")
-        self.assertFalse(self.path("docs/sub/index.md").exists())
+        self.assertFalse(self.path("docs/sub/INDEX.md").exists())
 
     def test_worthiness_propagates_up_the_ancestor_chain(self) -> None:
         # spec: ijy2l (docs/specs/directory-index.md)
@@ -752,10 +748,10 @@ class CreationModes(GeneratorTestCase):
             }
         )
         self.run_generator("docs", "-r")
-        self.assertTrue(self.path("docs/deep/deeper/index.md").is_file())
-        self.assertTrue(self.path("docs/deep/index.md").is_file())
-        self.assertTrue(self.path("docs/index.md").is_file())
-        self.assertFalse(self.path("docs/unrelated/index.md").exists())
+        self.assertTrue(self.path("docs/deep/deeper/INDEX.md").is_file())
+        self.assertTrue(self.path("docs/deep/INDEX.md").is_file())
+        self.assertTrue(self.path("docs/INDEX.md").is_file())
+        self.assertFalse(self.path("docs/unrelated/INDEX.md").exists())
 
     def test_no_strict_creates_an_index_in_every_directory(self) -> None:
         # spec: vcv98 (docs/specs/directory-index.md)
@@ -766,22 +762,22 @@ class CreationModes(GeneratorTestCase):
             }
         )
         self.run_generator("docs", "-r", "--no-strict")
-        self.assertTrue(self.path("docs/index.md").is_file())
-        self.assertTrue(self.path("docs/sub/index.md").is_file())
-        self.assertTrue(self.path("docs/empty/index.md").is_file())
+        self.assertTrue(self.path("docs/INDEX.md").is_file())
+        self.assertTrue(self.path("docs/sub/INDEX.md").is_file())
+        self.assertTrue(self.path("docs/empty/INDEX.md").is_file())
 
     def test_refresh_only_regenerates_but_never_creates(self) -> None:
         # spec: u417b (docs/specs/directory-index.md)
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": "# docs\n",
+                "docs/INDEX.md": "# docs\n",
                 "docs/sub/bravo.md": md("Bravo", "the bravo file"),
             }
         )
         self.run_generator("docs", "-r", "--refresh-only")
-        self.assertFalse(self.path("docs/sub/index.md").exists())
-        self.assertIn("alpha.md", self.entries("docs/index.md"))
+        self.assertFalse(self.path("docs/sub/INDEX.md").exists())
+        self.assertIn("alpha.md", self.entries("docs/INDEX.md"))
 
 
 class Reporting(GeneratorTestCase):
@@ -832,11 +828,11 @@ class LabelMerging(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/notes.md": "just some text, no frontmatter and no heading\n",
-                "docs/index.md": "# docs\n\n- [Field notes](notes.md): notes from the field\n",
+                "docs/INDEX.md": "# docs\n\n- [Field notes](notes.md): notes from the field\n",
             }
         )
         self.run_generator("docs")
-        label, _ = self.entry("docs/index.md", "notes.md")
+        label, _ = self.entry("docs/INDEX.md", "notes.md")
         self.assertEqual(label, "Field notes")
 
     def test_a_hand_written_label_survives_repeated_runs(self) -> None:
@@ -844,13 +840,13 @@ class LabelMerging(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/notes.md": "just some text, no frontmatter and no heading\n",
-                "docs/index.md": "# docs\n\n- [Field notes](notes.md): notes from the field\n",
+                "docs/INDEX.md": "# docs\n\n- [Field notes](notes.md): notes from the field\n",
             }
         )
         self.run_generator("docs")
         self.run_generator("docs")
         self.assertFileText(
-            "docs/index.md",
+            "docs/INDEX.md",
             "# docs\n\n- [Field notes](notes.md): notes from the field\n",
         )
 
@@ -859,11 +855,11 @@ class LabelMerging(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("From frontmatter", "the alpha file"),
-                "docs/index.md": "# docs\n\n- [Stale label](alpha.md): the alpha file\n",
+                "docs/INDEX.md": "# docs\n\n- [Stale label](alpha.md): the alpha file\n",
             }
         )
         self.run_generator("docs")
-        label, _ = self.entry("docs/index.md", "alpha.md")
+        label, _ = self.entry("docs/INDEX.md", "alpha.md")
         self.assertEqual(label, "From frontmatter")
 
     def test_a_first_h1_wins_over_the_label_in_the_index(self) -> None:
@@ -871,11 +867,11 @@ class LabelMerging(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": "# From heading\n",
-                "docs/index.md": "# docs\n\n- [Stale label](alpha.md): the alpha file\n",
+                "docs/INDEX.md": "# docs\n\n- [Stale label](alpha.md): the alpha file\n",
             }
         )
         self.run_generator("docs")
-        label, _ = self.entry("docs/index.md", "alpha.md")
+        label, _ = self.entry("docs/INDEX.md", "alpha.md")
         self.assertEqual(label, "From heading")
 
     def test_a_hand_written_label_survives_an_include_glob(self) -> None:
@@ -883,11 +879,11 @@ class LabelMerging(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/diagram.png": "png",
-                "docs/index.md": "# docs\n\n- [Architecture diagram](diagram.png): how the pieces fit\n",
+                "docs/INDEX.md": "# docs\n\n- [Architecture diagram](diagram.png): how the pieces fit\n",
             }
         )
         self.run_generator("docs", "--include", "*.png")
-        label, _ = self.entry("docs/index.md", "diagram.png")
+        label, _ = self.entry("docs/INDEX.md", "diagram.png")
         self.assertEqual(label, "Architecture diagram")
 
     def test_the_release_runner_label_is_not_reset_to_its_filename(self) -> None:
@@ -895,12 +891,12 @@ class LabelMerging(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/run.sh": "#!/bin/sh\n",
-                "docs/index.md": "# docs\n\n- [Release runner](run.sh): runs a release\n",
+                "docs/INDEX.md": "# docs\n\n- [Release runner](run.sh): runs a release\n",
             }
         )
         self.run_generator("docs", "--include", "*.sh")
         self.assertFileText(
-            "docs/index.md",
+            "docs/INDEX.md",
             "# docs\n\n- [Release runner](run.sh): runs a release\n",
         )
 
@@ -908,12 +904,12 @@ class LabelMerging(GeneratorTestCase):
         # spec: 24inj (docs/specs/directory-index.md)
         self.write_tree(
             {
-                "docs/sub/index.md": "# Subsection\n",
-                "docs/index.md": "# docs\n\n- [Stale label](sub/): about the sub\n",
+                "docs/sub/INDEX.md": "# Subsection\n",
+                "docs/INDEX.md": "# docs\n\n- [Stale label](sub/): about the sub\n",
             }
         )
         self.run_generator("docs")
-        label, _ = self.entry("docs/index.md", "sub/")
+        label, _ = self.entry("docs/INDEX.md", "sub/")
         self.assertEqual(label, "Subsection")
 
     def test_a_subdirectory_without_an_index_keeps_the_label_in_the_index(self) -> None:
@@ -921,11 +917,11 @@ class LabelMerging(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/sub/notes.txt": "nothing index-worthy here\n",
-                "docs/index.md": "# docs\n\n- [Loose material](sub/): odds and ends\n",
+                "docs/INDEX.md": "# docs\n\n- [Loose material](sub/): odds and ends\n",
             }
         )
         self.run_generator("docs")
-        label, _ = self.entry("docs/index.md", "sub/")
+        label, _ = self.entry("docs/INDEX.md", "sub/")
         self.assertEqual(label, "Loose material")
 
 
@@ -934,21 +930,21 @@ class NonMarkdownLabels(GeneratorTestCase):
         # spec: 8yx76 (docs/specs/directory-index.md)
         self.write_tree({"docs/diagram.png": "png"})
         self.run_generator("docs", "--include", "*.png")
-        label, _ = self.entry("docs/index.md", "diagram.png")
+        label, _ = self.entry("docs/INDEX.md", "diagram.png")
         self.assertEqual(label, "diagram")
 
     def test_only_the_last_suffix_is_dropped(self) -> None:
         # spec: 8yx76 (docs/specs/directory-index.md)
         self.write_tree({"docs/data.tar.gz": "archive"})
         self.run_generator("docs", "--include", "*.gz")
-        label, _ = self.entry("docs/index.md", "data.tar.gz")
+        label, _ = self.entry("docs/INDEX.md", "data.tar.gz")
         self.assertEqual(label, "data.tar")
 
     def test_a_name_with_no_suffix_is_used_unchanged(self) -> None:
         # spec: 8yx76 (docs/specs/directory-index.md)
         self.write_tree({"docs/Makefile": "all:\n"})
         self.run_generator("docs", "--include", "Makefile")
-        label, _ = self.entry("docs/index.md", "Makefile")
+        label, _ = self.entry("docs/INDEX.md", "Makefile")
         self.assertEqual(label, "Makefile")
 
     def test_labels_that_collide_once_the_suffix_is_dropped_are_reported(self) -> None:
@@ -964,7 +960,7 @@ class NonMarkdownLabels(GeneratorTestCase):
         # spec: 8yx76 (docs/specs/directory-index.md)
         self.write_tree({"docs/chart.png": "png", "docs/chart.csv": "a,b\n"})
         self.run_generator("docs", "--include", "*.png", "--include", "*.csv")
-        self.assertHrefs("docs/index.md", ["chart.png", "chart.csv"])
+        self.assertHrefs("docs/INDEX.md", ["chart.png", "chart.csv"])
 
     def test_two_non_colliding_labels_are_not_reported(self) -> None:
         # spec: 8yx76 (docs/specs/directory-index.md)
@@ -996,7 +992,7 @@ class EntryOrdering(GeneratorTestCase):
             }
         )
         self.run_generator("docs")
-        self.assertEqual(self.labels_in_order("docs/index.md"), ["Apple", "Zebra"])
+        self.assertEqual(self.labels_in_order("docs/INDEX.md"), ["Apple", "Zebra"])
 
     def test_label_sorting_ignores_case(self) -> None:
         # spec: 1ny6c (docs/specs/directory-index.md)
@@ -1009,7 +1005,7 @@ class EntryOrdering(GeneratorTestCase):
         )
         self.run_generator("docs")
         self.assertEqual(
-            self.labels_in_order("docs/index.md"), ["apple", "Banana", "cherry"]
+            self.labels_in_order("docs/INDEX.md"), ["apple", "Banana", "cherry"]
         )
 
     def test_the_filename_breaks_a_tie_between_equal_labels(self) -> None:
@@ -1022,7 +1018,7 @@ class EntryOrdering(GeneratorTestCase):
         )
         self.run_generator("docs")
         self.assertEqual(
-            self.hrefs_in_order("docs/index.md"), ["alpha.md", "zulu.md"]
+            self.hrefs_in_order("docs/INDEX.md"), ["alpha.md", "zulu.md"]
         )
 
     def test_subdirectories_are_not_grouped_separately(self) -> None:
@@ -1031,12 +1027,12 @@ class EntryOrdering(GeneratorTestCase):
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
                 "docs/beta.md": md("Zebra", "the zebra file"),
-                "docs/zzz/index.md": "# Beta\n\nthe beta directory\n",
+                "docs/zzz/INDEX.md": "# Beta\n\nthe beta directory\n",
             }
         )
         self.run_generator("docs")
         self.assertEqual(
-            self.hrefs_in_order("docs/index.md"), ["alpha.md", "zzz/", "beta.md"]
+            self.hrefs_in_order("docs/INDEX.md"), ["alpha.md", "zzz/", "beta.md"]
         )
 
     def test_the_pinned_block_keeps_the_order_it_was_written_in(self) -> None:
@@ -1044,7 +1040,7 @@ class EntryOrdering(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -1058,7 +1054,7 @@ class EntryOrdering(GeneratorTestCase):
         )
         self.run_generator("docs")
         self.assertEqual(
-            self.labels_in_order("docs/index.md"),
+            self.labels_in_order("docs/INDEX.md"),
             ["Alpha", "Zulu", "Mike", "Alfa"],
         )
 
@@ -1070,7 +1066,7 @@ class DescriptionLengthCap(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", long),
-                "docs/index.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {long}\n",
+                "docs/INDEX.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {long}\n",
             }
         )
         report = self.run_generator("docs")
@@ -1082,12 +1078,12 @@ class DescriptionLengthCap(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", long),
-                "docs/index.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {long}\n",
+                "docs/INDEX.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {long}\n",
             }
         )
         self.run_generator("docs")
         self.assertFileText(
-            "docs/index.md", f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {long}\n"
+            "docs/INDEX.md", f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {long}\n"
         )
 
     def test_a_long_description_is_never_fatal(self) -> None:
@@ -1095,7 +1091,7 @@ class DescriptionLengthCap(GeneratorTestCase):
         long = blob(2000)
         self.write_tree({"docs/alpha.md": md("Alpha", long)})
         self.run_generator("docs")  # must not raise SystemExit
-        self.assertTrue(self.path("docs/index.md").is_file())
+        self.assertTrue(self.path("docs/INDEX.md").is_file())
 
     def test_a_long_paragraph_in_this_directorys_own_index_is_reported(self) -> None:
         # spec: y6yp7 (docs/specs/directory-index.md)
@@ -1103,25 +1099,25 @@ class DescriptionLengthCap(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": f"# docs\n\n{long}\n\n- [Alpha](alpha.md): the alpha file\n",
+                "docs/INDEX.md": f"# docs\n\n{long}\n\n- [Alpha](alpha.md): the alpha file\n",
             }
         )
         report = self.run_generator("docs")
-        self.assertIn(str(self.path("docs/index.md")), report)
+        self.assertIn(str(self.path("docs/INDEX.md")), report)
 
     def test_a_long_subdirectory_paragraph_names_that_directorys_index(self) -> None:
         # spec: y6yp7 (docs/specs/directory-index.md)
         long = blob(260)
         self.write_tree(
             {
-                "docs/sub/index.md": f"# Sub\n\n{long}\n",
-                "docs/index.md": f"# docs\n\nThe docs.\n\n- [Sub](sub/): {long}\n",
+                "docs/sub/INDEX.md": f"# Sub\n\n{long}\n",
+                "docs/INDEX.md": f"# docs\n\nThe docs.\n\n- [Sub](sub/): {long}\n",
             }
         )
-        # Not recursive: docs/sub/index.md is never processed, so it can only be
+        # Not recursive: docs/sub/INDEX.md is never processed, so it can only be
         # named because its paragraph is the description that overran.
         report = self.run_generator("docs")
-        self.assertIn(str(self.path("docs/sub/index.md")), report)
+        self.assertIn(str(self.path("docs/sub/INDEX.md")), report)
 
     def test_a_description_at_the_default_cap_is_not_reported(self) -> None:
         # spec: qp54q (docs/specs/directory-index.md)
@@ -1129,7 +1125,7 @@ class DescriptionLengthCap(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", exact),
-                "docs/index.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {exact}\n",
+                "docs/INDEX.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {exact}\n",
             }
         )
         report = self.run_generator("docs")
@@ -1141,7 +1137,7 @@ class DescriptionLengthCap(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", over),
-                "docs/index.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {over}\n",
+                "docs/INDEX.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {over}\n",
             }
         )
         report = self.run_generator("docs")
@@ -1153,7 +1149,7 @@ class DescriptionLengthCap(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", short),
-                "docs/index.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {short}\n",
+                "docs/INDEX.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {short}\n",
             }
         )
         with quiet_stderr():
@@ -1166,7 +1162,7 @@ class DescriptionLengthCap(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", long),
-                "docs/index.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {long}\n",
+                "docs/INDEX.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {long}\n",
             }
         )
         with quiet_stderr():
@@ -1181,7 +1177,7 @@ class DescriptionLengthCap(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha"),
-                "docs/index.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {long}\n",
+                "docs/INDEX.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {long}\n",
             }
         )
         report = self.run_generator("docs")
@@ -1193,11 +1189,11 @@ class DescriptionLengthCap(GeneratorTestCase):
         # the text survives the first run whole and the second unchanged.
         long = blob(260)
         written = f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {long}\n"
-        self.write_tree({"docs/alpha.md": md("Alpha"), "docs/index.md": written})
+        self.write_tree({"docs/alpha.md": md("Alpha"), "docs/INDEX.md": written})
         self.run_generator("docs")
-        self.assertFileText("docs/index.md", written)
+        self.assertFileText("docs/INDEX.md", written)
         self.run_generator("docs")
-        self.assertFileText("docs/index.md", written)
+        self.assertFileText("docs/INDEX.md", written)
 
     def test_the_exemption_follows_provenance_not_length(self) -> None:
         # spec: kp37v (docs/specs/directory-index.md)
@@ -1208,7 +1204,7 @@ class DescriptionLengthCap(GeneratorTestCase):
             {
                 "docs/alpha.md": md("Alpha"),
                 "docs/beta.md": md("Beta", long),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     f"# docs\n"
                     f"\n"
                     f"The docs.\n"
@@ -1230,7 +1226,7 @@ class DescriptionLengthCap(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha"),
-                "docs/index.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {short}\n",
+                "docs/INDEX.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {short}\n",
             }
         )
         with quiet_stderr():
@@ -1245,7 +1241,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
                 "docs/bravo.md": md("Real Bravo", "the description the file claims"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -1258,7 +1254,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
         self.run_generator("docs")
         self.assertIn(
             "- [Frozen Bravo](bravo.md): frozen wording",
-            self.read("docs/index.md").splitlines(),
+            self.read("docs/INDEX.md").splitlines(),
         )
 
     def test_a_pinned_entry_is_never_relabelled_or_re_described(self) -> None:
@@ -1267,7 +1263,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
                 "docs/bravo.md": md("Real Bravo", "the description the file claims"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -1278,7 +1274,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
             }
         )
         self.run_generator("docs")
-        text = self.read("docs/index.md")
+        text = self.read("docs/INDEX.md")
         self.assertNotIn("Real Bravo", text)
         self.assertNotIn("the description the file claims", text)
 
@@ -1292,7 +1288,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -1302,7 +1298,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
             }
         )
         self.run_generator("docs")
-        text = self.read("docs/index.md")
+        text = self.read("docs/INDEX.md")
         marker_at = text.splitlines().index(PINNED)
         self.assertEqual(text.splitlines()[marker_at + 1 :], pinned_lines)
 
@@ -1320,11 +1316,11 @@ class PinnedBlockSemantics(GeneratorTestCase):
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
                 "docs/bravo.md": md("Real Bravo", "the description the file claims"),
-                "docs/index.md": original,
+                "docs/INDEX.md": original,
             }
         )
         self.run_generator("docs")
-        self.assertFileText("docs/index.md", original)
+        self.assertFileText("docs/INDEX.md", original)
 
     def test_a_pinned_member_is_never_listed_twice(self) -> None:
         # spec: caa4b (docs/specs/directory-index.md)
@@ -1332,7 +1328,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
                 "docs/bravo.md": md("Real Bravo", "the description the file claims"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -1343,7 +1339,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
             }
         )
         self.run_generator("docs")
-        hrefs = self.hrefs_in_order("docs/index.md")
+        hrefs = self.hrefs_in_order("docs/INDEX.md")
         self.assertEqual(hrefs.count("bravo.md"), 1, hrefs)
 
     def test_a_pinned_subdirectory_is_left_out_of_the_managed_list(self) -> None:
@@ -1351,8 +1347,8 @@ class PinnedBlockSemantics(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/sub/index.md": "# Subsection\n\nAll about the subsection.\n",
-                "docs/index.md": (
+                "docs/sub/INDEX.md": "# Subsection\n\nAll about the subsection.\n",
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -1363,7 +1359,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
             }
         )
         self.run_generator("docs")
-        hrefs = self.hrefs_in_order("docs/index.md")
+        hrefs = self.hrefs_in_order("docs/INDEX.md")
         self.assertEqual(hrefs.count("sub/"), 1, hrefs)
 
     def test_a_pinned_entry_may_point_anywhere_and_is_not_rewritten(self) -> None:
@@ -1383,11 +1379,11 @@ class PinnedBlockSemantics(GeneratorTestCase):
                 "outside/notes.md": md("Notes", "a note elsewhere in the repo"),
                 "docs/alpha.md": md("Alpha", "the alpha file"),
                 "docs/bravo.md": md("Real Bravo", "the description the file claims"),
-                "docs/index.md": original,
+                "docs/INDEX.md": original,
             }
         )
         self.run_generator("docs")
-        self.assertFileText("docs/index.md", original)
+        self.assertFileText("docs/INDEX.md", original)
 
     def test_a_pinned_entry_is_not_validated_against_the_include_set(self) -> None:
         # spec: z9bzy (docs/specs/directory-index.md)
@@ -1395,7 +1391,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
                 "docs/diagram.png": "png",
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -1408,7 +1404,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
         report = self.run_generator("docs")  # no --include for *.png
         self.assertIn(
             "- [The diagram](diagram.png): how the pieces fit",
-            self.read("docs/index.md").splitlines(),
+            self.read("docs/INDEX.md").splitlines(),
         )
         self.assertNotIn("diagram", report)
 
@@ -1417,7 +1413,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -1435,7 +1431,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -1448,7 +1444,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
         self.run_generator("docs")
         self.assertIn(
             "- [Gone](missing.md): a file that is not there",
-            self.read("docs/index.md").splitlines(),
+            self.read("docs/INDEX.md").splitlines(),
         )
 
     def test_a_pinned_url_is_passed_over_in_silence(self) -> None:
@@ -1456,7 +1452,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "The docs.\n"
@@ -1477,7 +1473,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
             {
                 "outside/notes.md": md("Notes", "a note elsewhere in the repo"),
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "The docs.\n"
@@ -1497,7 +1493,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -1511,14 +1507,14 @@ class PinnedBlockSemantics(GeneratorTestCase):
             }
         )
         message = self.run_generator_expecting_exit("docs")
-        self.assertIn(str(self.path("docs/index.md")), message)
+        self.assertIn(str(self.path("docs/INDEX.md")), message)
 
     def test_a_section_heading_below_the_pinned_marker_is_fatal(self) -> None:
         # spec: 3ibxv (docs/specs/directory-index.md)
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -1532,7 +1528,7 @@ class PinnedBlockSemantics(GeneratorTestCase):
             }
         )
         message = self.run_generator_expecting_exit("docs")
-        self.assertIn(str(self.path("docs/index.md")), message)
+        self.assertIn(str(self.path("docs/INDEX.md")), message)
 
 
 class PinnedBlockWhitespace(GeneratorTestCase):
@@ -1543,7 +1539,7 @@ class PinnedBlockWhitespace(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "- [Alpha](alpha.md): the alpha file\n"
@@ -1557,7 +1553,7 @@ class PinnedBlockWhitespace(GeneratorTestCase):
         )
         self.run_generator("docs")
         self.assertFileText(
-            "docs/index.md",
+            "docs/INDEX.md",
             "# docs\n"
             "\n"
             "- [Alpha](alpha.md): the alpha file\n"
@@ -1571,7 +1567,7 @@ class PinnedBlockWhitespace(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     f"{PINNED}\n"
@@ -1581,7 +1577,7 @@ class PinnedBlockWhitespace(GeneratorTestCase):
         )
         self.run_generator("docs")
         self.assertFileText(
-            "docs/index.md",
+            "docs/INDEX.md",
             f"# docs\n\n{PINNED}\n- [Frozen Alpha](alpha.md): frozen wording\n",
         )
 
@@ -1598,11 +1594,11 @@ class PinnedBlockWhitespace(GeneratorTestCase):
             "- [Upstream](https://example.com/): the upstream project\n"
         )
         self.write_tree(
-            {"docs/alpha.md": md("Alpha", "the alpha file"), "docs/index.md": original}
+            {"docs/alpha.md": md("Alpha", "the alpha file"), "docs/INDEX.md": original}
         )
         self.run_generator("docs")
         self.run_generator("docs")
-        self.assertFileText("docs/index.md", original)
+        self.assertFileText("docs/INDEX.md", original)
 
 
 class Migration(GeneratorTestCase):
@@ -1611,7 +1607,7 @@ class Migration(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "---\n"
                     "title: Project Documentation\n"
                     "description: Project documentation and specs.\n"
@@ -1624,7 +1620,7 @@ class Migration(GeneratorTestCase):
         with quiet_stderr():
             self.run_generator("docs", "--migrate")
         self.assertFileText(
-            "docs/index.md",
+            "docs/INDEX.md",
             "# Project Documentation\n"
             "\n"
             "Project documentation and specs.\n"
@@ -1637,7 +1633,7 @@ class Migration(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "---\n"
                     "title: Project Documentation\n"
                     "description: Project documentation and specs.\n"
@@ -1650,14 +1646,14 @@ class Migration(GeneratorTestCase):
         with quiet_stderr():
             report = self.run_generator("docs", "--migrate")
         self.assertIn("changed:", report)
-        self.assertIn(str(self.path("docs/index.md")), report)
+        self.assertIn(str(self.path("docs/INDEX.md")), report)
 
     def test_migrate_keeps_a_body_h1_that_repeats_the_frontmatter_title(self) -> None:
         # spec: 6g8s7 (docs/specs/directory-index.md)
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "---\n"
                     "title: Project Documentation\n"
                     "description: Project documentation and specs.\n"
@@ -1672,7 +1668,7 @@ class Migration(GeneratorTestCase):
         with quiet_stderr():
             self.run_generator("docs", "--migrate")
         self.assertFileText(
-            "docs/index.md",
+            "docs/INDEX.md",
             "# Project Documentation\n"
             "\n"
             "Project documentation and specs.\n"
@@ -1685,7 +1681,7 @@ class Migration(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "---\n"
                     "title: Project Documentation\n"
                     "---\n"
@@ -1697,7 +1693,7 @@ class Migration(GeneratorTestCase):
         with quiet_stderr():
             self.run_generator("docs", "--migrate")
         self.assertFileText(
-            "docs/index.md",
+            "docs/INDEX.md",
             "# Project Documentation\n\n- [Alpha](alpha.md): the alpha file\n",
         )
 
@@ -1706,7 +1702,7 @@ class Migration(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "---\n"
                     "description: Project documentation and specs.\n"
                     "---\n"
@@ -1718,7 +1714,7 @@ class Migration(GeneratorTestCase):
         with quiet_stderr():
             self.run_generator("docs", "--migrate")
         self.assertFileText(
-            "docs/index.md",
+            "docs/INDEX.md",
             "# docs\n"
             "\n"
             "Project documentation and specs.\n"
@@ -1732,7 +1728,7 @@ class Migration(GeneratorTestCase):
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
                 "docs/bravo.md": md("Bravo", "the bravo file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "---\n"
                     "title: Project Documentation\n"
                     "description: Project documentation and specs.\n"
@@ -1745,7 +1741,7 @@ class Migration(GeneratorTestCase):
         with quiet_stderr():
             self.run_generator("docs", "--migrate")
         self.assertFileText(
-            "docs/index.md",
+            "docs/INDEX.md",
             "# Project Documentation\n"
             "\n"
             "Project documentation and specs.\n"
@@ -1765,14 +1761,14 @@ class Migration(GeneratorTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": frontmatter_index,
+                "docs/INDEX.md": frontmatter_index,
                 "docs/sub/bravo.md": md("Bravo", "the bravo file"),
-                "docs/sub/index.md": frontmatter_index,
+                "docs/sub/INDEX.md": frontmatter_index,
             }
         )
         with quiet_stderr():
             self.run_generator("docs", "-r", "--migrate")
-        for relative in ("docs/index.md", "docs/sub/index.md"):
+        for relative in ("docs/INDEX.md", "docs/sub/INDEX.md"):
             self.assertFalse(
                 self.read(relative).lstrip().startswith("---"),
                 f"{relative} still carries frontmatter",
@@ -1788,18 +1784,18 @@ class Migration(GeneratorTestCase):
             "- [Alpha](alpha.md): the alpha file\n"
         )
         self.write_tree(
-            {"docs/alpha.md": md("Alpha", "the alpha file"), "docs/index.md": original}
+            {"docs/alpha.md": md("Alpha", "the alpha file"), "docs/INDEX.md": original}
         )
         with quiet_stderr():
             self.run_generator("docs", "--migrate")
-        self.assertFileText("docs/index.md", original)
+        self.assertFileText("docs/INDEX.md", original)
 
     def test_migrate_refuses_frontmatter_over_an_unmergeable_body(self) -> None:
         # spec: vew0l (docs/specs/directory-index.md)
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "---\n"
                     "title: Project Documentation\n"
                     "description: Project documentation and specs.\n"
@@ -1813,7 +1809,7 @@ class Migration(GeneratorTestCase):
         )
         with quiet_stderr():
             message = self.run_generator_expecting_exit("docs", "--migrate")
-        self.assertIn(str(self.path("docs/index.md")), message)
+        self.assertIn(str(self.path("docs/INDEX.md")), message)
 
     def test_a_refused_migration_leaves_the_file_untouched(self) -> None:
         # spec: vew0l (docs/specs/directory-index.md)
@@ -1828,11 +1824,11 @@ class Migration(GeneratorTestCase):
             "- [Alpha](alpha.md): the alpha file\n"
         )
         self.write_tree(
-            {"docs/alpha.md": md("Alpha", "the alpha file"), "docs/index.md": original}
+            {"docs/alpha.md": md("Alpha", "the alpha file"), "docs/INDEX.md": original}
         )
         with quiet_stderr():
             self.run_generator_expecting_exit("docs", "--migrate")
-        self.assertFileText("docs/index.md", original)
+        self.assertFileText("docs/INDEX.md", original)
 
 
 # =====================================================================
@@ -1903,7 +1899,7 @@ class ReportStructure(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n\nProject documentation.\n\n- [Alpha](alpha.md): the alpha file\n"
                 ),
             }
@@ -1917,7 +1913,7 @@ class ReportStructure(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": "- [Alpha](alpha.md): the alpha file\n",
+                "docs/INDEX.md": "- [Alpha](alpha.md): the alpha file\n",
             }
         )
         report = self.run_generator("docs")
@@ -1930,7 +1926,7 @@ class ReportStructure(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md(body="# Alpha\n"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     f"- [Alpha](alpha.md): {TODO}\n- [Gone](gone.md): the gone file\n"
                 ),
             }
@@ -1944,11 +1940,11 @@ class ReportStructure(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": "# docs\n\n- [Alpha](alpha.md): the alpha file\n",
+                "docs/INDEX.md": "# docs\n\n- [Alpha](alpha.md): the alpha file\n",
             }
         )
         report = self.run_generator("docs")
-        index = str(self.path("docs/index.md"))
+        index = str(self.path("docs/INDEX.md"))
         self.assertOneNote(self.gaps(report), index)
         self.assertNoNote(self.changed(report), index)
 
@@ -1956,7 +1952,7 @@ class ReportStructure(ReportTestCase):
         # spec: wk9pu (docs/specs/directory-index.md)
         self.write_tree({"docs/alpha.md": md("Alpha", "the alpha file")})
         report = self.run_generator("docs")
-        index = str(self.path("docs/index.md"))
+        index = str(self.path("docs/INDEX.md"))
         self.assertOneNote(self.gaps(report), index)
         self.assertNoNote(self.changed(report), index)
 
@@ -1965,7 +1961,7 @@ class ReportStructure(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md(body="# Alpha\n"),
-                "docs/index.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {TODO}\n",
+                "docs/INDEX.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {TODO}\n",
             }
         )
         report = self.run_generator("docs")
@@ -1978,7 +1974,7 @@ class ReportStructure(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "The docs.\n"
@@ -1998,7 +1994,7 @@ class ReportStructure(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", long),
-                "docs/index.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {long}\n",
+                "docs/INDEX.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {long}\n",
             }
         )
         report = self.run_generator("docs")
@@ -2025,7 +2021,7 @@ class ReportStructure(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": "The docs.\n\n- [Alpha](alpha.md): the alpha file\n",
+                "docs/INDEX.md": "The docs.\n\n- [Alpha](alpha.md): the alpha file\n",
             }
         )
         report = self.run_generator("docs")
@@ -2037,7 +2033,7 @@ class ReportStructure(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "---\n"
                     "title: Project documentation\n"
                     "description: Project documentation and specs.\n"
@@ -2048,7 +2044,7 @@ class ReportStructure(ReportTestCase):
             }
         )
         report = self.run_generator("docs", "--migrate")
-        self.assertOneNote(self.changed(report), str(self.path("docs/index.md")))
+        self.assertOneNote(self.changed(report), str(self.path("docs/INDEX.md")))
         self.assertNoNote(self.gaps(report), "frontmatter")
 
 
@@ -2058,7 +2054,7 @@ class ReplacedDescriptionReport(ReportTestCase):
     def replaced(self) -> dict[str, str]:
         return {
             "docs/alpha.md": md("Alpha", "the new description"),
-            "docs/index.md": (
+            "docs/INDEX.md": (
                 "# docs\n\nThe docs.\n\n- [Alpha](alpha.md): the old description\n"
             ),
         }
@@ -2118,8 +2114,8 @@ class ReplacedDescriptionReport(ReportTestCase):
         # spec: w1j5d (docs/specs/directory-index.md)
         self.write_tree(
             {
-                "docs/sub/index.md": "# Sub\n\nthe new description\n",
-                "docs/index.md": (
+                "docs/sub/INDEX.md": "# Sub\n\nthe new description\n",
+                "docs/INDEX.md": (
                     "# docs\n\nThe docs.\n\n- [Sub](sub/): the old description\n"
                 ),
             }
@@ -2134,7 +2130,7 @@ class ReplacedDescriptionReport(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n\nThe docs.\n\n- [Alpha](alpha.md): the alpha file\n"
                 ),
             }
@@ -2147,7 +2143,7 @@ class ReplacedDescriptionReport(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": "# docs\n\nThe docs.\n\n- [Alpha](alpha.md)\n",
+                "docs/INDEX.md": "# docs\n\nThe docs.\n\n- [Alpha](alpha.md)\n",
             }
         )
         report = self.run_generator("docs")
@@ -2158,7 +2154,7 @@ class ReplacedDescriptionReport(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {TODO}\n",
+                "docs/INDEX.md": f"# docs\n\nThe docs.\n\n- [Alpha](alpha.md): {TODO}\n",
             }
         )
         report = self.run_generator("docs")
@@ -2172,8 +2168,8 @@ class PlaceholderReport(ReportTestCase):
         return {
             "docs/alpha.md": md(body="# Alpha\n"),
             "docs/chart.png": "png",
-            "docs/sub/index.md": "# Sub\n",
-            "docs/index.md": "# docs\n\nThe docs.\n",
+            "docs/sub/INDEX.md": "# Sub\n",
+            "docs/INDEX.md": "# docs\n\nThe docs.\n",
         }
 
     def test_a_markdown_files_placeholder_points_at_its_frontmatter(self) -> None:
@@ -2187,18 +2183,18 @@ class PlaceholderReport(ReportTestCase):
         # spec: 8rs97 (docs/specs/directory-index.md)
         self.write_tree(self.mixed_tree())
         report = self.run_generator("docs", "--include", "*.png")
-        self.assertOneNote(self.gaps(report), str(self.path("docs/sub/index.md")))
+        self.assertOneNote(self.gaps(report), str(self.path("docs/sub/INDEX.md")))
 
     def test_a_subdirectory_without_an_index_still_points_at_one(self) -> None:
         # spec: 8rs97 (docs/specs/directory-index.md)
         self.write_tree(
             {
                 "docs/sub/notes.txt": "loose notes\n",
-                "docs/index.md": "# docs\n\nThe docs.\n",
+                "docs/INDEX.md": "# docs\n\nThe docs.\n",
             }
         )
         report = self.run_generator("docs")
-        self.assertOneNote(self.gaps(report), str(self.path("docs/sub/index.md")))
+        self.assertOneNote(self.gaps(report), str(self.path("docs/sub/INDEX.md")))
 
     def test_another_files_placeholder_points_at_this_index(self) -> None:
         # spec: 8rs97 (docs/specs/directory-index.md)
@@ -2206,7 +2202,7 @@ class PlaceholderReport(ReportTestCase):
         report = self.run_generator("docs", "--include", "*.png")
         # The file cannot carry a description, so the index is where it belongs.
         self.assertOneNote(
-            self.gaps(report), str(self.path("docs/index.md")), "chart.png"
+            self.gaps(report), str(self.path("docs/INDEX.md")), "chart.png"
         )
 
     def test_every_placeholder_is_reported_whatever_the_file_type(self) -> None:
@@ -2215,7 +2211,7 @@ class PlaceholderReport(ReportTestCase):
         report = self.run_generator("docs", "--include", "*.png")
         gaps = self.gaps(report)
         self.assertOneNote(gaps, str(self.path("docs/alpha.md")))
-        self.assertOneNote(gaps, str(self.path("docs/sub/index.md")))
+        self.assertOneNote(gaps, str(self.path("docs/sub/INDEX.md")))
         self.assertOneNote(gaps, "chart.png")
 
     def test_the_placeholder_itself_stays_uniform(self) -> None:
@@ -2223,7 +2219,7 @@ class PlaceholderReport(ReportTestCase):
         self.write_tree(self.mixed_tree())
         self.run_generator("docs", "--include", "*.png")
         self.assertEqual(
-            self.entry_lines("docs/index.md"),
+            self.entry_lines("docs/INDEX.md"),
             [
                 f"- [Alpha](alpha.md): {TODO}",
                 f"- [chart](chart.png): {TODO}",
@@ -2236,7 +2232,7 @@ class PlaceholderReport(ReportTestCase):
         self.write_tree(
             {
                 "docs/chart.png": "png",
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n\nThe docs.\n\n- [chart](chart.png): the quarterly chart\n"
                 ),
             }
@@ -2253,7 +2249,7 @@ class StaleEntryReport(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "The docs.\n"
@@ -2272,7 +2268,7 @@ class StaleEntryReport(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "The docs.\n"
@@ -2291,7 +2287,7 @@ class StaleEntryReport(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "The docs.\n"
@@ -2312,7 +2308,7 @@ class StaleEntryReport(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "The docs.\n"
@@ -2323,7 +2319,7 @@ class StaleEntryReport(ReportTestCase):
             }
         )
         report = self.run_generator("docs")
-        self.assertNotIn("gone.md", self.read("docs/index.md"))
+        self.assertNotIn("gone.md", self.read("docs/INDEX.md"))
         note = self.assertOneNote(self.gaps(report), "gone.md")
         self.assertIn("a description nobody else holds", note)
 
@@ -2332,7 +2328,7 @@ class StaleEntryReport(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "The docs.\n"
@@ -2344,7 +2340,7 @@ class StaleEntryReport(ReportTestCase):
         )
         report = self.run_generator("docs")
         note = self.assertOneNote(self.gaps(report), "gone.md")
-        self.assertIn(str(self.path("docs/index.md")), note)
+        self.assertIn(str(self.path("docs/INDEX.md")), note)
 
 
 class NonMemberEntry(ReportTestCase):
@@ -2362,7 +2358,7 @@ class NonMemberEntry(ReportTestCase):
         lines = ["- [Alpha](alpha.md): the alpha file", *extra_lines]
         return {
             "docs/alpha.md": md("Alpha", "the alpha file"),
-            "docs/index.md": "# docs\n\nThe docs.\n\n" + "".join(f"{line}\n" for line in lines),
+            "docs/INDEX.md": "# docs\n\nThe docs.\n\n" + "".join(f"{line}\n" for line in lines),
         }
 
     # -- a ../ path -------------------------------------------------------
@@ -2373,7 +2369,7 @@ class NonMemberEntry(ReportTestCase):
         tree["other/notes.md"] = md("Other", "lives elsewhere")
         self.write_tree(tree)
         self.run_generator("docs")
-        self.assertHrefs("docs/index.md", ["alpha.md"])
+        self.assertHrefs("docs/INDEX.md", ["alpha.md"])
 
     def test_a_parent_relative_path_is_dropped_though_it_resolves_on_disk(self) -> None:
         # spec: k5zgu (docs/specs/directory-index.md)
@@ -2382,7 +2378,7 @@ class NonMemberEntry(ReportTestCase):
         self.write_tree(tree)
         self.run_generator("docs")
         self.assertTrue(self.path("other/notes.md").exists(), "the target is still there")
-        self.assertNotIn("../other/notes.md", self.read("docs/index.md"))
+        self.assertNotIn("../other/notes.md", self.read("docs/INDEX.md"))
 
     def test_a_dropped_parent_relative_path_is_reported_with_its_full_text(self) -> None:
         # spec: k5zgu (docs/specs/directory-index.md)
@@ -2392,27 +2388,27 @@ class NonMemberEntry(ReportTestCase):
         report = self.run_generator("docs")
         note = self.assertOneNote(self.gaps(report), "../other/notes.md")
         self.assertIn("[Other](../other/notes.md): lives elsewhere", note)
-        self.assertIn(str(self.path("docs/index.md")), note)
+        self.assertIn(str(self.path("docs/INDEX.md")), note)
 
     # -- a path into a subdirectory ---------------------------------------
 
     def subdirectory_tree(self) -> dict[str, str]:
         tree = self.index_with("- [Deep](sub/deep.md): two segments down")
         tree["docs/sub/deep.md"] = md("Deep", "the deep file")
-        tree["docs/sub/index.md"] = "# sub\n\nthe sub directory\n"
+        tree["docs/sub/INDEX.md"] = "# sub\n\nthe sub directory\n"
         return tree
 
     def test_a_path_into_a_subdirectory_is_dropped(self) -> None:
         # spec: k5zgu (docs/specs/directory-index.md)
         self.write_tree(self.subdirectory_tree())
         self.run_generator("docs")
-        self.assertHrefs("docs/index.md", ["alpha.md", "sub/"])
+        self.assertHrefs("docs/INDEX.md", ["alpha.md", "sub/"])
 
     def test_the_subdirectory_itself_is_still_listed_as_a_member(self) -> None:
         # spec: k5zgu (docs/specs/directory-index.md)
         self.write_tree(self.subdirectory_tree())
         self.run_generator("docs")
-        label, description = self.entry("docs/index.md", "sub/")
+        label, description = self.entry("docs/INDEX.md", "sub/")
         self.assertEqual(label, "sub")
         self.assertEqual(description, "the sub directory")
 
@@ -2422,7 +2418,7 @@ class NonMemberEntry(ReportTestCase):
         report = self.run_generator("docs")
         note = self.assertOneNote(self.gaps(report), "sub/deep.md")
         self.assertIn("[Deep](sub/deep.md): two segments down", note)
-        self.assertIn(str(self.path("docs/index.md")), note)
+        self.assertIn(str(self.path("docs/INDEX.md")), note)
 
     # -- a URL ------------------------------------------------------------
 
@@ -2430,7 +2426,7 @@ class NonMemberEntry(ReportTestCase):
         # spec: k5zgu (docs/specs/directory-index.md)
         self.write_tree(self.index_with("- [Upstream](https://example.com/): a url"))
         self.run_generator("docs")
-        self.assertHrefs("docs/index.md", ["alpha.md"])
+        self.assertHrefs("docs/INDEX.md", ["alpha.md"])
 
     def test_a_dropped_url_is_reported_with_its_full_text(self) -> None:
         # spec: k5zgu (docs/specs/directory-index.md)
@@ -2445,17 +2441,17 @@ class NonMemberEntry(ReportTestCase):
         # spec: k5zgu (docs/specs/directory-index.md)
         self.write_tree(self.index_with())
         report = self.run_generator("docs")
-        _, description = self.entry("docs/index.md", "alpha.md")
+        _, description = self.entry("docs/INDEX.md", "alpha.md")
         self.assertEqual(description, "the alpha file")
         self.assertNoNote(self.gaps(report), "alpha.md")
 
     def test_a_directory_member_with_its_trailing_slash_is_kept(self) -> None:
         # spec: k5zgu (docs/specs/directory-index.md)
         tree = self.index_with("- [sub](sub/): the sub directory")
-        tree["docs/sub/index.md"] = "# sub\n\nthe sub directory\n"
+        tree["docs/sub/INDEX.md"] = "# sub\n\nthe sub directory\n"
         self.write_tree(tree)
         report = self.run_generator("docs")
-        _, description = self.entry("docs/index.md", "sub/")
+        _, description = self.entry("docs/INDEX.md", "sub/")
         self.assertEqual(description, "the sub directory")
         self.assertNoNote(self.gaps(report), "sub/")
 
@@ -2471,7 +2467,7 @@ class NonMemberEntry(ReportTestCase):
         tree["other/notes.md"] = md("Other", "lives elsewhere")
         self.write_tree(tree)
         report = self.run_generator("docs")  # no --include: run.sh is outside the set
-        _, description = self.entry("docs/index.md", "run.sh")
+        _, description = self.entry("docs/INDEX.md", "run.sh")
         self.assertEqual(description, "runs a release")
         self.assertNoNote(self.gaps(report), "run.sh")
         self.assertOneNote(self.gaps(report), "../other/notes.md")
@@ -2485,7 +2481,7 @@ class NonMemberEntry(ReportTestCase):
                 "docs/alpha.md": md("Alpha", "the alpha file"),
                 "other/notes.md": md("Other", "lives elsewhere"),
                 "other/legacy.md": md("Legacy", "also lives elsewhere"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "# docs\n"
                     "\n"
                     "The docs.\n"
@@ -2500,7 +2496,7 @@ class NonMemberEntry(ReportTestCase):
             }
         )
         report = self.run_generator("docs")
-        text = self.read("docs/index.md")
+        text = self.read("docs/INDEX.md")
         self.assertIn("- [Other](../other/notes.md): below the marker", text)
         self.assertNotIn("../other/legacy.md", text)
         self.assertOneNote(self.gaps(report), "../other/legacy.md")
@@ -2518,8 +2514,8 @@ class RenamedDirectoryReport(ReportTestCase):
 
     def renamed(self) -> dict[str, str]:
         return {
-            "docs/howtos/index.md": "# Guides\n\nhow to do things\n",
-            "docs/index.md": (
+            "docs/howtos/INDEX.md": "# Guides\n\nhow to do things\n",
+            "docs/INDEX.md": (
                 "# docs\n\nThe docs.\n\n- [Guides](guides/): how to do things\n"
             ),
         }
@@ -2544,8 +2540,8 @@ class RenamedDirectoryReport(ReportTestCase):
         # spec: 054pu (docs/specs/directory-index.md)
         self.write_tree(
             {
-                "docs/howtos/index.md": "# How-tos\n\nhow to do things\n",
-                "docs/index.md": (
+                "docs/howtos/INDEX.md": "# How-tos\n\nhow to do things\n",
+                "docs/INDEX.md": (
                     "# docs\n\nThe docs.\n\n- [Guides](guides/): how to do things\n"
                 ),
             }
@@ -2560,8 +2556,8 @@ class RenamedDirectoryReport(ReportTestCase):
         # spec: 054pu (docs/specs/directory-index.md)
         self.write_tree(self.renamed())
         self.run_generator("docs")
-        self.assertEqual(self.read("docs/howtos/index.md").splitlines()[0], "# Guides")
-        label, _ = self.entry("docs/index.md", "howtos/")
+        self.assertEqual(self.read("docs/howtos/INDEX.md").splitlines()[0], "# Guides")
+        label, _ = self.entry("docs/INDEX.md", "howtos/")
         self.assertEqual(label, "Guides")
 
 
@@ -2586,10 +2582,10 @@ class MigrationBodyWins(ReportTestCase):
     ENTRY = "- [Alpha](alpha.md): the alpha file"
 
     def legacy(self, body: str) -> dict[str, str]:
-        """A tree whose index.md carries both frontmatter fields over `body`."""
+        """A tree whose INDEX.md carries both frontmatter fields over `body`."""
         return {
             "docs/alpha.md": md("Alpha", "the alpha file"),
-            "docs/index.md": (
+            "docs/INDEX.md": (
                 "---\n"
                 f"title: {self.FM_TITLE}\n"
                 f"description: {self.FM_DESCRIPTION}\n"
@@ -2600,7 +2596,7 @@ class MigrationBodyWins(ReportTestCase):
         }
 
     def index_notes(self, notes: list[str]) -> list[str]:
-        return self.notes_mentioning(notes, str(self.path("docs/index.md")))
+        return self.notes_mentioning(notes, str(self.path("docs/INDEX.md")))
 
     # -- a disagreeing title -------------------------------------------------
 
@@ -2609,7 +2605,7 @@ class MigrationBodyWins(ReportTestCase):
         self.write_tree(self.legacy(f"# {self.BODY_TITLE}\n\n{self.ENTRY}\n"))
         self.run_generator("docs", "--migrate")
         self.assertFileText(
-            "docs/index.md",
+            "docs/INDEX.md",
             f"# {self.BODY_TITLE}\n"
             "\n"
             f"{self.FM_DESCRIPTION}\n"
@@ -2622,7 +2618,7 @@ class MigrationBodyWins(ReportTestCase):
         self.write_tree(self.legacy(f"# {self.BODY_TITLE}\n\n{self.ENTRY}\n"))
         report = self.run_generator("docs", "--migrate")
         self.assertOneNote(
-            self.changed(report), str(self.path("docs/index.md")), self.FM_TITLE
+            self.changed(report), str(self.path("docs/INDEX.md")), self.FM_TITLE
         )
         self.assertNoNote(self.gaps(report), self.FM_TITLE)
 
@@ -2633,7 +2629,7 @@ class MigrationBodyWins(ReportTestCase):
         self.write_tree(self.legacy(f"{self.BODY_PARAGRAPH}\n\n{self.ENTRY}\n"))
         self.run_generator("docs", "--migrate")
         self.assertFileText(
-            "docs/index.md",
+            "docs/INDEX.md",
             f"# {self.FM_TITLE}\n"
             "\n"
             f"{self.BODY_PARAGRAPH}\n"
@@ -2647,7 +2643,7 @@ class MigrationBodyWins(ReportTestCase):
         # The run completes and writes the file; carrying both is an ordinary
         # conversion, not an error.
         self.run_generator("docs", "--migrate")
-        self.assertNotIn(self.FM_DESCRIPTION, self.read("docs/index.md"))
+        self.assertNotIn(self.FM_DESCRIPTION, self.read("docs/INDEX.md"))
 
     def test_the_discarded_frontmatter_description_is_reported_under_changed(
         self,
@@ -2656,7 +2652,7 @@ class MigrationBodyWins(ReportTestCase):
         self.write_tree(self.legacy(f"{self.BODY_PARAGRAPH}\n\n{self.ENTRY}\n"))
         report = self.run_generator("docs", "--migrate")
         self.assertOneNote(
-            self.changed(report), str(self.path("docs/index.md")), self.FM_DESCRIPTION
+            self.changed(report), str(self.path("docs/INDEX.md")), self.FM_DESCRIPTION
         )
         self.assertNoNote(self.gaps(report), self.FM_DESCRIPTION)
 
@@ -2672,7 +2668,7 @@ class MigrationBodyWins(ReportTestCase):
         self.write_tree(self.both())
         self.run_generator("docs", "--migrate")
         self.assertFileText(
-            "docs/index.md",
+            "docs/INDEX.md",
             f"# {self.BODY_TITLE}\n"
             "\n"
             f"{self.BODY_PARAGRAPH}\n"
@@ -2685,8 +2681,8 @@ class MigrationBodyWins(ReportTestCase):
         self.write_tree(self.both())
         report = self.run_generator("docs", "--migrate")
         changed = self.changed(report)
-        self.assertOneNote(changed, str(self.path("docs/index.md")), self.FM_TITLE)
-        self.assertOneNote(changed, str(self.path("docs/index.md")), self.FM_DESCRIPTION)
+        self.assertOneNote(changed, str(self.path("docs/INDEX.md")), self.FM_TITLE)
+        self.assertOneNote(changed, str(self.path("docs/INDEX.md")), self.FM_DESCRIPTION)
 
     def test_the_conversion_is_reported_alongside_the_discards(self) -> None:
         # spec: 6g8s7 (docs/specs/directory-index.md)
@@ -2714,7 +2710,7 @@ class MigrationBodyWins(ReportTestCase):
         self.write_tree(
             {
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/index.md": (
+                "docs/INDEX.md": (
                     "---\n"
                     f"title: '{title}'\n"
                     f"description: {description}\n"
@@ -2739,9 +2735,9 @@ class MigrationBodyWins(ReportTestCase):
         # spec: 6g8s7 (docs/specs/directory-index.md)
         self.write_tree(self.both())
         self.run_generator("docs", "--migrate")
-        migrated = self.read("docs/index.md")
+        migrated = self.read("docs/INDEX.md")
         self.run_generator("docs")
-        self.assertEqual(self.read("docs/index.md"), migrated)
+        self.assertEqual(self.read("docs/INDEX.md"), migrated)
 
     def test_a_second_run_without_migrate_reports_no_conversion(self) -> None:
         # spec: 6g8s7 (docs/specs/directory-index.md)
@@ -2752,6 +2748,200 @@ class MigrationBodyWins(ReportTestCase):
         # can be discarded twice.
         self.assertNoNote(self.changed(report), self.FM_TITLE)
         self.assertNoNote(self.changed(report), self.FM_DESCRIPTION)
+
+
+# =====================================================================
+# Group F -- the uppercase INDEX.md name, and migrating index.md
+# =====================================================================
+
+
+def case_insensitive_filesystem() -> bool:
+    """Whether the temporary directory's filesystem folds case, as macOS does."""
+    with tempfile.TemporaryDirectory() as tmp:
+        probe = Path(tmp) / "probe"
+        probe.write_text("", encoding="utf-8")
+        return (Path(tmp) / "PROBE").exists()
+
+
+CASE_INSENSITIVE = case_insensitive_filesystem()
+
+LEGACY_INDEX = "# docs\n\nProject documentation.\n\n- [Alpha](alpha.md): the alpha file\n"
+
+
+class IndexFileName(ReportTestCase):
+    """What a directory lists, not what a path lookup answers: on a
+    case-insensitive filesystem the two disagree, and only the listing tells
+    INDEX.md from index.md."""
+
+    def names(self, relative: str) -> set[str]:
+        return {child.name for child in self.path(relative).iterdir()}
+
+    def test_a_created_index_is_spelled_in_uppercase(self) -> None:
+        # spec: cy7d8 (docs/specs/directory-index.md)
+        self.write_tree({"docs/alpha.md": md("Alpha", "the alpha file")})
+        self.run_generator("docs")
+        self.assertIn("INDEX.md", self.names("docs"))
+        self.assertNotIn("index.md", self.names("docs"))
+
+    @unittest.skipIf(CASE_INSENSITIVE, "two spellings cannot coexist here")
+    def test_another_spelling_is_an_ordinary_member(self) -> None:
+        # spec: 730xy (docs/specs/directory-index.md)
+        self.write_tree(
+            {
+                "docs/alpha.md": md("Alpha", "the alpha file"),
+                "docs/Index.md": md("Site index", "the site's landing page"),
+            }
+        )
+        self.run_generator("docs")
+        self.assertEqual(
+            self.entry("docs/INDEX.md", "Index.md"), ("Site index", "the site's landing page")
+        )
+        self.assertEqual(self.read("docs/Index.md"), md("Site index", "the site's landing page"))
+
+    @unittest.skipUnless(CASE_INSENSITIVE, "needs a case-insensitive filesystem")
+    def test_another_spelling_blocks_creating_the_index(self) -> None:
+        # spec: fa97n (docs/specs/directory-index.md)
+        original = md("Site index", "the site's landing page")
+        self.write_tree({"docs/alpha.md": md("Alpha", "the alpha file"), "docs/Index.md": original})
+        message = self.run_generator_expecting_exit("docs")
+        self.assertIn("Index.md", message)
+        self.assertEqual(self.names("docs"), {"alpha.md", "Index.md"})
+        self.assertEqual(self.read("docs/Index.md"), original)
+
+    @unittest.skipUnless(CASE_INSENSITIVE, "needs a case-insensitive filesystem")
+    def test_another_spelling_is_no_error_when_nothing_is_written(self) -> None:
+        # spec: fa97n (docs/specs/directory-index.md)
+        self.write_tree(
+            {
+                "docs/alpha.md": md("Alpha", "the alpha file"),
+                "docs/Index.md": md("Site index", "the site's landing page"),
+            }
+        )
+        self.run_generator("docs", "--refresh-only")
+        self.assertEqual(self.names("docs"), {"alpha.md", "Index.md"})
+
+    def test_a_legacy_index_is_fatal_and_names_the_migrate_flag(self) -> None:
+        # spec: 2m10w (docs/specs/directory-index.md)
+        self.write_tree({"docs/alpha.md": md("Alpha", "the alpha file"), "docs/index.md": LEGACY_INDEX})
+        message = self.run_generator_expecting_exit("docs")
+        self.assertIn(str(self.path("docs/index.md")), message)
+        self.assertIn("--migrate", message)
+        self.assertEqual(self.names("docs"), {"alpha.md", "index.md"})
+        self.assertEqual(self.read("docs/index.md"), LEGACY_INDEX)
+
+    def test_a_legacy_index_is_fatal_under_refresh_only(self) -> None:
+        # spec: 2m10w (docs/specs/directory-index.md)
+        self.write_tree(
+            {"docs/sub/alpha.md": md("Alpha", "the alpha file"), "docs/sub/index.md": LEGACY_INDEX}
+        )
+        message = self.run_generator_expecting_exit("docs", "-r", "--refresh-only")
+        self.assertIn("--migrate", message)
+        self.assertEqual(self.names("docs/sub"), {"alpha.md", "index.md"})
+
+    def test_migrate_renames_a_legacy_index_and_regenerates_it(self) -> None:
+        # spec: gjr1n (docs/specs/directory-index.md)
+        self.write_tree(
+            {
+                "docs/alpha.md": md("Alpha", "the alpha file"),
+                "docs/beta.md": md("Beta", "the beta file"),
+                "docs/index.md": LEGACY_INDEX,
+            }
+        )
+        self.run_generator("docs", "--migrate")
+        self.assertEqual(self.names("docs"), {"alpha.md", "beta.md", "INDEX.md"})
+        self.assertFileText(
+            "docs/INDEX.md",
+            "# docs\n"
+            "\n"
+            "Project documentation.\n"
+            "\n"
+            "- [Alpha](alpha.md): the alpha file\n"
+            "- [Beta](beta.md): the beta file\n",
+        )
+
+    def test_migrate_reports_the_rename_under_changed(self) -> None:
+        # spec: gjr1n (docs/specs/directory-index.md)
+        self.write_tree({"docs/alpha.md": md("Alpha", "the alpha file"), "docs/index.md": LEGACY_INDEX})
+        report = self.run_generator("docs", "--migrate")
+        self.assertOneNote(self.changed(report), str(self.path("docs/index.md")), "INDEX.md")
+
+    def test_migrate_converts_the_name_and_the_frontmatter_in_one_pass(self) -> None:
+        # spec: gjr1n (docs/specs/directory-index.md)
+        self.write_tree(
+            {
+                "docs/alpha.md": md("Alpha", "the alpha file"),
+                "docs/index.md": (
+                    "---\n"
+                    "title: Project Documentation\n"
+                    "description: Project documentation and specs.\n"
+                    "---\n"
+                    "\n"
+                    "- [Alpha](alpha.md): the alpha file\n"
+                ),
+            }
+        )
+        self.run_generator("docs", "--migrate")
+        self.assertEqual(self.names("docs"), {"alpha.md", "INDEX.md"})
+        self.assertFileText(
+            "docs/INDEX.md",
+            "# Project Documentation\n"
+            "\n"
+            "Project documentation and specs.\n"
+            "\n"
+            "- [Alpha](alpha.md): the alpha file\n",
+        )
+
+    def test_migrate_renames_bottom_up_so_the_parent_reads_the_child(self) -> None:
+        # spec: gjr1n (docs/specs/directory-index.md)
+        self.write_tree(
+            {
+                "docs/sub/alpha.md": md("Alpha", "the alpha file"),
+                "docs/sub/index.md": "# Subsystem\n\nThe sub part.\n",
+                "docs/index.md": "# docs\n",
+            }
+        )
+        self.run_generator("docs", "-r", "--migrate")
+        self.assertEqual(self.names("docs"), {"sub", "INDEX.md"})
+        self.assertEqual(self.names("docs/sub"), {"alpha.md", "INDEX.md"})
+        self.assertEqual(self.entry("docs/INDEX.md", "sub/"), ("Subsystem", "The sub part."))
+
+    def test_a_refused_migration_keeps_the_legacy_name(self) -> None:
+        # spec: vew0l (docs/specs/directory-index.md)
+        original = "# docs\n\n## Specs\n\n- [Alpha](alpha.md): the alpha file\n"
+        self.write_tree({"docs/alpha.md": md("Alpha", "the alpha file"), "docs/index.md": original})
+        message = self.run_generator_expecting_exit("docs", "--migrate")
+        self.assertIn(str(self.path("docs/index.md")), message)
+        self.assertEqual(self.names("docs"), {"alpha.md", "index.md"})
+        self.assertEqual(self.read("docs/index.md"), original)
+
+    @unittest.skipIf(CASE_INSENSITIVE, "two spellings cannot coexist here")
+    def test_index_md_next_to_INDEX_md_is_an_ordinary_member(self) -> None:
+        # spec: 6nvhr (docs/specs/directory-index.md)
+        self.write_tree(
+            {
+                "docs/INDEX.md": "# docs\n",
+                "docs/index.md": md("Home", "the site's landing page"),
+            }
+        )
+        self.run_generator("docs")
+        self.assertEqual(self.entry("docs/INDEX.md", "index.md"), ("Home", "the site's landing page"))
+        self.assertEqual(self.names("docs"), {"INDEX.md", "index.md"})
+
+    def test_a_subdirectory_with_a_legacy_index_is_reported_and_not_read(self) -> None:
+        # spec: kwt4a (docs/specs/directory-index.md)
+        child = "# Renamed subsystem\n\nA description the parent must not read.\n"
+        self.write_tree(
+            {
+                "docs/sub/index.md": child,
+                "docs/INDEX.md": "# docs\n\n- [Subsystem](sub/): the sub part\n",
+            }
+        )
+        report = self.run_generator("docs")
+        self.assertOneNote(self.gaps(report), str(self.path("docs/sub/index.md")), "--migrate")
+        self.assertEqual(self.entry("docs/INDEX.md", "sub/"), ("Subsystem", "the sub part"))
+        self.assertEqual(self.names("docs/sub"), {"index.md"})
+        self.assertEqual(self.read("docs/sub/index.md"), child)
+
 
 if __name__ == "__main__":
     unittest.main()

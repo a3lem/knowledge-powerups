@@ -35,7 +35,7 @@ description: What deleting an issue does and doesn't remove
 ---
 ```
 
-They tell a reader what the file is about without opening it, and they make index.md files generatable instead of hand-maintained (see /knowledge-powerups:index-md skill). Deliberately absent: `type` (the path already encodes a file's role) and dates (git records them).
+They tell a reader what the file is about without opening it, and they make INDEX.md files generatable instead of hand-maintained (see /knowledge-powerups:index-md skill). Deliberately absent: `type` (the path already encodes a file's role) and dates (git records them).
 
 ## Standard layout for `docs/`
 
@@ -45,7 +45,7 @@ They tell a reader what the file is about without opening it, and they make inde
   CONTRIBUTING.md  # how to get started contributing. brief!
   CHANGELOG.md  # all notable changes to the project (see /changelog-md skill)
   docs/
-    index.md  # optional. directory listing; can be generated (see /knowledge-powerups:index-md skill)
+    INDEX.md  # optional. directory listing; can be generated (see /knowledge-powerups:index-md skill)
     glossary.md  # project-specific jargon must be defined here.
     architecture.md  # high-level architecture of the project (see /architecture-md skill)
     philosophy.md  # optional. design principles and high-level goals -- one-line claims, each linking to an explainer (e.g. in explanation/)
@@ -66,7 +66,7 @@ They tell a reader what the file is about without opening it, and they make inde
       <slug>/  # e.g. fix-bad-exception-handling/. every file within is optional:
         slices/  # optional. split large work items into 'slices' (sub-items, same files)
           <slug>/
-        index.md  # only needed in case of non-obvious files
+        INDEX.md  # only needed in case of non-obvious files
         plan.md  # goal + approach in one file, for simple work items only
         goal.md  # problem context, desired outcome, success criteria -- the why and the what
         approach.md  # the how: assumptions, decisions, verification

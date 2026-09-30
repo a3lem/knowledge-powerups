@@ -42,7 +42,7 @@ marketplace entry, so the base plugin stays knowledge-only.
   `scripts/`. It also holds the lint checklist. It has no spec in `docs/specs/`: the skill is itself the
   natural-language statement of the conventions.
 - **clis/index-gen/** -- `generate_index.py`, the only shared executable in
-  the repo. It regenerates the list in a directory's `index.md` from the
+  the repo. It regenerates the list in a directory's `INDEX.md` from the
   directory's members, merging additively rather than overwriting: a
   hand-written label or description survives, and a `<!-- pinned -->` block
   is copied through untouched. Stdlib-only, so a copy runs anywhere

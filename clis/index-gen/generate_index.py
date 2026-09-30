@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
-"""Regenerate the list in a directory's index.md from the directory's contents.
+"""Regenerate the list in a directory's INDEX.md from the directory's contents.
 
-An index.md is plain markdown: an H1, an optional one-paragraph description,
+An INDEX.md is plain markdown: an H1, an optional one-paragraph description,
 the list, and an optional `<!-- pinned -->` marker with a hand-owned list below
 it. The H1 and the paragraph are hand-written -- the generator writes the
 directory's own name as the H1 when it creates the file and never touches it
 again. Everything else in the body is derived: a subdirectory contributes the
-H1 and first paragraph of its own index.md; a .md file contributes its
+H1 and first paragraph of its own INDEX.md; a .md file contributes its
 frontmatter title + description, the label falling back to its first heading,
 then its filename. A first paragraph counts as a description only in an
-index.md, whose format defines it as one. Other files are listed only when
+INDEX.md, whose format defines it as one. Other files are listed only when
 matched by an --include pattern, or when already present in the index, and are
 labelled with their filename minus its last suffix.
 
 Regeneration is additive, not destructive: a description that exists only in
-the current index.md is kept, and so is a label, unless the member names itself
-through frontmatter, an H1, or its own index.md. The source file's frontmatter
+the current INDEX.md is kept, and so is a label, unless the member names itself
+through frontmatter, an H1, or its own INDEX.md. The source file's frontmatter
 wins when both exist. The managed list indexes this directory's members and
 nothing else: an entry naming a member that is still there is never dropped,
 not even one outside the --include set, and every other entry is dropped and
@@ -37,24 +37,26 @@ The run prints a summary line, then what it changed and what needs attention.
 A description the member displaced is reported with both strings, and with no
 claim about which side moved -- one run cannot tell an updated source from an
 edited index. A placeholder is reported against the file that should carry the
-description: a .md file's frontmatter, a directory's own index.md, or this
+description: a .md file's frontmatter, a directory's own INDEX.md, or this
 index for a file that can hold no text. A dropped entry is quoted whole, so the
 only copy of its description survives in the report; the run infers nothing
 from a drop, since a renamed directory and a deleted one look identical from
 here.
 
-An existing index.md is always regenerated. Creating a missing one depends on
+An existing INDEX.md is always regenerated. Creating a missing one depends on
 mode: without -r, the named directory simply gets one. With -r, a directory
 only gets one when it holds something index-worthy -- a subdirectory with an
-index.md, or a .md file carrying both title and description. Bottom-up order
+INDEX.md, or a .md file carrying both title and description. Bottom-up order
 makes worthiness propagate: one documented file deep in the tree pulls
-index.md files up its ancestor chain. -r --no-strict indexes every directory.
---refresh-only never creates: only existing index.md files are regenerated --
-the mode for machinery (a created index.md needs its description authored).
---migrate converts a legacy index.md carrying frontmatter to the plain-markdown
-format in the same pass that regenerates it. The body wins: the frontmatter
-fills in only what the body lacks, and whatever it contributed nothing to is
-discarded and reported, quoted, under `changed:`.
+INDEX.md files up its ancestor chain. -r --no-strict indexes every directory.
+--refresh-only never creates: only existing INDEX.md files are regenerated --
+the mode for machinery (a created INDEX.md needs its description authored).
+--migrate converts a legacy index in the same pass that regenerates it. An
+index still named index.md is renamed to INDEX.md. Frontmatter is folded into
+the plain-markdown body, where the body wins: the frontmatter fills in only
+what the body lacks, and whatever it contributed nothing to is discarded and
+reported, quoted, under `changed:`. The name is always matched exactly, since
+on a case-insensitive filesystem INDEX.md and index.md open the same file.
 
 Usage: generate_index.py DIRECTORY [-r] [--no-strict] [--refresh-only]
                          [--include GLOB]... [--max-desc-len N] [--migrate]
@@ -70,6 +72,10 @@ from fnmatch import fnmatch
 from pathlib import Path
 
 FM_DELIMITER = "---"
+
+INDEX_NAME = "INDEX.md"
+# The name indexes carried before INDEX.md. Only --migrate touches such a file.
+LEGACY_INDEX_NAME = "index.md"
 
 # The two markers the format defines. Everything else between the H1 and the
 # end of the file is either an entry line or the description paragraph.
@@ -138,7 +144,7 @@ class Entry:
 
 @dataclass
 class IndexBody:
-    """What an index.md says about itself and about its members."""
+    """What an INDEX.md says about itself and about its members."""
 
     title: str | None = None  # None: the file carries no H1
     # The description paragraph is kept line by line, so a hand-wrapped
@@ -150,6 +156,29 @@ class IndexBody:
     @property
     def description(self) -> str | None:
         return " ".join(self.description_lines) or None
+
+
+def has_index(directory: Path) -> bool:
+    """Whether the directory holds a file named exactly INDEX.md.
+
+    The name is looked up among the directory's entries: on a case-insensitive
+    filesystem, `(directory / "INDEX.md").is_file()` is true for index.md too.
+    """
+    names = {child.name for child in directory.iterdir()}
+    return INDEX_NAME in names and (directory / INDEX_NAME).is_file()
+
+
+def has_legacy_index(directory: Path) -> bool:
+    """Whether the directory's index still carries the old name, index.md.
+
+    Next to an INDEX.md, an index.md is an ordinary member instead.
+    """
+    names = {child.name for child in directory.iterdir()}
+    return (
+        LEGACY_INDEX_NAME in names
+        and INDEX_NAME not in names
+        and (directory / LEGACY_INDEX_NAME).is_file()
+    )
 
 
 def split_frontmatter(text: str) -> tuple[Frontmatter | None, str]:
@@ -177,7 +206,7 @@ def parse_frontmatter(text: str) -> Frontmatter | None:
 
 
 def parse_index_body(text: str) -> IndexBody | None:
-    """Read an index.md. None when it holds content the generator cannot place."""
+    """Read an INDEX.md. None when it holds content the generator cannot place."""
     body = IndexBody()
     in_pinned = False
     in_paragraph = False  # inside the description paragraph's own lines
@@ -245,7 +274,7 @@ def unmergeable(index_path: Path) -> SystemExit:
 
 
 def migrate_body(index_path: Path, text: str) -> tuple[IndexBody, list[str]]:
-    """Fold an index.md's frontmatter into its body. Returns (body, notes)."""
+    """Fold an INDEX.md's frontmatter into its body. Returns (body, notes)."""
     block, rest = split_frontmatter(text)
     assert block is not None, index_path  # only called once frontmatter is seen
     body = parse_index_body(rest)
@@ -285,7 +314,7 @@ def first_heading(text: str) -> str | None:
 
 
 def index_self_description(index_path: Path) -> tuple[str | None, str | None]:
-    """The H1 and description an index.md gives for its own directory."""
+    """The H1 and description an INDEX.md gives for its own directory."""
     text = index_path.read_text(encoding="utf-8")
     if parse_frontmatter(text) is None:
         body = parse_index_body(text)
@@ -355,10 +384,10 @@ def merged_description(
 
 
 def entry_for_subdir(subdir: Path, prev: ExistingEntry | None) -> Entry:
-    child_index = subdir / "index.md"
+    child_index = subdir / INDEX_NAME
     title: str | None = None
     source_description: str | None = None
-    if child_index.is_file():
+    if has_index(subdir):
         title, source_description = index_self_description(child_index)
     description, source, replaced = merged_description(source_description, child_index, prev)
     return Entry(
@@ -377,7 +406,7 @@ def entry_for_md_file(path: Path, prev: ExistingEntry | None) -> Entry:
         self_named = fm.title
     else:
         self_named = first_heading(text)
-    # Only an index.md's first paragraph is a description; prose in an ordinary
+    # Only an INDEX.md's first paragraph is a description; prose in an ordinary
     # document was not written to be lifted into someone else's list.
     source_description = fm.description if fm is not None else None
     description, source, replaced = merged_description(source_description, path, prev)
@@ -416,18 +445,18 @@ def placeholder_note(directory: Path, entry: Entry) -> str:
     """Where the description this entry is still missing belongs.
 
     A description is written where its subject lives -- a .md file's in its own
-    frontmatter, a directory's in its own index.md, whether or not that file
+    frontmatter, a directory's in its own INDEX.md, whether or not that file
     exists yet -- so that is what the note names. A file that can hold no text
     of its own is the exception: this index is the only place it can be
     described, so the note names the index and the member.
     """
     if entry.href.endswith("/"):
-        home = directory / entry.member_name / "index.md"
+        home = directory / entry.member_name / INDEX_NAME
         return f"{home}: no description -- write one as the paragraph below its H1"
     if entry.href.endswith(".md"):
         home = directory / entry.href
         return f"{home}: no description -- write one into its frontmatter"
-    index_path = directory / "index.md"
+    index_path = directory / INDEX_NAME
     return (
         f"{index_path}: no description for {entry.href} -- the file carries none "
         "of its own, so write it here"
@@ -452,7 +481,7 @@ def collect_entries(
     directory: Path, body: IndexBody, include: list[str]
 ) -> tuple[list[Entry], list[str], list[str]]:
     """Entries for the managed list (sorted), plus (changed, gaps) notes."""
-    index_path = directory / "index.md"
+    index_path = directory / INDEX_NAME
     # A pinned member is listed by hand, so the managed list leaves it out --
     # and must not resurrect it as a stale entry either.
     pinned_members = {
@@ -460,14 +489,23 @@ def collect_entries(
     }
     seen: set[str] = set(pinned_members)
 
+    changed: list[str] = []
+    gaps: list[str] = []
     keyed: list[tuple[str, str, Entry]] = []
     for child in sorted(directory.iterdir(), key=lambda p: p.name.lower()):
-        if child.name.startswith(".") or child.name == "index.md":
+        if child.name.startswith(".") or child.name == INDEX_NAME:
             continue
         if child.name in pinned_members:
             continue
         prev = body.entries.get(child.name)
         if child.is_dir():
+            if has_legacy_index(child):
+                # Not read: the entry this index carries keeps the label and
+                # description until the subdirectory is migrated.
+                gaps.append(
+                    f"{child / LEGACY_INDEX_NAME}: legacy index name -- rerun "
+                    f"with --migrate to rename it to {INDEX_NAME}"
+                )
             entry = entry_for_subdir(child, prev)
         elif child.suffix == ".md":
             entry = entry_for_md_file(child, prev)
@@ -478,8 +516,6 @@ def collect_entries(
         seen.add(child.name)
         keyed.append((entry.label.lower(), child.name.lower(), entry))
 
-    changed: list[str] = []
-    gaps: list[str] = []
     for key, prev in body.entries.items():
         if key in seen:
             continue
@@ -531,7 +567,7 @@ def pinned_target_notes(directory: Path, pinned: list[str]) -> list[str]:
     broken pin is never removed. A target it cannot check -- a URL, a fragment
     -- is passed over rather than guessed at.
     """
-    index_path = directory / "index.md"
+    index_path = directory / INDEX_NAME
     notes: list[str] = []
     for line in pinned:
         href = entry_href(line)
@@ -558,14 +594,14 @@ def length_note(description: str | None, source: Path, cap: int) -> str | None:
 
 
 def index_worthy(directory: Path) -> bool:
-    """Would an index.md say more than `ls` does?"""
+    """Would an INDEX.md say more than `ls` does?"""
     for child in directory.iterdir():
         if child.name.startswith("."):
             continue
         if child.is_dir():
-            if (child / "index.md").is_file():
+            if has_index(child):
                 return True
-        elif child.suffix == ".md" and child.name != "index.md":
+        elif child.suffix == ".md" and child.name != INDEX_NAME:
             fm = parse_frontmatter(child.read_text(encoding="utf-8"))
             if fm is not None and fm.title is not None and fm.description is not None:
                 return True
@@ -593,37 +629,66 @@ def render(title: str, description_lines: list[str], entries: list[Entry], pinne
 
 
 def process_directory(directory: Path, options: Options) -> tuple[bool, list[str], list[str]]:
-    """Regenerate directory/index.md in place. Returns (written, changed, gaps)."""
+    """Regenerate directory/INDEX.md in place. Returns (written, changed, gaps)."""
     assert directory.is_dir(), directory
     dir_name = directory.resolve().name  # Path(".").name is "" -- resolve first
     assert dir_name, directory
     changed: list[str] = []
     gaps: list[str] = []
-    index_path = directory / "index.md"
-    existed = index_path.is_file()
+    index_path = directory / INDEX_NAME
+    legacy_path = directory / LEGACY_INDEX_NAME
+    legacy = has_legacy_index(directory)
+    existed = legacy or has_index(directory)
+    if legacy and not options.migrate:
+        raise SystemExit(
+            f"error: {legacy_path} carries the legacy name; an index is named "
+            f"{INDEX_NAME}. Rerun with --migrate to rename it"
+        )
 
     if not existed:
         if options.refresh_only:
             return False, [], []
         if not options.create_always and not index_worthy(directory):
             return False, [], []
+        if index_path.exists():
+            # The name is not listed, yet the path resolves: another spelling
+            # holds it on a case-insensitive filesystem, and writing INDEX.md
+            # would overwrite that file.
+            holders = [
+                child.name
+                for child in directory.iterdir()
+                if child.name.lower() == INDEX_NAME.lower()
+            ]
+            raise SystemExit(
+                f"error: writing {index_path} would overwrite "
+                f"{', '.join(holders)}, whose name differs only in case; "
+                "rename that file"
+            )
 
     body = IndexBody()
     if existed:
-        text = index_path.read_text(encoding="utf-8")
+        source_path = legacy_path if legacy else index_path
+        text = source_path.read_text(encoding="utf-8")
         if parse_frontmatter(text) is not None:
             if not options.migrate:
                 raise SystemExit(
-                    f"error: {index_path} has frontmatter, and an index.md carries "
+                    f"error: {source_path} has frontmatter, and an INDEX.md carries "
                     "none; rerun with --migrate to convert it"
                 )
-            body, notes = migrate_body(index_path, text)
+            body, notes = migrate_body(source_path, text)
             changed.extend(notes)
         else:
             parsed = parse_index_body(text)
             if parsed is None:
-                raise unmergeable(index_path)
+                raise unmergeable(source_path)
             body = parsed
+
+    if legacy:
+        # Only once the body has parsed: a file the generator refuses keeps
+        # its old name along with everything else. Renaming before the list is
+        # collected also keeps index.md from being listed as a member.
+        legacy_path.rename(index_path)
+        changed.append(f"{legacy_path}: renamed to {INDEX_NAME}")
 
     if body.title is not None:
         title = body.title  # hand-written from here on, whatever the directory is called
@@ -670,7 +735,7 @@ def iter_dirs_bottom_up(root: Path) -> Iterator[Path]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("directory", type=Path, help="directory whose index.md to (re)generate")
+    parser.add_argument("directory", type=Path, help="directory whose INDEX.md to (re)generate")
     parser.add_argument(
         "-r",
         "--recursive",
@@ -681,12 +746,12 @@ def main() -> None:
     parser.add_argument(
         "--no-strict",
         action="store_true",
-        help="with -r: create an index.md in every directory, worthy or not",
+        help="with -r: create an INDEX.md in every directory, worthy or not",
     )
     parser.add_argument(
         "--refresh-only",
         action="store_true",
-        help="only regenerate existing index.md files; never create one",
+        help="only regenerate existing INDEX.md files; never create one",
     )
     parser.add_argument(
         "--include",
@@ -707,9 +772,10 @@ def main() -> None:
     parser.add_argument(
         "--migrate",
         action="store_true",
-        help="convert an index.md carrying frontmatter to plain markdown; the "
-        "body wins, the frontmatter filling in only what the body lacks, and "
-        "whatever it does not contribute is reported and discarded",
+        help="convert a legacy index: rename index.md to INDEX.md, and fold "
+        "frontmatter into plain markdown; the body wins, the frontmatter "
+        "filling in only what the body lacks, and whatever it does not "
+        "contribute is reported and discarded",
     )
     args = parser.parse_args()
     directory: Path = args.directory

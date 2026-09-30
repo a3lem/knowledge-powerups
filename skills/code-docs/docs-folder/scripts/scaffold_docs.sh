@@ -8,7 +8,7 @@
 # how-tos/, specs/, decisions/) are deliberately not created here; they
 # are created on demand when the first file needs one. Same for
 # archive/, which appears when the first work item is completed. No
-# index.md either: whether the project keeps one, and how, is the user's
+# INDEX.md either: whether the project keeps one, and how, is the user's
 # call. Seed files carry the frontmatter keys but no prefilled wording.
 set -euo pipefail
 
