@@ -1,5 +1,5 @@
 ---
-title: Architecture
+name: Architecture
 description: what the plugin consists of and how the pieces connect
 ---
 

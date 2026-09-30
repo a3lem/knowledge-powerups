@@ -30,7 +30,7 @@ Reference `.md` files carry two frontmatter fields:
 
 ```
 ---
-title: Issue deletion
+name: Issue deletion
 description: What deleting an issue does and doesn't remove
 ---
 ```

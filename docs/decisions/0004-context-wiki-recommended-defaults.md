@@ -1,5 +1,5 @@
 ---
-title: Context wikis get recommended defaults
+name: Context wikis get recommended defaults
 description: Why the context-wiki skill requires a small core and only suggests the rest, superseding the fixed layout of 0002
 ---
 

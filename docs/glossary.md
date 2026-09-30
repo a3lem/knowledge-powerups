@@ -1,5 +1,5 @@
 ---
-title: Glossary
+name: Glossary
 description: cross-cutting jargon used across the plugins, defined in one place
 ---
 

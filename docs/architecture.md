@@ -1,5 +1,5 @@
 ---
-title: Architecture
+name: Architecture
 description: what the repository holds and how the base plugin, the shared CLIs and the companion plugins relate
 ---
 

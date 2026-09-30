@@ -1,5 +1,5 @@
 ---
-title: Consolidation
+name: Consolidation
 description: The memory agent's maintenance pass over the queued session branches -- unify, refine, accept, with transcript mining on demand
 ---
 

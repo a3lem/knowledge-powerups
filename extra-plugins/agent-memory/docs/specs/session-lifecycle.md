@@ -1,5 +1,5 @@
 ---
-title: Session lifecycle
+name: Session lifecycle
 description: How a session's memory branch is born, used, committed, and queued
 ---
 

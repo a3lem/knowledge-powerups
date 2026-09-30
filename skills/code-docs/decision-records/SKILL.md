@@ -37,7 +37,7 @@ Dropped work is a common source: "we decided not to do X because Y" outlives the
 
 ```md
 ---
-title: No soft deletions
+name: No soft deletions
 description: Why deleted rows leave the database instead of being flagged
 ---
 

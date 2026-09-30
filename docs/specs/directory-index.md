@@ -1,5 +1,5 @@
 ---
-title: Directory index
+name: Directory index
 description: Per-directory INDEX.md files, generated from what a directory contains.
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: Glossary
+name: Glossary
 description: memory-system jargon, defined in one place
 ---
 

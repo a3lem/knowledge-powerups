@@ -1,5 +1,5 @@
 ---
-title: Calibration
+name: Calibration
 description: Reviewing memories with the human -- grading both their truth and the agent's stated confidence
 ---
 

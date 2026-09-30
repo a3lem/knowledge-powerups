@@ -1,5 +1,5 @@
 ---
-title: Flat context wiki layout
+name: Flat context wiki layout
 description: Why entries stay at a context wiki's root, next to agent-skills/, sources/ and inbox/
 ---
 

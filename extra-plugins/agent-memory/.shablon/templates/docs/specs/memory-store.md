@@ -1,5 +1,5 @@
 ---
-title: Memory store
+name: Memory store
 description: Layout and content rules for an agent's memory directory
 ---
 

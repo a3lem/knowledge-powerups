@@ -1,5 +1,5 @@
 ---
-title: Skills as knowledge switches
+name: Skills as knowledge switches
 description: A skill is a body of knowledge the human switches on -- the two modes such a skill serves, and what that means for names and descriptions
 ---
 

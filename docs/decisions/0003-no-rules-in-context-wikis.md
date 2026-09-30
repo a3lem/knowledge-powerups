@@ -1,5 +1,5 @@
 ---
-title: No rules in context wikis
+name: No rules in context wikis
 description: Why a context wiki carries no always-loaded agent rules, and conventions ship as plugins instead
 ---
 

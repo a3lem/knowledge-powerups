@@ -57,7 +57,7 @@ make_dir "$docs/resources/generated"
 
 make_file "$docs/glossary.md" "$(cat <<'EOF'
 ---
-title: Glossary
+name: Glossary
 description:
 ---
 
@@ -69,7 +69,7 @@ EOF
 
 make_file "$docs/architecture.md" "$(cat <<'EOF'
 ---
-title: Architecture
+name: Architecture
 description:
 ---
 

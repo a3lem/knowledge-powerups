@@ -1,5 +1,5 @@
 ---
-title: Flat docs layout
+name: Flat docs layout
 description: Why docs/dev/ was dissolved into wip/, archive/ and resources/
 ---
 

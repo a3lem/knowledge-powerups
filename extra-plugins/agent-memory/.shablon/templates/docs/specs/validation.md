@@ -1,5 +1,5 @@
 ---
-title: Validation
+name: Validation
 description: The enforced memory contract -- what blocks a turn and why
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: Memory link style
+name: Memory link style
 description: Why links inside an agent's memory are markdown links with hrefs rooted at the store -- path over name, root-relative over file-relative, and why the wikilink form was retired
 ---
 

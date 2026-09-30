@@ -1,5 +1,5 @@
 ---
-title: Verify the plugin
+name: Verify the plugin
 description: Scripted checks that prove memoryctl, the hooks, and the consolidation choreography behave to spec
 ---
 

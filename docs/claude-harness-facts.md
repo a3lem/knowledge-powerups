@@ -1,5 +1,5 @@
 ---
-title: Claude Code harness facts
+name: Claude Code harness facts
 description: Verified behaviors of the Claude Code harness that plugins in this repo depend on
 ---
 

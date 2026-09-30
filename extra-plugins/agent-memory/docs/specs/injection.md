@@ -1,5 +1,5 @@
 ---
-title: Injection
+name: Injection
 description: How memory is compiled into the prompt at session and subagent start
 ---
 
