@@ -5,7 +5,7 @@ description: Interact with a 'context wiki' as a reader or contributor to build 
 
 # Context Wiki
 
-A context wiki is a git repository of interlinked markdown files that humans and their AI agents write together. It holds knowledge that applies across projects, such as an organization, its customers, its domain, its constraints and its external systems, so that nobody has to explain these to their agent again. Several people and their agents may edit the same wiki.
+A context wiki is a git repository of interlinked markdown files that humans and their AI agents write together. It holds knowledge that applies across projects, such as the user and how they work, or an organization, its customers, its domain, its constraints and its external systems, so that nobody has to explain these to their agent twice. Several people and their agents may edit the same wiki.
 
 An agent can have several context wikis with different scopes: for example, one for the whole company, one for its software engineers, and one for a single engineer.
 
@@ -20,7 +20,7 @@ To create a new context wiki, follow [references/init-wiki.md](references/init-w
 ## What Every Wiki Has
 
 - **README.md** at the root. Its Scope section says what belongs in the wiki and what does not.
-- **AGENTS.md** at the root, with a CLAUDE.md symlink to it. It says that the folder is a context wiki and that agents should load this skill. It also says which conventions the wiki follows, such as the defaults below that it adopted. Keep it short, and do not repeat README.md.
+- **AGENTS.md** at the root, with an optional CLAUDE.md symlink to it. It says that the folder is a context wiki and that agents should load this skill. It also says which conventions the wiki follows, such as the defaults below that it adopted. Keep it short, and do not repeat README.md.
 - **Notes.** A note is a markdown file about one thing. Every markdown file except README.md, AGENTS.md, CLAUDE.md, the INDEX.md files and the skills is a note. The wiki's folders are free: organize notes however suits the knowledge. Every note starts with this frontmatter:
 
   ```markdown
@@ -31,7 +31,7 @@ To create a new context wiki, follow [references/init-wiki.md](references/init-w
   ```
 
   Add other fields when the wiki's AGENTS.md asks for them.
-- **INDEX.md files.** An INDEX.md lists the files in its folder, with the `name` and `description` of each, so a reader opens only what is relevant. Generate them with the index-md skill, using the command in the wiki's AGENTS.md, so that every contributor generates the same indexes. The command uses `-r` for the whole tree and `--exclude` for what should not be indexed, such as `agent-skills/`.
+- **INDEX.md files.** An INDEX.md lists the files in its folder, with the `name` and `description` of each, so a reader opens only what is relevant. Generate them with the index-md skill, using the command in the wiki's AGENTS.md, so that every contributor generates the same indexes. The command uses `-r` for the whole tree and `--exclude` for what should not be indexed.
 
 ## Reading a Wiki
 
@@ -55,17 +55,17 @@ So distill before you write. Say what you learned in your own words, and keep on
 
 Keep notes short. The longer a note, the less likely it is to be reviewed thoroughly. Start with the essential information, and add detail after it.
 
-Brevity must not cost clarity. Abbreviations, self-coined jargon and telegraphic style make text dense and hard to understand. A good style is an informal version of Simplified Technical English (ASD-STE100).
+Brevity must not cost clarity. Abbreviations, self-coined jargon and telegraphic style make text dense and hard to understand. A good style is an informal version of Simplified Technical English (ASD-STE100). Check with the user before establishing jargon.
 
-### Write for Another Context
+### Write for Other Readers
 
-Other readers may be working in a different context. Treat the wiki as common ground. When you refer to something outside that common ground, such as an event, explain it.
+Other readers may be working in a different context. Treat the wiki as common ground. When you refer to something outside that common ground, such as an event, explain it. For example, make sure that the referents of determiner phrases can be resolved, albeit via link to a different note in the wiki or via a URL -- so long as *any* reader has access to it.
 
 ### Descriptions and Records
 
 Most notes are descriptions: of a system, a customer, a person and their working style, a team, a process, a term, or a recurring problem and its fix. A description stays true for a while. When something changes, edit the description.
 
-Some notes are records of something that happened, such as a meeting, an experiment or an incident. Do not rewrite a record later. If the event happened on another day than the one you write it, put that day in a `date` field (`YYYY-MM-DD`). If a record teaches something lasting, write that in a description and link to the record.
+Some notes are records of something that happened, such as a meeting, an experiment or an incident. Do not rewrite a record later. If the event happened on another day than the one you write it, put that day in a `date` field (`YYYY-MM-DD`). If a record teaches something lasting, write that in a description and link to the event record.
 
 ### Preferences
 
@@ -97,9 +97,15 @@ After you add, rename, move or delete a note, regenerate the INDEX.md in each fo
 - Do not push without the human's permission.
 - Resolve mechanical conflicts yourself. Where two versions contradict each other, infer the resolution from context if you can, and say how you resolved it in the commit message. Otherwise ask the human.
 
-### Linting
+### Reviewing a Wiki
 
-To check a wiki's health, follow the checklist in [references/lint.md](references/lint.md).
+When the human asks for a review, or after a large change such as a reorganization or a batch of new notes, check the wiki against this skill and against the conventions in its AGENTS.md. In a large wiki, you may check only the files changed since a given commit (`git diff --name-only <commit>`), and the notes that link to them.
+
+- Collect every finding first, then report them to the human as one list. Fix nothing before you report.
+- To find stale indexes, run the index command from AGENTS.md on a clean working tree. If `git status` then shows changes, an index was stale.
+- Report a link to a file that does not exist; do not remove it. The human decides whether to write the note or remove the link.
+- After the report, fix mechanical findings yourself, in one commit. Fix the others only after the human agrees. Where two notes contradict each other, or a claim may be wrong, the human decides.
+- Do not rewrite a record to fix a finding. You may move it and complete its frontmatter.
 
 ## Defaults a Wiki Can Adopt
 
