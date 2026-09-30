@@ -61,11 +61,11 @@ Brevity must not cost clarity. Abbreviations, self-coined jargon and telegraphic
 
 Other readers may be working in a different context. Treat the wiki as common ground. When you refer to something outside that common ground, such as an event, explain it. For example, make sure that the referents of determiner phrases can be resolved, albeit via link to a different note in the wiki or via a URL -- so long as *any* reader has access to it.
 
-### Descriptions and Records
+### Notes and Time
 
-Most notes are descriptions: of a system, a customer, a person and their working style, a team, a process, a term, or a recurring problem and its fix. A description stays true for a while. When something changes, edit the description.
+Most notes describe something as it is now, such as a system, a customer or a process. When that thing changes, edit its note.
 
-Some notes are records of something that happened, such as a meeting, an experiment or an incident. Do not rewrite a record later. If the event happened on another day than the one you write it, put that day in a `date` field (`YYYY-MM-DD`). If a record teaches something lasting, write that in a description and link to the event record.
+A note about something that happened, such as a meeting or an incident, is usually most useful as a snapshot of that moment. When things change later, update the notes it affected and link back to it, rather than rewriting the snapshot. A `date` field (`YYYY-MM-DD`) tells readers when it happened.
 
 ### Preferences
 
@@ -105,7 +105,7 @@ When the human asks for a review, or after a large change such as a reorganizati
 - To find stale indexes, run the index command from AGENTS.md on a clean working tree. If `git status` then shows changes, an index was stale.
 - Report a link to a file that does not exist; do not remove it. The human decides whether to write the note or remove the link.
 - After the report, fix mechanical findings yourself, in one commit. Fix the others only after the human agrees. Where two notes contradict each other, or a claim may be wrong, the human decides.
-- Do not rewrite a record to fix a finding. You may move it and complete its frontmatter.
+- A note about a past event is a snapshot. Fix the notes it affected rather than the snapshot itself.
 
 ## Defaults a Wiki Can Adopt
 
