@@ -135,13 +135,13 @@ class GeneratorTestCase(unittest.TestCase):
         return hrefs
 
 
-def md(title: str | None = None, description: str | None = None, body: str = "") -> str:
+def md(name: str | None = None, description: str | None = None, body: str = "") -> str:
     """An ordinary .md file, with optional frontmatter."""
     parts: list[str] = []
-    if title is not None or description is not None:
+    if name is not None or description is not None:
         parts.append("---")
-        if title is not None:
-            parts.append(f"title: {title}")
+        if name is not None:
+            parts.append(f"name: {name}")
         if description is not None:
             parts.append(f"description: {description}")
         parts.append("---")
@@ -602,7 +602,7 @@ class MembersListed(GeneratorTestCase):
 
 
 class LabelSources(GeneratorTestCase):
-    def test_a_markdown_label_prefers_the_frontmatter_title(self) -> None:
+    def test_a_markdown_label_prefers_the_frontmatter_name(self) -> None:
         # spec: w768b (docs/specs/directory-index.md)
         self.write_tree(
             {"docs/alpha.md": md("From frontmatter", "d", body="# From heading\n")}
@@ -625,14 +625,27 @@ class LabelSources(GeneratorTestCase):
         label, _ = self.entry("docs/INDEX.md", "alpha.md")
         self.assertEqual(label, "alpha.md")
 
-    def test_name_is_a_lenient_alias_for_title(self) -> None:
+    def test_title_is_accepted_in_place_of_name(self) -> None:
         # spec: em1ax (docs/specs/directory-index.md)
         self.write_tree(
-            {"docs/alpha.md": "---\nname: Aliased\ndescription: the alpha file\n---\n"}
+            {"docs/alpha.md": "---\ntitle: Older\ndescription: the alpha file\n---\n"}
         )
         self.run_generator("docs")
         label, _ = self.entry("docs/INDEX.md", "alpha.md")
-        self.assertEqual(label, "Aliased")
+        self.assertEqual(label, "Older")
+
+    def test_name_wins_over_title(self) -> None:
+        # spec: em1ax (docs/specs/directory-index.md)
+        self.write_tree(
+            {
+                "docs/alpha.md": (
+                    "---\ntitle: Older\nname: Newer\ndescription: the alpha file\n---\n"
+                )
+            }
+        )
+        self.run_generator("docs")
+        label, _ = self.entry("docs/INDEX.md", "alpha.md")
+        self.assertEqual(label, "Newer")
 
 
 class DescriptionSources(GeneratorTestCase):

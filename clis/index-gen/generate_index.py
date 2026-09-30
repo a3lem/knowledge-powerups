@@ -7,7 +7,7 @@ it. The H1 and the paragraph are hand-written -- the generator writes the
 directory's own name as the H1 when it creates the file and never touches it
 again. Everything else in the body is derived: a subdirectory contributes the
 H1 and first paragraph of its own INDEX.md; a .md file contributes its
-frontmatter title + description, the label falling back to its first heading,
+frontmatter name + description, the label falling back to its first heading,
 then its filename. A first paragraph counts as a description only in an
 INDEX.md, whose format defines it as one. Other files are listed only when
 matched by an --include pattern, or when already present in the index, and are
@@ -46,7 +46,7 @@ here.
 An existing INDEX.md is always regenerated. Creating a missing one depends on
 mode: without -r, the named directory simply gets one. With -r, a directory
 only gets one when it holds something index-worthy -- a subdirectory with an
-INDEX.md, or a .md file carrying both title and description. Bottom-up order
+INDEX.md, or a .md file carrying both name and description. Bottom-up order
 makes worthiness propagate: one documented file deep in the tree pulls
 INDEX.md files up its ancestor chain. -r --no-strict indexes every directory.
 --refresh-only never creates: only existing INDEX.md files are regenerated --
@@ -117,7 +117,7 @@ class Options:
 class Frontmatter:
     # None means the field is absent from the source file: it is never
     # invented, only reported.
-    title: str | None
+    name: str | None
     description: str | None
 
 
@@ -217,9 +217,9 @@ def split_frontmatter(text: str) -> tuple[Frontmatter | None, str]:
             if ":" in line and not line.startswith((" ", "\t")):
                 key, _, value = line.partition(":")
                 fields[key.strip()] = value.strip().strip("'\"")
-        # 'name' is accepted as well, as skills use it.
-        title = fields.get("title") or fields.get("name") or None
-        block = Frontmatter(title=title, description=fields.get("description") or None)
+        # 'title' is the older spelling of 'name', still accepted.
+        name = fields.get("name") or fields.get("title") or None
+        block = Frontmatter(name=name, description=fields.get("description") or None)
         return block, "\n".join(lines[idx + 1 :])
     return None, text
 
@@ -312,10 +312,10 @@ def migrate_body(index_path: Path, text: str) -> tuple[IndexBody, list[str]]:
     # the run's output.
     notes: list[str] = []
     if body.title is None:
-        body.title = block.title
-    elif block.title is not None and block.title != body.title:
+        body.title = block.name
+    elif block.name is not None and block.name != body.title:
         notes.append(
-            f"{index_path}: frontmatter title '{block.title}' discarded; "
+            f"{index_path}: frontmatter name '{block.name}' discarded; "
             f"the H1 '{body.title}' stands"
         )
     if not body.description_lines:
@@ -426,8 +426,8 @@ def entry_for_subdir(subdir: Path, prev: ExistingEntry | None) -> Entry:
 def entry_for_md_file(path: Path, prev: ExistingEntry | None) -> Entry:
     text = path.read_text(encoding="utf-8")
     fm = parse_frontmatter(text)
-    if fm is not None and fm.title is not None:
-        self_named = fm.title
+    if fm is not None and fm.name is not None:
+        self_named = fm.name
     else:
         self_named = first_heading(text)
     # Only an INDEX.md's first paragraph is a description; prose in an ordinary
@@ -635,7 +635,7 @@ def index_worthy(directory: Path, options: Options) -> bool:
                 return True
         elif child.suffix == ".md" and child.name != INDEX_NAME:
             fm = parse_frontmatter(child.read_text(encoding="utf-8"))
-            if fm is not None and fm.title is not None and fm.description is not None:
+            if fm is not None and fm.name is not None and fm.description is not None:
                 return True
     return False
 

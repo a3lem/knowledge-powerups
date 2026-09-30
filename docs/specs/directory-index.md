@@ -95,9 +95,10 @@ description short enough to skim, and no prose around the list.
   description from that file's first paragraph. A directory with no
   description has no paragraph: the H1 is followed straight by the
   list. [ht9j1]
-- A `.md` file's label comes from its frontmatter `title`, else its first H1,
+- A `.md` file's label comes from its frontmatter `name`, else its first H1,
   else its filename. [w768b]
-- `name` is accepted in place of `title` in frontmatter. [em1ax]
+- `title` is accepted in place of `name` in frontmatter, as the older
+  spelling. When a file carries both, `name` wins. [em1ax]
 - A `.md` file's description comes from its frontmatter `description`. [87rk6]
 - A first paragraph is read as a description only in an `INDEX.md`, whose
   format defines it as one. In any other markdown file the paragraph is
@@ -136,7 +137,7 @@ description short enough to skim, and no prose around the list.
   author may have written it there. [irr1y]
 - A label the index already carries is kept when the member did not name
   itself, that is when the label would otherwise fall back to the filename. A
-  member that does name itself, through frontmatter `title` or a first H1,
+  member that does name itself, through frontmatter `name` or a first H1,
   wins over the index. [24inj]
 - An entry whose member still exists is never dropped, even when the member
   falls outside the include set. [33f4e]
@@ -185,7 +186,7 @@ description short enough to skim, and no prose around the list.
 - With `-r`, every subdirectory is processed, bottom-up. [6f4vl]
 - With `-r`, a directory without an `INDEX.md` gets one only when it holds
   something index-worthy: a subdirectory that has an `INDEX.md`, or a `.md`
-  file carrying both a title and a description. [6w3gg]
+  file carrying both a name and a description. [6w3gg]
 - Bottom-up order propagates worthiness: one documented file deep in the tree
   pulls `INDEX.md` files up its ancestor chain, and unrelated directories stay
   untouched. [ijy2l]
@@ -213,9 +214,9 @@ description short enough to skim, and no prose around the list.
   the `--migrate` flag. The generator never converts a file's structure
   without being asked. [s1lmg]
 - `--migrate` converts each `INDEX.md` it processes: the frontmatter block is
-  removed, and it supplies only what the body lacks -- the `title` becomes the
-  H1 when there is no H1, the `description` becomes the paragraph when there is
-  no paragraph. The body wins wherever both carry something, and whatever the
+  removed, and it supplies only what the body lacks -- the `name` (or `title`)
+  becomes the H1 when there is no H1, the `description` becomes the paragraph
+  when there is no paragraph. The body wins wherever both carry something, and whatever the
   frontmatter contributed nothing to is reported under `changed:` along with the
   conversion, so no text disappears unrecorded. The run then regenerates as
   usual, so migrating and refreshing are one pass. [6g8s7]

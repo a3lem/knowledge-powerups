@@ -82,8 +82,9 @@ to anything that is not a file in this directory.
 ## Where labels and descriptions come from
 
 - A subdirectory contributes the H1 and first paragraph of its own `INDEX.md`.
-- A `.md` file contributes its frontmatter `title` (or `name`) and
-  `description`. Without either the label falls back to its first H1, then its filename. A first
+- A `.md` file contributes its frontmatter `name` and `description`. `title`
+  is accepted in place of `name`, as the older spelling. Without either, the
+  label falls back to its first H1, then its filename. A first
   paragraph is **not** read as a description outside an `INDEX.md` -- lifting a
   sentence out of someone's prose would fill the index with descriptions nobody
   wrote.
@@ -114,7 +115,7 @@ to anything that is not a file in this directory.
 
 - Without `-r`, the named directory simply gets one; the request was explicit.
 - With `-r`, a directory is skipped unless it holds something index-worthy: a
-  subdirectory with an `INDEX.md`, or a `.md` file carrying both a title and a
+  subdirectory with an `INDEX.md`, or a `.md` file carrying both a name and a
   description. Otherwise the index would say no more than `ls` does.
 - Bottom-up order makes worthiness propagate: one documented file deep in the
   tree pulls `INDEX.md` files up its ancestor chain, and unrelated directories
