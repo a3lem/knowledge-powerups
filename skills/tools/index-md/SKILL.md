@@ -58,7 +58,13 @@ to anything that is not a file in this directory.
    python3 <skill-base-dir>/scripts/generate_index.py <dir>                    # one directory
    python3 <skill-base-dir>/scripts/generate_index.py <dir> -r                 # whole tree, bottom-up
    python3 <skill-base-dir>/scripts/generate_index.py <dir> --include '*.png'  # also list matching files (repeatable)
+   python3 <skill-base-dir>/scripts/generate_index.py <dir> -r --exclude inbox/  # leave members out (repeatable)
    ```
+
+   `--exclude` matches the way `.gitignore` does: a pattern with no slash
+   matches a name at any depth, one with a slash matches the path from `<dir>`,
+   and a trailing slash matches directories only. An excluded directory is not
+   descended into. It wins over `--include`.
 
    `--refresh-only` regenerates existing files and never creates one -- the
    mode for machinery, since a new `INDEX.md` needs its description authored.
@@ -76,8 +82,8 @@ to anything that is not a file in this directory.
 ## Where labels and descriptions come from
 
 - A subdirectory contributes the H1 and first paragraph of its own `INDEX.md`.
-- A `.md` file contributes its frontmatter `title` and `description`. Without a
-  `title` the label falls back to its first H1, then its filename. A first
+- A `.md` file contributes its frontmatter `title` (or `name`) and
+  `description`. Without either the label falls back to its first H1, then its filename. A first
   paragraph is **not** read as a description outside an `INDEX.md` -- lifting a
   sentence out of someone's prose would fill the index with descriptions nobody
   wrote.
@@ -94,7 +100,7 @@ to anything that is not a file in this directory.
   an H1, or its own `INDEX.md`.
 - Above the marker the list indexes this directory's members and nothing else.
   An entry for a member that still exists is never dropped, not even one outside
-  the `--include` set. Everything else goes: a vanished member, a `../` path, a
+  the `--include` set, unless it is excluded. Everything else goes: a vanished member, a `../` path, a
   path into a subdirectory, a URL, a link to a section of a file. Each drop is
   reported with the entry's full text, so the description survives in the run's
   output. Pinning is how you keep such a line.

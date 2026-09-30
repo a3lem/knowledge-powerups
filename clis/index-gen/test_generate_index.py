@@ -2943,5 +2943,131 @@ class IndexFileName(ReportTestCase):
         self.assertEqual(self.read("docs/sub/index.md"), child)
 
 
+# =====================================================================
+# Group G -- --exclude
+# =====================================================================
+
+
+class ExcludedMembers(ReportTestCase):
+    def test_a_pattern_without_a_slash_matches_a_name_at_any_depth(self) -> None:
+        # spec: ozoa9 (docs/specs/directory-index.md)
+        self.write_tree(
+            {
+                "docs/alpha.md": md("Alpha", "the alpha file"),
+                "docs/draft.md": md("Draft", "a draft"),
+                "docs/sub/bravo.md": md("Bravo", "the bravo file"),
+                "docs/sub/draft.md": md("Draft", "another draft"),
+            }
+        )
+        self.run_generator("docs", "-r", "--exclude", "draft.md")
+        self.assertHrefs("docs/INDEX.md", ["alpha.md", "sub/"])
+        self.assertHrefs("docs/sub/INDEX.md", ["bravo.md"])
+
+    def test_a_pattern_with_a_slash_matches_the_path_from_the_named_directory(self) -> None:
+        # spec: ozoa9 (docs/specs/directory-index.md)
+        self.write_tree(
+            {
+                "docs/draft.md": md("Draft", "a draft"),
+                "docs/sub/bravo.md": md("Bravo", "the bravo file"),
+                "docs/sub/draft.md": md("Draft", "another draft"),
+            }
+        )
+        self.run_generator("docs", "-r", "--exclude", "sub/draft.md")
+        self.assertHrefs("docs/INDEX.md", ["draft.md", "sub/"])
+        self.assertHrefs("docs/sub/INDEX.md", ["bravo.md"])
+
+    def test_a_trailing_slash_matches_directories_only(self) -> None:
+        # spec: ozoa9 (docs/specs/directory-index.md)
+        self.write_tree(
+            {
+                "docs/inbox.md": md("Inbox", "about the inbox"),
+                "docs/inbox/raw.md": md("Raw", "raw material"),
+            }
+        )
+        self.run_generator("docs", "-r", "--exclude", "inbox/")
+        self.assertHrefs("docs/INDEX.md", ["inbox.md"])
+
+    def test_an_excluded_directory_is_not_descended_into(self) -> None:
+        # spec: 4is8i (docs/specs/directory-index.md)
+        self.write_tree(
+            {
+                "docs/alpha.md": md("Alpha", "the alpha file"),
+                "docs/skills/foo/SKILL.md": "---\nname: foo\ndescription: Do foo\n---\n",
+            }
+        )
+        self.run_generator("docs", "-r", "--exclude", "skills/")
+        self.assertHrefs("docs/INDEX.md", ["alpha.md"])
+        self.assertFalse(self.path("docs/skills/INDEX.md").exists())
+        self.assertFalse(self.path("docs/skills/foo/INDEX.md").exists())
+
+    def test_an_index_inside_an_excluded_directory_is_left_untouched(self) -> None:
+        # spec: 4is8i (docs/specs/directory-index.md)
+        stale = "# skills\n\n- [Gone](gone.md): no longer here\n"
+        self.write_tree(
+            {
+                "docs/alpha.md": md("Alpha", "the alpha file"),
+                "docs/skills/INDEX.md": stale,
+            }
+        )
+        self.run_generator("docs", "-r", "--exclude", "skills")
+        self.assertEqual(self.read("docs/skills/INDEX.md"), stale)
+
+    def test_an_excluded_member_does_not_make_its_directory_worthy(self) -> None:
+        # spec: 9l8o1 (docs/specs/directory-index.md)
+        self.write_tree({"docs/sub/draft.md": md("Draft", "a draft")})
+        self.run_generator("docs", "-r", "--exclude", "draft.md")
+        self.assertFalse(self.path("docs/sub/INDEX.md").exists())
+        self.assertFalse(self.path("docs/INDEX.md").exists())
+
+    def test_an_entry_for_an_excluded_member_is_dropped_and_reported(self) -> None:
+        # spec: 3lree (docs/specs/directory-index.md)
+        self.write_tree(
+            {
+                "docs/alpha.md": md("Alpha", "the alpha file"),
+                "docs/inbox/raw.md": md("Raw", "raw material"),
+                "docs/INDEX.md": (
+                    "# docs\n"
+                    "\n"
+                    "- [Alpha](alpha.md): the alpha file\n"
+                    "- [Inbox](inbox/): raw material waiting\n"
+                ),
+            }
+        )
+        report = self.run_generator("docs", "--exclude", "inbox/")
+        self.assertHrefs("docs/INDEX.md", ["alpha.md"])
+        note = self.assertOneNote(self.gaps(report), "inbox/")
+        self.assertIn("[Inbox](inbox/): raw material waiting", note)
+
+    def test_a_pinned_entry_for_an_excluded_member_is_kept(self) -> None:
+        # spec: 3lree (docs/specs/directory-index.md)
+        self.write_tree(
+            {
+                "docs/alpha.md": md("Alpha", "the alpha file"),
+                "docs/inbox/raw.md": md("Raw", "raw material"),
+                "docs/INDEX.md": (
+                    "# docs\n"
+                    "\n"
+                    "- [Alpha](alpha.md): the alpha file\n"
+                    "\n"
+                    f"{PINNED}\n"
+                    "- [Inbox](inbox/): raw material waiting\n"
+                ),
+            }
+        )
+        self.run_generator("docs", "--exclude", "inbox/")
+        self.assertIn("- [Inbox](inbox/): raw material waiting", self.read("docs/INDEX.md"))
+
+    def test_exclude_wins_over_include(self) -> None:
+        # spec: 0qc1r (docs/specs/directory-index.md)
+        self.write_tree(
+            {
+                "docs/alpha.md": md("Alpha", "the alpha file"),
+                "docs/diagram.png": "png",
+            }
+        )
+        self.run_generator("docs", "--include", "*.png", "--exclude", "diagram.png")
+        self.assertHrefs("docs/INDEX.md", ["alpha.md"])
+
+
 if __name__ == "__main__":
     unittest.main()

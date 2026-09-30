@@ -58,8 +58,15 @@ what the body lacks, and whatever it contributed nothing to is discarded and
 reported, quoted, under `changed:`. The name is always matched exactly, since
 on a case-insensitive filesystem INDEX.md and index.md open the same file.
 
+--exclude leaves members out, matched as .gitignore matches: a pattern with no
+slash matches a name at any depth, one with a slash matches the path from
+DIRECTORY, and a trailing slash restricts it to directories. An excluded
+directory is not descended into, and an entry naming an excluded member is
+dropped and reported unless it is pinned.
+
 Usage: generate_index.py DIRECTORY [-r] [--no-strict] [--refresh-only]
-                         [--include GLOB]... [--max-desc-len N] [--migrate]
+                         [--include GLOB]... [--exclude GLOB]...
+                         [--max-desc-len N] [--migrate]
 """
 
 from __future__ import annotations
@@ -97,7 +104,9 @@ UNCHECKABLE_HREF_RE = re.compile(r"^(?:[A-Za-z][A-Za-z0-9+.-]*:|#)")
 class Options:
     """The run's flags, settled once in main()."""
 
+    root: Path  # the directory named on the command line
     include: list[str]
+    exclude: list[str]
     create_always: bool
     refresh_only: bool
     migrate: bool
@@ -158,6 +167,20 @@ class IndexBody:
         return " ".join(self.description_lines) or None
 
 
+def is_excluded(path: Path, options: Options) -> bool:
+    """Whether an --exclude pattern matches the member, as .gitignore would."""
+    for pattern in options.exclude:
+        directories_only = pattern.endswith("/")
+        if directories_only and not path.is_dir():
+            continue
+        anchored = "/" in pattern.rstrip("/")
+        glob = pattern.strip("/")
+        target = path.relative_to(options.root).as_posix() if anchored else path.name
+        if fnmatch(target, glob):
+            return True
+    return False
+
+
 def has_index(directory: Path) -> bool:
     """Whether the directory holds a file named exactly INDEX.md.
 
@@ -194,7 +217,8 @@ def split_frontmatter(text: str) -> tuple[Frontmatter | None, str]:
             if ":" in line and not line.startswith((" ", "\t")):
                 key, _, value = line.partition(":")
                 fields[key.strip()] = value.strip().strip("'\"")
-        title = fields.get("title") or fields.get("name") or None  # 'name' accepted leniently
+        # 'name' is accepted as well, as skills use it.
+        title = fields.get("title") or fields.get("name") or None
         block = Frontmatter(title=title, description=fields.get("description") or None)
         return block, "\n".join(lines[idx + 1 :])
     return None, text
@@ -478,7 +502,7 @@ def replacement_note(index_path: Path, entry: Entry) -> str:
 
 
 def collect_entries(
-    directory: Path, body: IndexBody, include: list[str]
+    directory: Path, body: IndexBody, options: Options
 ) -> tuple[list[Entry], list[str], list[str]]:
     """Entries for the managed list (sorted), plus (changed, gaps) notes."""
     index_path = directory / INDEX_NAME
@@ -497,6 +521,8 @@ def collect_entries(
             continue
         if child.name in pinned_members:
             continue
+        if is_excluded(child, options):
+            continue
         prev = body.entries.get(child.name)
         if child.is_dir():
             if has_legacy_index(child):
@@ -509,7 +535,7 @@ def collect_entries(
             entry = entry_for_subdir(child, prev)
         elif child.suffix == ".md":
             entry = entry_for_md_file(child, prev)
-        elif any(fnmatch(child.name, pattern) for pattern in include):
+        elif any(fnmatch(child.name, pattern) for pattern in options.include):
             entry = entry_for_other_file(child, prev)
         else:
             continue
@@ -520,6 +546,12 @@ def collect_entries(
         if key in seen:
             continue
         member = member_key(prev.href)
+        if member is not None and is_excluded(directory / member, options):
+            gaps.append(
+                f"{index_path}: dropped entry for excluded member "
+                f"{entry_text(prev.label, prev.href, prev.description)}"
+            )
+            continue
         if member is not None and (directory / member).exists():
             # The member exists but falls outside the include set: another
             # agent put it here on purpose -- keep the entry as-is.
@@ -593,10 +625,10 @@ def length_note(description: str | None, source: Path, cap: int) -> str | None:
     )
 
 
-def index_worthy(directory: Path) -> bool:
+def index_worthy(directory: Path, options: Options) -> bool:
     """Would an INDEX.md say more than `ls` does?"""
     for child in directory.iterdir():
-        if child.name.startswith("."):
+        if child.name.startswith(".") or is_excluded(child, options):
             continue
         if child.is_dir():
             if has_index(child):
@@ -648,7 +680,7 @@ def process_directory(directory: Path, options: Options) -> tuple[bool, list[str
     if not existed:
         if options.refresh_only:
             return False, [], []
-        if not options.create_always and not index_worthy(directory):
+        if not options.create_always and not index_worthy(directory, options):
             return False, [], []
         if index_path.exists():
             # The name is not listed, yet the path resolves: another spelling
@@ -704,7 +736,7 @@ def process_directory(directory: Path, options: Options) -> tuple[bool, list[str
     elif body.description is None:
         gaps.append(f"{index_path}: no description")
 
-    entries, entry_changed, entry_gaps = collect_entries(directory, body, options.include)
+    entries, entry_changed, entry_gaps = collect_entries(directory, body, options)
     changed.extend(entry_changed)
     cap = options.max_desc_len
     own_note = length_note(body.description, index_path, cap)
@@ -726,10 +758,10 @@ def process_directory(directory: Path, options: Options) -> tuple[bool, list[str
     return True, changed, gaps
 
 
-def iter_dirs_bottom_up(root: Path) -> Iterator[Path]:
+def iter_dirs_bottom_up(root: Path, options: Options) -> Iterator[Path]:
     for child in sorted(root.iterdir(), key=lambda p: p.name.lower()):
-        if child.is_dir() and not child.name.startswith("."):
-            yield from iter_dirs_bottom_up(child)
+        if child.is_dir() and not child.name.startswith(".") and not is_excluded(child, options):
+            yield from iter_dirs_bottom_up(child, options)
     yield root
 
 
@@ -761,6 +793,15 @@ def main() -> None:
         help="also list files matching this pattern (repeatable), e.g. --include '*.py'",
     )
     parser.add_argument(
+        "--exclude",
+        action="append",
+        default=[],
+        metavar="GLOB",
+        help="leave out members matching this pattern, as .gitignore matches "
+        "(repeatable); an excluded directory is not descended into, e.g. "
+        "--exclude inbox/",
+    )
+    parser.add_argument(
         "--max-desc-len",
         type=int,
         default=DEFAULT_MAX_DESC_LEN,
@@ -783,13 +824,15 @@ def main() -> None:
         raise SystemExit(f"error: not a directory: {directory}")
 
     options = Options(
+        root=directory.resolve(),
         include=args.include,
+        exclude=args.exclude,
         create_always=not args.recursive or args.no_strict,
         refresh_only=args.refresh_only,
         migrate=args.migrate,
         max_desc_len=args.max_desc_len,
     )
-    targets = list(iter_dirs_bottom_up(directory)) if args.recursive else [directory]
+    targets = list(iter_dirs_bottom_up(directory.resolve(), options)) if args.recursive else [directory]
     changed: list[str] = []
     gaps: list[str] = []
     written = 0

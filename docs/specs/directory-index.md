@@ -72,6 +72,23 @@ description short enough to skim, and no prose around the list.
   managed list is an index of this directory's files; a link to anything else
   belongs in the pinned block. [k5zgu]
 
+## Excluded members
+
+- `--exclude GLOB` (repeatable) leaves members out, matched the way
+  `.gitignore` matches: a pattern with no slash matches a member's name at
+  any depth, a pattern with a slash before its end matches the member's path
+  relative to the named directory, and a trailing slash restricts the pattern
+  to directories. `--exclude inbox/` leaves out every directory named
+  `inbox`. [ozoa9]
+- An excluded member is never listed. An excluded directory is not descended
+  into: with `-r` it gets no `INDEX.md`, and one already inside it is left
+  untouched. [4is8i]
+- An excluded member does not make its directory index-worthy. [9l8o1]
+- An entry naming an excluded member is dropped from the managed list and
+  reported with its full text, as when its member is gone. This is the one
+  exception to [33f4e]. To list an excluded member anyway, pin it. [3lree]
+- `--exclude` wins over `--include`. [0qc1r]
+
 ## Where label and description come from
 
 - A subdirectory's label comes from the H1 of its own `INDEX.md`, and its
@@ -80,7 +97,7 @@ description short enough to skim, and no prose around the list.
   list. [ht9j1]
 - A `.md` file's label comes from its frontmatter `title`, else its first H1,
   else its filename. [w768b]
-- `name` is accepted as a lenient alias for `title` in frontmatter. [em1ax]
+- `name` is accepted in place of `title` in frontmatter. [em1ax]
 - A `.md` file's description comes from its frontmatter `description`. [87rk6]
 - A first paragraph is read as a description only in an `INDEX.md`, whose
   format defines it as one. In any other markdown file the paragraph is
