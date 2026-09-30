@@ -1,8 +1,9 @@
 # Linting a context wiki
 
-A lint is a check of the whole wiki against the conventions in SKILL.md. Run one
-when the human asks for it, or after a large change such as a migration or
-a batch of ingests.
+A lint checks a wiki against what every wiki has, against the conventions its
+own AGENTS.md lists, and against the writing guidance in SKILL.md. Run one
+when the human asks for it, or after a large change such as a reorganization
+or a batch of new notes.
 
 Work through the checklist below. Some checks are mechanical: the answer is
 yes or no. Others need judgment. Collect every finding first, then report
@@ -13,87 +14,57 @@ After the report:
 
 - Fix mechanical findings yourself, in one commit, unless the human says
   otherwise.
-- Fix judgment findings only after the human agrees. Where two entries
+- Fix judgment findings only after the human agrees. Where two notes
   contradict each other, or a claim may be wrong, the human decides.
 - Never rewrite the content of a record to fix a finding. A record may be
   moved, and its frontmatter may be completed.
 
 In a large wiki, you may lint only the files that changed since a given
-commit (`git diff --name-only <commit>`). Also check the entries that link
-to those files.
+commit (`git diff --name-only <commit>`). Also check the notes that link to
+those files.
 
-## Layout
+## What Every Wiki Has
 
-- [ ] `.agents/skills` and `.claude/skills` are symlinks to
-      `../agent-skills`.
-- [ ] `CLAUDE.md` is a symlink to `AGENTS.md`.
-- [ ] Git does not track personal Claude Code settings
-      (`CLAUDE.local.md`, `.claude/settings.local.json`).
-- [ ] Git tracks nothing in `inbox/` except `.gitkeep`
-      (`git ls-files inbox`).
 - [ ] `README.md` exists and has a Scope section.
-- [ ] `AGENTS.md` is short, and its instructions are about working in the
-      wiki.
+- [ ] `AGENTS.md` exists, and `CLAUDE.md` is a symlink to it.
+- [ ] `AGENTS.md` is short, and says which conventions the wiki follows.
+- [ ] Every note has a `name` and a `description`.
+- [ ] Each `description` is one line and says what the note is about.
+- [ ] Every `INDEX.md` is current. Run the index generator with the wiki's
+      `--exclude` patterns: if it changes anything, an index was stale.
+- [ ] No `INDEX.md` entry carries a `<!-- to-do -->` placeholder.
 
-## Frontmatter
+## The Wiki's Own Conventions
 
-- [ ] Every entry has a `title` and a `description`.
-- [ ] Each `description` is one line and says what the entry is about.
-- [ ] Every tag used is defined in `TAGS.md`, and every tag defined there
-      is used.
-- [ ] Every type used is defined in `TYPES.md`, and every type defined
-      there is used.
-- [ ] Each `date` field has the form `YYYY-MM-DD` and holds the date of
-      the source or the event, not the date the entry was written.
-
-## Records and sources
-
-- [ ] No record was changed after it was written, apart from moves and
-      frontmatter. `git log --follow -p -- <file>` shows its history.
-- [ ] A record whose event happened on a different day than the record was
-      written has a `date` field.
-- [ ] Every note under `sources/` is about a source, and has a `date` field
-      when the source's date is known.
-- [ ] Only source notes whose names would otherwise repeat, such as
-      meetings, have a date in their file name.
-- [ ] Each source note is cited by at least one entry. A source note that
-      nothing cites may still be useful, but report it.
+- [ ] Each convention listed in `AGENTS.md` holds. For example: if the wiki
+      keeps skills in `agent-skills/`, `.claude/skills` and `.agents/skills`
+      are relative symlinks to it; if it has an `inbox/`, git tracks
+      nothing in it except `.gitkeep` (`git ls-files inbox`); if it uses
+      tags, every tag is defined in `TAGS.md`.
+- [ ] The wiki follows no convention that `AGENTS.md` does not list. Report
+      one you find, so that the human can add it to `AGENTS.md` or drop it.
 
 ## Links
 
-- [ ] All links are standard markdown links. There are no `[[...]]`
-      links.
 - [ ] Links to files that do not exist are reported, not removed. Such a
-      link may point to an entry nobody has written yet. Ask the human
-      whether to write the entry or remove the link.
-- [ ] Entries that no other entry links to are reported. Links from
-      INDEX.md files do not count, since every entry has one.
+      link may point to a note nobody has written yet. Ask the human
+      whether to write the note or remove the link.
 
-## Indexes
-
-- [ ] Every folder with two or more children has an INDEX.md, except
-      `agent-skills/`, `inbox/` and the folders inside them.
-- [ ] Every INDEX.md is current. Run the index-md generator: if it changes
-      anything, the index was stale.
-- [ ] No INDEX.md entry carries a `<!-- to-do -->` placeholder.
-
-## Content
+## Writing
 
 These checks need judgment. Report what you find and why.
 
-- [ ] Each entry is about one thing. Two entries about the same thing
-      should be merged.
-- [ ] No two entries contradict each other. Do not choose a side: report
-      both entries.
-- [ ] Descriptions are current. A description that a newer record or
-      source note contradicts is probably stale.
+- [ ] Each note is about one thing. Two notes about the same thing should
+      be merged.
+- [ ] No two notes contradict each other. Do not choose a side: report
+      both notes.
+- [ ] Descriptions are current. A description that a newer record
+      contradicts is probably stale.
 - [ ] Guesses are marked as guesses ("probably", "we assume"). A claim
       stated as a hard fact with no source or evidence is reported.
 - [ ] Preferences are written as facts about a person, with a reason, not
       as commands.
-- [ ] Jargon is defined in `GLOSSARY.md`, including terms used in a
-      narrower meaning than usual.
-- [ ] Entries are short, and start with the essential information.
-- [ ] Each entry fits the Scope section of the README. An entry that
-      belongs in another wiki is reported.
+- [ ] Notes are short, and start with the essential information.
+- [ ] Each note fits the Scope section of the README. A note that belongs
+      in another wiki is reported.
 - [ ] Each skill's description names a specific task.
