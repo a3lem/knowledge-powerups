@@ -57,10 +57,11 @@ wrong when it disagrees with the code.
   inside the skill.
 
 **[context-wiki](skills/context-wiki/)** -- a git-tracked folder of markdown
-entries that gives agents context beyond a single project, kept up by
-several people and their agents. An agent can read several wikis at once,
-each with its own scope, such as a company, a team or one person. An entry
-is wrong when it disagrees with the world.
+notes that gives agents context beyond a single project, kept up by several
+people and their agents. An agent can read several wikis at once, each with
+its own scope, such as a company, a team or one person. A note is wrong when
+it disagrees with the world. The skill requires a small core and suggests
+the rest; each wiki's `AGENTS.md` says which suggestions it follows.
 
 ## Companion plugins
 

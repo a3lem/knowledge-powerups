@@ -8,9 +8,9 @@ session. Repeat the flag for each wiki.
 command line, put it before `--add-dir`. Otherwise Claude Code reads the
 prompt as another directory.
 
-Claude Code loads skills in `.claude/skills/` from an added folder. The
-wiki's `.claude/skills` is a symlink to `agent-skills/`, so its skills load
-with nothing else to set up.
+Claude Code loads skills in `.claude/skills/` from an added folder. In a
+wiki created with `init-wiki.sh`, `.claude/skills` is a symlink to
+`agent-skills/`, so its skills load with nothing else to set up.
 
 `permissions.additionalDirectories` in `settings.json` gives file access
 only. It loads no skills.
