@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
-# Create the fixed parts of a context wiki: the git repository, the reserved
-# folders, the symlinks and the special files whose content never varies.
+# Create the parts every context wiki starts with: the git repository,
+# AGENTS.md with its CLAUDE.md symlink, and agent-skills/ with the symlinks
+# that let agent harnesses find its skills.
 #
 # Usage: init-wiki.sh [wiki-root]   (default: current directory)
 #
 # Idempotent: creates only what is missing, never overwrites an existing
 # file. Safe to re-run. README.md and the root INDEX.md are not created
 # here: README.md needs the wiki's scope, which only the human knows, and
-# INDEX.md comes from the index-md skill. Nothing is committed.
+# INDEX.md comes from the index-md skill. Nothing is committed, and nothing
+# already in the folder is moved.
 set -euo pipefail
 
 root="${1:-.}"
@@ -76,13 +78,9 @@ make_link() {
 }
 
 make_dir agent-skills
-make_dir sources
-make_dir inbox
 make_dir .agents
 make_dir .claude
 make_keep agent-skills
-make_keep sources
-make_keep inbox
 
 make_link .agents/skills ../agent-skills
 make_link .claude/skills ../agent-skills
@@ -90,19 +88,16 @@ make_link .claude/skills ../agent-skills
 make_file AGENTS.md "$(cat <<'EOF'
 This folder is a context wiki. Load the context-wiki skill before you read
 or change it. Start at the README.md next to this file.
+
+## Conventions
+
+- Agent skills live in agent-skills/. .claude/skills and .agents/skills are
+  relative symlinks to it.
 EOF
 )"
 make_link CLAUDE.md AGENTS.md
 
-make_file TAGS.md "# Tags"
-
-# inbox/* rather than inbox/: git does not look inside an ignored folder, so
-# the .gitkeep exception would have no effect.
 make_file .gitignore "$(cat <<'EOF'
-# Raw material waiting for ingestion. Stays on this machine.
-inbox/*
-!inbox/.gitkeep
-
 # Personal Claude Code settings and instructions
 CLAUDE.local.md
 .claude/settings.local.json
@@ -122,6 +117,30 @@ if [ "${#skipped[@]}" -eq 0 ]; then
   echo "  (nothing)"
 else
   printf '  %s\n' "${skipped[@]}"
+fi
+# has_note_frontmatter <file> -- the file opens with frontmatter that carries
+# both name and description
+has_note_frontmatter() {
+  awk 'NR == 1 && $0 != "---" { exit 1 }
+       NR > 1 && $0 == "---" { exit !(n && d) }
+       /^name:/ { n = 1 }
+       /^description:/ { d = 1 }
+       END { if (NR < 2) exit 1 }' "$1"
+}
+
+# Markdown that was here before is a note, and needs name and description
+# frontmatter. Reported, never moved or changed.
+missing=()
+while IFS= read -r -d '' f; do
+  rel="${f#"$root"/}"
+  case "$rel" in
+    README.md | AGENTS.md | CLAUDE.md | INDEX.md | */INDEX.md | agent-skills/*) continue ;;
+  esac
+  has_note_frontmatter "$f" || missing+=("$rel")
+done < <(find "$root" -name .git -prune -o -type f -name '*.md' -print0)
+if [ "${#missing[@]}" -gt 0 ]; then
+  echo "Notes without name and description frontmatter:"
+  printf '  %s\n' "${missing[@]}"
 fi
 if [ "${#conflicts[@]}" -gt 0 ]; then
   echo "Conflicts (left alone, fix by hand):"

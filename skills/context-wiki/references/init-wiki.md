@@ -1,8 +1,7 @@
 # Creating a context wiki
 
-Most of a new wiki is the same every time. A script creates that part. The
-human decides the rest: where the wiki lives, what belongs in it, and who
-shares it.
+A script creates what every new wiki starts with. The human decides the
+rest: where the wiki lives, what belongs in it, and who shares it.
 
 1. Ask the human three things:
    - the folder for the wiki,
@@ -18,22 +17,25 @@ shares it.
    The script:
 
    - creates the wiki folder if it is missing, and runs `git init`,
-   - creates `agent-skills/`, `sources/` and `inbox/`, each with an empty
-     `.gitkeep` file so that git tracks the folder until it holds
-     something,
-   - creates the symlinks `.agents/skills`, `.claude/skills` and
-     `CLAUDE.md`. They are relative, so they work in every clone.
-   - creates the files `AGENTS.md` and `TAGS.md`, and a `.gitignore` so that
-     the contents of `inbox/` and personal Claude Code settings are not
+   - creates `AGENTS.md`, and `CLAUDE.md` as a symlink to it,
+   - creates `agent-skills/` with an empty `.gitkeep` file, so that git
+     tracks the folder before it holds a skill,
+   - creates `.agents/skills` and `.claude/skills` as symlinks to
+     `agent-skills/`. They are relative, so they work in every clone.
+   - creates a `.gitignore` so that personal Claude Code settings are not
      tracked by git.
 
-   The script never overwrites a file, so you can run it again safely. It
-   stops if the folder is inside another git repository, because the wiki
-   must be the root of its own repository. If that happens, tell the human.
-   Do not move anything.
+   The script never overwrites or moves a file, so you can run it again
+   safely. It stops if the folder is inside another git repository, because
+   the wiki must be the root of its own repository. If that happens, tell
+   the human. Do not move anything.
+
+   If the folder already holds markdown files, the script lists those
+   without `name` and `description` frontmatter. Each of them is a note and
+   needs both fields. Add them with the human's agreement.
 
 3. Write `README.md` with the human. The Scope section matters most.
-   Contributors read it to decide whether an entry belongs in this wiki.
+   Contributors read it to decide whether a note belongs in this wiki.
    Suggested format (all sections except Scope are optional):
 
    ```markdown
@@ -54,20 +56,22 @@ shares it.
    <Guard against noise>
    ```
 
-4. Generate the root `INDEX.md` with the index-md skill. `README.md`,
-   `AGENTS.md`, `CLAUDE.md` and `TAGS.md` have no frontmatter, so the
-   generator gives them a `<!-- to-do -->` placeholder. Replace each
-   placeholder with a short description in `INDEX.md` itself. The generator
-   keeps descriptions written there.
+4. Ask the human which of the skill's other defaults the wiki adopts, such
+   as `sources/`, `inbox/`, rooted links, a glossary or tags. Set up each
+   one, and list it under Conventions in `AGENTS.md`.
 
-5. Commit everything.
+5. Generate the root `INDEX.md` with the index-md skill, adding
+   `--exclude inbox/` if the wiki has an inbox. Replace its H1 with
+   the wiki's name and write a one-line description below it. The files at
+   the root have no frontmatter, so the generator gives them a
+   `<!-- to-do -->` placeholder. Replace each placeholder with a short
+   description in `INDEX.md` itself. The generator keeps descriptions
+   written there.
 
-6. If the wiki is shared, add the remote with `git remote add origin <url>`.
+6. Commit everything.
+
+7. If the wiki is shared, add the remote with `git remote add origin <url>`.
    Push only when the human says so.
 
-7. Add the folder to `CONTEXT_WIKI_DIRS` on this machine. See
+8. Add the folder to `CONTEXT_WIKI_DIRS` on this machine. See
    [context-wiki-dirs.md](context-wiki-dirs.md).
-
-If the folder already holds markdown files, the script leaves them alone.
-Each of them becomes an entry and needs a `title` and a `description` in its
-frontmatter.
