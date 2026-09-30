@@ -5,6 +5,9 @@ description: Why entries stay at a context wiki's root, next to agent-skills/, s
 
 # Flat context wiki layout
 
+Superseded by [0004](0004-context-wiki-recommended-defaults.md): the layout
+became a suggestion.
+
 A context wiki keeps its entries at the root of its repository. The folders
 with a fixed meaning sit beside them: `agent-skills/` (formerly `skills/`)
 for skills the harness discovers, `sources/` for notes on citable sources,
