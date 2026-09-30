@@ -8,7 +8,7 @@ or a batch of new notes.
 Work through the checklist below. Some checks are mechanical: the answer is
 yes or no. Others need judgment. Collect every finding first, then report
 them to the human as one list, grouped by check. Fix nothing before you
-report.
+report, apart from the indexes that the staleness check regenerates.
 
 After the report:
 
@@ -30,8 +30,9 @@ those files.
 - [ ] `AGENTS.md` is short, and says which conventions the wiki follows.
 - [ ] Every note has a `name` and a `description`.
 - [ ] Each `description` is one line and says what the note is about.
-- [ ] Every `INDEX.md` is current. Run the index generator with the wiki's
-      `--exclude` patterns: if it changes anything, an index was stale.
+- [ ] Every `INDEX.md` is current. On a clean working tree, run the index
+      command from `AGENTS.md`. If `git status` then shows changes, an
+      index was stale.
 - [ ] No `INDEX.md` entry carries a `<!-- to-do -->` placeholder.
 
 ## The Wiki's Own Conventions
@@ -41,8 +42,6 @@ those files.
       are relative symlinks to it; if it has an `inbox/`, git tracks
       nothing in it except `.gitkeep` (`git ls-files inbox`); if it uses
       tags, every tag is defined in `TAGS.md`.
-- [ ] The wiki follows no convention that `AGENTS.md` does not list. Report
-      one you find, so that the human can add it to `AGENTS.md` or drop it.
 
 ## Links
 

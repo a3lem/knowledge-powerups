@@ -93,6 +93,9 @@ or change it. Start at the README.md next to this file.
 
 - Agent skills live in agent-skills/. .claude/skills and .agents/skills are
   relative symlinks to it.
+- INDEX.md files are generated with the index-md skill, leaving out the
+  skills and the CLAUDE.md symlink:
+  `generate_index.py <this folder> -r --exclude agent-skills/ --exclude /CLAUDE.md`
 EOF
 )"
 make_link CLAUDE.md AGENTS.md

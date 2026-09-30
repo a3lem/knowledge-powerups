@@ -21,7 +21,7 @@ To create a new context wiki, follow [references/init-wiki.md](references/init-w
 
 - **README.md** at the root. Its Scope section says what belongs in the wiki and what does not.
 - **AGENTS.md** at the root, with a CLAUDE.md symlink to it. It says that the folder is a context wiki and that agents should load this skill. It also says which conventions the wiki follows, such as the defaults below that it adopted. Keep it short, and do not repeat README.md.
-- **Notes.** A note is a markdown file about one thing. The wiki's folders are free: organize notes however suits the knowledge. Every note starts with this frontmatter:
+- **Notes.** A note is a markdown file about one thing. Every markdown file except README.md, AGENTS.md, CLAUDE.md, the INDEX.md files and the skills is a note. The wiki's folders are free: organize notes however suits the knowledge. Every note starts with this frontmatter:
 
   ```markdown
   ---
@@ -31,7 +31,7 @@ To create a new context wiki, follow [references/init-wiki.md](references/init-w
   ```
 
   Add other fields when the wiki's AGENTS.md asks for them.
-- **INDEX.md files.** An INDEX.md lists the files in its folder, with the `name` and `description` of each, so a reader opens only what is relevant. Generate them with the index-md skill: `generate_index.py <wiki> -r`. Add `--exclude <folder>/` for each folder that should not be indexed, and list those folders in AGENTS.md, so that every contributor generates the same indexes.
+- **INDEX.md files.** An INDEX.md lists the files in its folder, with the `name` and `description` of each, so a reader opens only what is relevant. Generate them with the index-md skill, using the command in the wiki's AGENTS.md, so that every contributor generates the same indexes. The command uses `-r` for the whole tree and `--exclude` for what should not be indexed, such as `agent-skills/`.
 
 ## Reading a Wiki
 
@@ -69,7 +69,7 @@ Some notes are records of something that happened, such as a meeting, an experim
 
 ### Preferences
 
-Write a person's preferences as facts about that person, with the reason: "Adriaan prefers small commits, so each one is easy to review", not "Make small commits." A reader of several wikis then knows whose preference it is, and the reason helps them apply it in new situations.
+Write a person's preferences as facts about that person, with the reason if you know it: "Adriaan prefers small commits, so each one is easy to review", not "Make small commits." A reader of several wikis then knows whose preference it is, and the reason helps them apply it in new situations.
 
 ## Contributing
 
@@ -107,7 +107,7 @@ When a wiki adopts one of these, write it in the wiki's AGENTS.md, so that other
 
 - **`agent-skills/`** holds agent skills (agentskills.io): procedures, especially for tasks that took several attempts to get right. Write one when you want to remember how to do a task. `.claude/skills` and `.agents/skills` must be relative symlinks to `agent-skills/`, so that agent harnesses find the skills when the wiki folder is added to a session. A skill's description names a specific task. New wikis have this folder.
 - **`sources/`** holds notes about sources that other notes cite: an article, a book, a talk, a meeting. A source note says in your own words what the source contains, links to the original if it has a URL, and has a `date` field for when the source was published or the event took place. Raw material, such as a transcript or a clipped article, does not belong in a wiki. Distill what matters into a source note and into the notes it changes.
-- **`inbox/`** collects raw material that waits to be distilled. Make git ignore its contents (`inbox/*` and `!inbox/.gitkeep` in `.gitignore`), so that raw material stays on each person's machine, and run the index generator with `--exclude inbox/`. Take one file at a time: distill it, commit the notes, then delete the file.
+- **`inbox/`** collects raw material that waits to be distilled. Create it with an empty `.gitkeep`, and make git ignore the rest of its contents (`inbox/*` and `!inbox/.gitkeep` in `.gitignore`), so that raw material stays on each person's machine. Add `--exclude inbox/` to the index command in AGENTS.md. Take one file at a time: distill it into new or existing notes, commit them, then delete the file.
 - **Rooted links.** Use standard markdown links, not `[[name]]` links, and start the path with `/`, the wiki root: `/customers/acme.md`. Each note then has one link spelling, so a search for its path finds every link to it, and links still work when the note that contains them moves.
-- **GLOSSARY.md** at the root: a sorted list of jargon with definitions, in the form `- <term>: <definition>`. Jargon includes abbreviations, new terms, and ordinary words used in a narrower meaning.
-- **Tags.** A `tags: [<tag>, ...]` frontmatter field, with every tag defined in a TAGS.md at the root, in the same form as the glossary. Reuse a tag before you add one, and define a new tag in the same commit.
+- **GLOSSARY.md** at the root: a note whose body is a sorted list of jargon with definitions, in the form `- <term>: <definition>`. Jargon includes abbreviations, new terms, and ordinary words used in a narrower meaning.
+- **Tags.** A `tags: [<tag>, ...]` frontmatter field, with every tag defined in a TAGS.md note at the root, in the same form as the glossary. Reuse a tag before you add one, and define a new tag in the same commit.

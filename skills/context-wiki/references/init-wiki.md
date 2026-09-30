@@ -22,6 +22,8 @@ rest: where the wiki lives, what belongs in it, and who shares it.
      tracks the folder before it holds a skill,
    - creates `.agents/skills` and `.claude/skills` as symlinks to
      `agent-skills/`. They are relative, so they work in every clone.
+   - writes into `AGENTS.md` the command that generates the wiki's
+     `INDEX.md` files.
    - creates a `.gitignore` so that personal Claude Code settings are not
      tracked by git.
 
@@ -58,15 +60,19 @@ rest: where the wiki lives, what belongs in it, and who shares it.
 
 4. Ask the human which of the skill's other defaults the wiki adopts, such
    as `sources/`, `inbox/`, rooted links, a glossary or tags. Set up each
-   one, and list it under Conventions in `AGENTS.md`.
+   one, list it under Conventions in `AGENTS.md`, and add any folder that
+   should not be indexed to the index command there.
 
-5. Generate the root `INDEX.md` with the index-md skill, adding
-   `--exclude inbox/` if the wiki has an inbox. Replace its H1 with
-   the wiki's name and write a one-line description below it. The files at
-   the root have no frontmatter, so the generator gives them a
-   `<!-- to-do -->` placeholder. Replace each placeholder with a short
-   description in `INDEX.md` itself. The generator keeps descriptions
-   written there.
+5. Create the root `INDEX.md` by running the index-md generator on the
+   wiki folder once without `-r`, with the `--exclude` options from the
+   command in `AGENTS.md`. (With `-r`, the generator creates an index only
+   in a folder that holds notes, and a new wiki has none yet. Once the root
+   index exists, the command in `AGENTS.md` keeps it current.) Replace the
+   H1 with the wiki's name and write a one-line description below it.
+   `README.md` and `AGENTS.md` have no frontmatter, so the generator gives
+   them a `<!-- to-do -->` placeholder and suggests adding frontmatter.
+   Instead, replace each placeholder with a short description in `INDEX.md`
+   itself. The generator keeps descriptions written there.
 
 6. Commit everything.
 
