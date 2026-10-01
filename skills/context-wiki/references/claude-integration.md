@@ -12,6 +12,13 @@ Claude Code loads skills in `.claude/skills/` from an added folder. In a
 wiki created with `init-wiki.sh`, `.claude/skills` is a symlink to
 `agent-skills/`, so its skills load with nothing else to set up.
 
+By default, Claude Code does not load `CLAUDE.md` from an added folder, so
+the wiki's `AGENTS.md` does not load either. Set
+`CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` to make it load `CLAUDE.md`
+from each added folder. In a wiki created with `init-wiki.sh`, `CLAUDE.md` is
+a symlink to `AGENTS.md`. Claude Code does not load an `AGENTS.md` on its
+own, so the symlink is needed.
+
 `permissions.additionalDirectories` in `settings.json` gives file access
 only. It loads no skills.
 
@@ -25,6 +32,9 @@ A launcher that starts Claude Code with every wiki passes one
   can contain spaces.
 - It puts the `--add-dir` flags after the user's own arguments. This way, a
   prompt typed on the command line still works as a prompt.
+- It sets `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` for the Claude
+  Code process only, so that each wiki's `AGENTS.md` loads. Sessions started
+  without the launcher do not load the `CLAUDE.md` of folders they add.
 
 If you set this up for a user, ask first how they want to start it. Options
 include a shell function with a new name, a script on their `PATH`, or a
