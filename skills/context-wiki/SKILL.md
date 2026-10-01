@@ -43,13 +43,33 @@ To create a new context wiki, follow [references/init-wiki.md](references/init-w
 - When a note contradicts what you observe, trust the observation. Fix the note, or tell the human.
 - Two wikis may disagree. Do not choose one silently. Tell the human.
 
+## Write Only What Has a Basis
+
+This applies to every file in the wiki: notes, README.md, AGENTS.md, INDEX.md descriptions, the glossary and the skills.
+
+Every statement you write needs a basis: something a human told you, a source you read, or something you observed. Readers assume that each statement came from somewhere, and they act on it. Elaboration without a basis is harmful, even when it is plausible and well meant:
+
+- A reader cannot tell your invention from a fact.
+- A scope item or a rule that nobody asked for decides what other people and their agents write, and how they behave.
+- A plausible addition is the hardest kind of error to find in a review, because nothing about it looks wrong.
+
+General knowledge is a basis for general facts only. It is not a basis for facts about the people, the organization, the customers or the systems that the wiki describes. For example, knowing what document processing software usually does tells you nothing about how one company's system works.
+
+So:
+
+- When a human gives you content, such as a scope, a rule or a fact, write what they said, in their terms. Do not add items, examples, reasons or details that they did not give.
+- Do not invent examples, names or numbers. A made-up example reads as a fact.
+- When you think something is missing, propose it to the human. Write it only after they agree.
+- When you write an inference, mark it ("probably", "we assume", "this may be true") and say what it is based on, so that the reader can tell a guess from an observation.
+- If you do not know something, leave it out. A reader can see that a detail is missing and ask. A guessed detail looks like everything around it.
+
 ## Writing Notes
 
 ### Distill
 
 Dumping information is easy. Separating fact from assumption afterward is hard, especially for LLMs. Collecting information feels like learning it, but a pile of saved material is not knowledge. Every note competes for a reader's attention, and a note nobody has processed makes the notes around it harder to trust.
 
-So distill before you write. Say what you learned in your own words, and keep only what a reader working in a different context would need. Mark anything you have not verified ("probably", "we assume", "this may be true"), so that the reader can tell a guess from an observation. When you are not sure whether something matters, ask the human.
+So distill before you write. Say what you learned in your own words, and keep only what a reader working in a different context would need. Distilling removes material; it never adds statements that the material does not support (see [Write Only What Has a Basis](#write-only-what-has-a-basis)). When you are not sure whether something matters, ask the human.
 
 ### Keep It Short and Clear
 
@@ -103,6 +123,7 @@ When the human asks for a review, or after a large change such as a reorganizati
 
 - Collect every finding first, then report them to the human as one list. Fix nothing before you report.
 - To find stale indexes, generate them as described under [What Every Wiki Has](#what-every-wiki-has), on a clean working tree. If `git status` then shows changes, an index was stale.
+- Report each statement that has no basis: no source, and nothing in the wiki or its history that supports it. Do not delete it yourself; the human decides.
 - Report a link to a file that does not exist; do not remove it. The human decides whether to write the note or remove the link.
 - After the report, fix mechanical findings yourself, in one commit. Fix the others only after the human agrees. Where two notes contradict each other, or a claim may be wrong, the human decides.
 - A note about a past event is a snapshot. Fix the notes it affected rather than the snapshot itself.

@@ -36,6 +36,11 @@ rest: where the wiki lives, what belongs in it, and who shares it.
 
 3. Write `README.md` with the human. The Scope section matters most.
    Contributors read it to decide whether a note belongs in this wiki.
+   Write only the scope, audience and rules that the human gave you, in
+   their words. Do not add items, examples or rules of your own. If you
+   think the README needs more, list your proposals for the human, and
+   add only the ones they accept. See "Write Only What Has a Basis" in
+   SKILL.md.
    Suggested format (all sections except Scope are optional):
 
    ```markdown
