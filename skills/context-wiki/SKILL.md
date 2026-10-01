@@ -43,7 +43,25 @@ To create a new context wiki, follow [references/init-wiki.md](references/init-w
 - When a note contradicts what you observe, trust the observation. Fix the note, or tell the human.
 - Two wikis may disagree. Do not choose one silently. Tell the human.
 
-## Write Only What Has a Basis
+## Writing Guidelines
+
+### Distill
+
+Dumping information is easy. Separating fact from assumption afterward is hard, especially for LLMs. Collecting information feels like learning it, but a pile of saved material is not knowledge. Every note competes for a reader's attention, and a note nobody has processed makes the notes around it harder to trust.
+
+So distill before you write. Say what you learned in your own words, and keep only what a reader working in a different context would need. Distilling removes material; it never adds statements that the material does not support (see [Write Only What Has a Basis](#write-only-what-has-a-basis)). When you are not sure whether something matters, ask the human.
+
+### Keep It Short and Clear
+
+Keep notes short. The longer a note, the less likely it is to be reviewed thoroughly. Start with the essential information, and add detail after it.
+
+Brevity must not cost clarity. Abbreviations, self-coined jargon and telegraphic style make text dense and hard to understand. A good style is an informal version of Simplified Technical English (ASD-STE100). Check with the user before establishing jargon.
+
+### Write for Other Readers
+
+Other readers may be working in a different context. Treat the wiki as common ground. When you refer to something outside that common ground, such as an event, explain it. For example, make sure that the referents of determiner phrases can be resolved, albeit via link to a different note in the wiki or via a URL -- so long as *any* reader has access to it.
+
+### Write Only What Has a Basis
 
 This applies to every file in the wiki: notes, README.md, AGENTS.md, INDEX.md descriptions, the glossary and the skills.
 
@@ -63,23 +81,6 @@ So:
 - When you write an inference, mark it ("probably", "we assume", "this may be true") and say what it is based on, so that the reader can tell a guess from an observation.
 - If you do not know something, leave it out. A reader can see that a detail is missing and ask. A guessed detail looks like everything around it.
 
-## Writing Notes
-
-### Distill
-
-Dumping information is easy. Separating fact from assumption afterward is hard, especially for LLMs. Collecting information feels like learning it, but a pile of saved material is not knowledge. Every note competes for a reader's attention, and a note nobody has processed makes the notes around it harder to trust.
-
-So distill before you write. Say what you learned in your own words, and keep only what a reader working in a different context would need. Distilling removes material; it never adds statements that the material does not support (see [Write Only What Has a Basis](#write-only-what-has-a-basis)). When you are not sure whether something matters, ask the human.
-
-### Keep It Short and Clear
-
-Keep notes short. The longer a note, the less likely it is to be reviewed thoroughly. Start with the essential information, and add detail after it.
-
-Brevity must not cost clarity. Abbreviations, self-coined jargon and telegraphic style make text dense and hard to understand. A good style is an informal version of Simplified Technical English (ASD-STE100). Check with the user before establishing jargon.
-
-### Write for Other Readers
-
-Other readers may be working in a different context. Treat the wiki as common ground. When you refer to something outside that common ground, such as an event, explain it. For example, make sure that the referents of determiner phrases can be resolved, albeit via link to a different note in the wiki or via a URL -- so long as *any* reader has access to it.
 
 ### Notes and Time
 
