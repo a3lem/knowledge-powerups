@@ -83,7 +83,6 @@ description short enough to skim, and no prose around the list.
 - An excluded member is never listed. An excluded directory is not descended
   into: with `-r` it gets no `INDEX.md`, and one already inside it is left
   untouched. [4is8i]
-- An excluded member does not make its directory index-worthy. [9l8o1]
 - An entry naming an excluded member is dropped from the managed list and
   reported with its full text, as when its member is gone. This is the one
   exception to [33f4e]. To list an excluded member anyway, pin it. [3lree]
@@ -184,14 +183,10 @@ description short enough to skim, and no prose around the list.
 - Without `-r`, the named directory gets an `INDEX.md` whether or not it
   already has one. [6a8xt]
 - With `-r`, every subdirectory is processed, bottom-up. [6f4vl]
-- With `-r`, a directory without an `INDEX.md` gets one only when it holds
-  something index-worthy: a subdirectory that has an `INDEX.md`, or a `.md`
-  file carrying both a name and a description. [6w3gg]
-- Bottom-up order propagates worthiness: one documented file deep in the tree
-  pulls `INDEX.md` files up its ancestor chain, and unrelated directories stay
-  untouched. [ijy2l]
-- `-r --no-strict` creates an `INDEX.md` in every directory, worthy or
-  not. [vcv98]
+- With `-r`, every directory that is not excluded gets an `INDEX.md`, even
+  one that is empty or holds nothing to list. An index's description says
+  what belongs in its directory, so it tells a writer where to put a new file
+  as well as telling a reader what is there. [6w3gg]
 - `--refresh-only` regenerates existing `INDEX.md` files and never creates
   one. [u417b]
 
@@ -227,8 +222,8 @@ description short enough to skim, and no prose around the list.
 
 ## Reporting
 
-- Every run prints how many directories it indexed, and how many it skipped as
-  unworthy. [871yq]
+- Every run prints how many directories it indexed. With `--refresh-only` it
+  also prints how many it skipped for having no `INDEX.md`. [871yq]
 - The report has two sections. `changed:` records what the run did to text
   that already existed. `needs attention:` lists gaps: an index without a
   description, an entry still carrying the placeholder, a dropped stale entry,

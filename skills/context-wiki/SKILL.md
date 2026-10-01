@@ -77,7 +77,7 @@ Write a person's preferences as facts about that person, with the reason if you 
 
 First choose the wiki. The Scope section of each wiki's README.md says what belongs there.
 
-Within the wiki, follow the conventions in its AGENTS.md, and follow the INDEX.md files down to the closest folder. Before you add a note, look for an existing note about the same thing, and update that one instead. Keep one thing per note. Create a new folder only when several notes will share it.
+Within the wiki, follow the conventions in its AGENTS.md, and follow the INDEX.md files down to the closest folder. Before you add a note, look for an existing note about the same thing, and update that one instead. Keep one thing per note. Create a new folder only when several notes will share it, and describe in its INDEX.md what belongs there.
 
 ### Keeping Indexes Current
 

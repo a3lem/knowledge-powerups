@@ -43,13 +43,11 @@ only copy of its description survives in the report; the run infers nothing
 from a drop, since a renamed directory and a deleted one look identical from
 here.
 
-An existing INDEX.md is always regenerated. Creating a missing one depends on
-mode: without -r, the named directory simply gets one. With -r, a directory
-only gets one when it holds something index-worthy -- a subdirectory with an
-INDEX.md, or a .md file carrying both name and description. Bottom-up order
-makes worthiness propagate: one documented file deep in the tree pulls
-INDEX.md files up its ancestor chain. -r --no-strict indexes every directory.
---refresh-only never creates: only existing INDEX.md files are regenerated --
+An existing INDEX.md is always regenerated, and a missing one is created: for
+the named directory, and with -r for every directory below it that is not
+excluded, empty ones included. An index's description says what belongs in its
+directory, so even an empty directory's index tells a writer where to put a
+new file. --refresh-only never creates: only existing INDEX.md files are regenerated --
 the mode for machinery (a created INDEX.md needs its description authored).
 --migrate converts a legacy index in the same pass that regenerates it. An
 index still named index.md is renamed to INDEX.md. Frontmatter is folded into
@@ -64,7 +62,7 @@ DIRECTORY, and a trailing slash restricts it to directories. An excluded
 directory is not descended into, and an entry naming an excluded member is
 dropped and reported unless it is pinned.
 
-Usage: generate_index.py DIRECTORY [-r] [--no-strict] [--refresh-only]
+Usage: generate_index.py DIRECTORY [-r] [--refresh-only]
                          [--include GLOB]... [--exclude GLOB]...
                          [--max-desc-len N] [--migrate]
 """
@@ -107,7 +105,6 @@ class Options:
     root: Path  # the directory named on the command line
     include: list[str]
     exclude: list[str]
-    create_always: bool
     refresh_only: bool
     migrate: bool
     max_desc_len: int
@@ -625,21 +622,6 @@ def length_note(description: str | None, source: Path, cap: int) -> str | None:
     )
 
 
-def index_worthy(directory: Path, options: Options) -> bool:
-    """Would an INDEX.md say more than `ls` does?"""
-    for child in directory.iterdir():
-        if child.name.startswith(".") or is_excluded(child, options):
-            continue
-        if child.is_dir():
-            if has_index(child):
-                return True
-        elif child.suffix == ".md" and child.name != INDEX_NAME:
-            fm = parse_frontmatter(child.read_text(encoding="utf-8"))
-            if fm is not None and fm.name is not None and fm.description is not None:
-                return True
-    return False
-
-
 def render(title: str, description_lines: list[str], entries: list[Entry], pinned: list[str]) -> str:
     # The body is a run of blocks with one blank line between them, so an
     # absent block -- no description, an empty managed list -- leaves no gap.
@@ -679,8 +661,6 @@ def process_directory(directory: Path, options: Options) -> tuple[bool, list[str
 
     if not existed:
         if options.refresh_only:
-            return False, [], []
-        if not options.create_always and not index_worthy(directory, options):
             return False, [], []
         if index_path.exists():
             # The name is not listed, yet the path resolves: another spelling
@@ -772,13 +752,8 @@ def main() -> None:
         "-r",
         "--recursive",
         action="store_true",
-        help="index every subdirectory too, bottom-up; skips directories with "
-        "nothing index-worthy (see --no-strict)",
-    )
-    parser.add_argument(
-        "--no-strict",
-        action="store_true",
-        help="with -r: create an INDEX.md in every directory, worthy or not",
+        help="index every subdirectory too, bottom-up, creating an INDEX.md "
+        "in each one that is not excluded",
     )
     parser.add_argument(
         "--refresh-only",
@@ -827,7 +802,6 @@ def main() -> None:
         root=directory.resolve(),
         include=args.include,
         exclude=args.exclude,
-        create_always=not args.recursive or args.no_strict,
         refresh_only=args.refresh_only,
         migrate=args.migrate,
         max_desc_len=args.max_desc_len,
@@ -846,7 +820,7 @@ def main() -> None:
     skipped = len(targets) - written
     summary = f"indexed {written} {noun}"
     if skipped:
-        summary += f", skipped {skipped} with nothing index-worthy (--no-strict overrides)"
+        summary += f", skipped {skipped} without an {INDEX_NAME} (--refresh-only)"
     print(summary)
     if changed:
         print("changed:")

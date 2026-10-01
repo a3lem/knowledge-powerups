@@ -716,7 +716,7 @@ class EntryLifetime(GeneratorTestCase):
 class CreationModes(GeneratorTestCase):
     def test_without_r_the_named_directory_gets_an_index(self) -> None:
         # spec: 6a8xt (docs/specs/directory-index.md)
-        self.write_tree({"docs/notes.txt": "nothing index-worthy here\n"})
+        self.write_tree({"docs/notes.txt": "no markdown here\n"})
         self.run_generator("docs")
         self.assertTrue(self.path("docs/INDEX.md").is_file())
 
@@ -733,51 +733,24 @@ class CreationModes(GeneratorTestCase):
         self.assertTrue(self.path("docs/two/INDEX.md").is_file())
         self.assertTrue(self.path("docs/INDEX.md").is_file())
 
-    def test_with_r_an_unworthy_directory_gets_no_index(self) -> None:
+    def test_with_r_every_directory_gets_an_index_even_an_empty_one(self) -> None:
         # spec: 6w3gg (docs/specs/directory-index.md)
-        self.write_tree({"docs/sub/notes.txt": "nothing index-worthy here\n"})
-        self.run_generator("docs", "-r")
-        self.assertFalse(self.path("docs/sub/INDEX.md").exists())
-        self.assertFalse(self.path("docs/INDEX.md").exists())
-
-    def test_with_r_a_documented_markdown_file_makes_a_directory_worthy(self) -> None:
-        # spec: 6w3gg (docs/specs/directory-index.md)
-        self.write_tree({"docs/sub/alpha.md": md("Alpha", "the alpha file")})
-        self.run_generator("docs", "-r")
-        self.assertTrue(self.path("docs/sub/INDEX.md").is_file())
-
-    def test_with_r_a_title_without_a_description_is_not_worthy(self) -> None:
-        # spec: 6w3gg (docs/specs/directory-index.md)
-        self.write_tree({"docs/sub/alpha.md": md("Alpha")})
-        self.run_generator("docs", "-r")
-        self.assertFalse(self.path("docs/sub/INDEX.md").exists())
-
-    def test_worthiness_propagates_up_the_ancestor_chain(self) -> None:
-        # spec: ijy2l (docs/specs/directory-index.md)
         self.write_tree(
             {
-                "docs/deep/deeper/alpha.md": md("Alpha", "the alpha file"),
-                "docs/unrelated/notes.txt": "nothing index-worthy here\n",
-            }
-        )
-        self.run_generator("docs", "-r")
-        self.assertTrue(self.path("docs/deep/deeper/INDEX.md").is_file())
-        self.assertTrue(self.path("docs/deep/INDEX.md").is_file())
-        self.assertTrue(self.path("docs/INDEX.md").is_file())
-        self.assertFalse(self.path("docs/unrelated/INDEX.md").exists())
-
-    def test_no_strict_creates_an_index_in_every_directory(self) -> None:
-        # spec: vcv98 (docs/specs/directory-index.md)
-        self.write_tree(
-            {
-                "docs/sub/notes.txt": "nothing index-worthy here\n",
+                "docs/sub/notes.txt": "no markdown here\n",
                 "docs/empty/": None,
             }
         )
-        self.run_generator("docs", "-r", "--no-strict")
+        self.run_generator("docs", "-r")
         self.assertTrue(self.path("docs/INDEX.md").is_file())
         self.assertTrue(self.path("docs/sub/INDEX.md").is_file())
         self.assertTrue(self.path("docs/empty/INDEX.md").is_file())
+
+    def test_with_r_a_created_index_without_a_description_is_reported(self) -> None:
+        # spec: 6w3gg (docs/specs/directory-index.md)
+        self.write_tree({"docs/empty/": None})
+        report = self.run_generator("docs", "-r")
+        self.assertRegex(report, r"docs/empty/INDEX\.md: created -- author its description")
 
     def test_refresh_only_regenerates_but_never_creates(self) -> None:
         # spec: u417b (docs/specs/directory-index.md)
@@ -800,17 +773,18 @@ class Reporting(GeneratorTestCase):
         report = self.run_generator("docs")
         self.assertRegex(report, r"indexed 1 director")
 
-    def test_the_run_reports_how_many_directories_it_skipped_as_unworthy(self) -> None:
+    def test_refresh_only_reports_how_many_directories_it_skipped(self) -> None:
         # spec: 871yq (docs/specs/directory-index.md)
         self.write_tree(
             {
+                "docs/INDEX.md": "# docs\n",
                 "docs/alpha.md": md("Alpha", "the alpha file"),
-                "docs/unrelated/notes.txt": "nothing index-worthy here\n",
+                "docs/unrelated/notes.txt": "no markdown here\n",
             }
         )
-        report = self.run_generator("docs", "-r")
+        report = self.run_generator("docs", "-r", "--refresh-only")
         self.assertRegex(report, r"indexed 1 director")
-        self.assertRegex(report, r"skipped 1")
+        self.assertRegex(report, r"skipped 1 without an INDEX\.md")
 
 
 # =====================================================================
@@ -929,7 +903,7 @@ class LabelMerging(GeneratorTestCase):
         # spec: 24inj (docs/specs/directory-index.md)
         self.write_tree(
             {
-                "docs/sub/notes.txt": "nothing index-worthy here\n",
+                "docs/sub/notes.txt": "no markdown here\n",
                 "docs/INDEX.md": "# docs\n\n- [Loose material](sub/): odds and ends\n",
             }
         )
@@ -3024,13 +2998,6 @@ class ExcludedMembers(ReportTestCase):
         )
         self.run_generator("docs", "-r", "--exclude", "skills")
         self.assertEqual(self.read("docs/skills/INDEX.md"), stale)
-
-    def test_an_excluded_member_does_not_make_its_directory_worthy(self) -> None:
-        # spec: 9l8o1 (docs/specs/directory-index.md)
-        self.write_tree({"docs/sub/draft.md": md("Draft", "a draft")})
-        self.run_generator("docs", "-r", "--exclude", "draft.md")
-        self.assertFalse(self.path("docs/sub/INDEX.md").exists())
-        self.assertFalse(self.path("docs/INDEX.md").exists())
 
     def test_an_entry_for_an_excluded_member_is_dropped_and_reported(self) -> None:
         # spec: 3lree (docs/specs/directory-index.md)

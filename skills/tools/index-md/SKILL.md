@@ -31,7 +31,8 @@ Project documentation and specs.          <- description. Yours.
 when it creates the file, and never touches it again. The parent directory's
 index reads it as this directory's label.
 
-**The description** is the first paragraph, and it is yours entirely. It is
+**The description** is the first paragraph, and it is yours entirely. Say what
+belongs in the directory, so that a writer can tell where a new file goes. It is
 absent until you write it, and reported as a gap until you do. The parent's
 index reads it as this directory's description -- that is how a description
 propagates up the tree.
@@ -113,14 +114,11 @@ to anything that is not a file in this directory.
 
 ## When an INDEX.md is created
 
-- Without `-r`, the named directory simply gets one; the request was explicit.
-- With `-r`, a directory is skipped unless it holds something index-worthy: a
-  subdirectory with an `INDEX.md`, or a `.md` file carrying both a name and a
-  description. Otherwise the index would say no more than `ls` does.
-- Bottom-up order makes worthiness propagate: one documented file deep in the
-  tree pulls `INDEX.md` files up its ancestor chain, and unrelated directories
-  stay untouched.
-- `-r --no-strict` indexes every directory.
+- Without `-r`, the named directory gets one.
+- With `-r`, every directory that is not excluded gets one, even an empty
+  directory. Its description says what belongs there, which `ls` cannot. Use
+  `--exclude` for directories that should have no index.
+- `--refresh-only` creates none.
 
 ## Reading the report
 

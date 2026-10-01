@@ -63,16 +63,17 @@ rest: where the wiki lives, what belongs in it, and who shares it.
    one, list it under Conventions in `AGENTS.md`, and add any folder that
    should not be indexed to the index command there.
 
-5. Create the root `INDEX.md` by running the index-md generator on the
-   wiki folder once without `-r`, with the `--exclude` options from the
-   command in `AGENTS.md`. (With `-r`, the generator creates an index only
-   in a folder that holds notes, and a new wiki has none yet. Once the root
-   index exists, the command in `AGENTS.md` keeps it current.) Replace the
-   H1 with the wiki's name and write a one-line description below it.
-   `README.md` and `AGENTS.md` have no frontmatter, so the generator gives
-   them a `<!-- to-do -->` placeholder and suggests adding frontmatter.
-   Instead, replace each placeholder with a short description in `INDEX.md`
-   itself. The generator keeps descriptions written there.
+5. Create the `INDEX.md` files by running the index command in
+   `AGENTS.md`. It creates one in every folder it indexes, including empty
+   ones such as a new `sources/`. In the root `INDEX.md`, replace the H1
+   with the wiki's name and write a one-line description below it. In each
+   other new `INDEX.md`, write a description that says what belongs in that
+   folder. `README.md` and `AGENTS.md` have no frontmatter, so the
+   generator gives them a `<!-- to-do -->` placeholder and suggests adding
+   frontmatter. Instead, replace each placeholder with a short description
+   in the root `INDEX.md` itself. The generator keeps descriptions written
+   there. Run the command again, so that the root index picks up the
+   descriptions of the folders below it.
 
 6. Commit everything.
 
