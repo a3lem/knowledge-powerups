@@ -33,28 +33,28 @@ marketplace entry, so the base plugin stays knowledge-only.
   `/architecture-md`, `/changelog-md` and `/decision-records` cover individual
   parts of the layout. `/incremental-specs` declares `/docs-folder` as a
   prerequisite and bundles `gen-spec-codes.py`.
-- **skills/tools/index-md/** -- one skill wrapping the index generator. Its
-  `scripts/generate_index.py` is a symlink into `clis/index-gen/`; an
-  installed copy of the skill carries the file itself.
+- **skills/tools/index-md/** -- the index generator and the one skill that
+  runs it. `scripts/generate_index.py` regenerates the list in a directory's
+  `INDEX.md` from the directory's members, merging additively rather than
+  overwriting: a hand-written label or description survives, and a
+  `<!-- pinned -->` block is copied through untouched. Stdlib-only, so a
+  copy runs anywhere `python3` does. Other skills reach it through
+  `/index-md`, never by path. `tests/test_generate_index.py` covers it, and
+  its tests cite the statements they verify in
+  `docs/specs/directory-index.md`.
 - **skills/context-wiki/** -- one skill. `SKILL.md` holds what every wiki
   has, the writing guidance, and defaults a wiki can adopt.
   `references/` covers setup: the `CONTEXT_WIKI_DIRS` variable, loading
   wikis into Claude Code, and creating a wiki, with `init-wiki.sh` under
   `scripts/`. It has no spec in `docs/specs/`: the skill is itself the
   natural-language statement of the conventions.
-- **clis/index-gen/** -- `generate_index.py`, the only shared executable in
-  the repo. It regenerates the list in a directory's `INDEX.md` from the
-  directory's members, merging additively rather than overwriting: a
-  hand-written label or description survives, and a `<!-- pinned -->` block
-  is copied through untouched. Stdlib-only, so a copy runs anywhere
-  `python3` does. Covered by `test_generate_index.py`, whose tests cite the
-  statements they verify in `docs/specs/directory-index.md`.
 - **extra-plugins/agent-memory/** -- the companion with moving parts.
   `memoryctl.py` holds the deterministic verbs, `hooks.json` compels them at
   session boundaries, and the skills plus the `memory` agent carry the
-  judgment. It reaches the generator through a symlink in its `scripts/`
-  that the installer dereferences. Its own `docs/architecture.md` describes
-  the three layers.
+  judgment. Its hooks run the generator outside any skill, so it reaches
+  the file through a symlink in its `scripts/` into
+  `skills/tools/index-md/scripts/`, which the installer dereferences. Its
+  own `docs/architecture.md` describes the three layers.
 - **docs/** -- this repository's own docs, following `/docs-folder`.
   `specs/` and `decisions/` hold the base plugin's reference material.
 
@@ -71,11 +71,10 @@ marketplace entry, so the base plugin stays knowledge-only.
   A companion names base skills by full name and degrades to guidance-only
   when the base plugin is absent.
 - **Two installers, one wording.** A Claude Code install copies the whole
-  repo into the plugin cache, so `clis/` travels with the skills. An
-  `npx skills` install copies a single skill directory and dereferences
-  symlinks, so a skill that needs an executable keeps a symlink to it under
-  its own `scripts/` and names it relative to its own base directory, never
-  through `${CLAUDE_PLUGIN_ROOT}`.
+  repo into the plugin cache. An `npx skills` install copies a single skill
+  directory and dereferences symlinks. So a skill keeps its executables
+  under its own `scripts/` and names them relative to its own base
+  directory, never through `${CLAUDE_PLUGIN_ROOT}`.
 - **Rendered surfaces.** In `agent-memory` only, several files are generated
   from `.shablon/templates/` with facts pulled from `memoryctl.py`, so the
   enforcing code is their single source. Those files carry a header saying

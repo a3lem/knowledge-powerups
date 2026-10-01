@@ -188,7 +188,7 @@ INSTRUCTIONS_FILE = PROMPTS_DIR / "injected-instructions.md"
 SUBAGENT_PREAMBLE_FILE = PROMPTS_DIR / "subagent-preamble.md"
 SESSIONLESS_PREAMBLE_FILE = PROMPTS_DIR / "sessionless-preamble.md"
 
-# The index.md list generator, shared through the repo's clis/index-gen/. It
+# The index.md list generator, owned by the base plugin's index-md skill. It
 # sits next to this file: a symlink in the checkout, a copy in an installed
 # plugin (the installer dereferences links within the marketplace). Absent,
 # the index refresh degrades to a skipped step, never a failure.

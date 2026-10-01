@@ -1,1 +1,1 @@
-../../../clis/index-gen/generate_index.py
+../../../skills/tools/index-md/scripts/generate_index.py

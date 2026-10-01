@@ -77,7 +77,7 @@ An agent's memory is a git repository of markdown files at
 - A `reference/` directory carries an `index.md`: its frontmatter
   `description` is authored and is what the injected index shows for the
   directory; its body is a generated table of contents (the repo's
-  `clis/index-gen`, reached via the index-md skill or `memoryctl index`),
+  generator, reached via the index-md skill or `memoryctl index`),
   regenerated after files are added, removed, or moved -- never written by
   hand. An entry whose file is gone is dropped
   on regeneration. SessionStart and SessionEnd refresh existing indexes;

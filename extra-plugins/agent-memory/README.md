@@ -34,7 +34,7 @@ injection, validation, and end-of-turn commits from then on.
 The index-md skill from the base plugin is a companion: reference
 directories keep generated `index.md` tables of contents. The hooks refresh
 them at SessionStart and SessionEnd through the bundled
-`scripts/generate_index.py`, a copy of the repo's `clis/index-gen`, and the
+`scripts/generate_index.py`, a copy of the base plugin's generator, and the
 memory skills invoke the index-md skill for creation and manual
 regeneration.
 

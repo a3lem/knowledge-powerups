@@ -51,9 +51,8 @@ to anything that is not a file in this directory.
 1. Generate. Never write the list by hand. The generator is
    `scripts/generate_index.py` next to this SKILL.md (stdlib-only, plain
    `python3`). Resolve it against the base directory reported when this
-   skill was loaded; in the repo checkout the file is a symlink into
-   `clis/index-gen/`, and an installed copy of the skill carries the file
-   itself.
+   skill was loaded. Run it only from this skill; other skills and agents
+   that need indexes go through `/index-md`.
 
    ```sh
    python3 <skill-base-dir>/scripts/generate_index.py <dir>                    # one directory
