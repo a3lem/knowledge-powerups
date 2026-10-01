@@ -3,8 +3,8 @@
 
 Each code is 5 lowercase alphanumeric characters with at least one letter and
 one digit, e.g. '2b342', so it reads as a random code rather than a word or a
-number. Codes tag behavior statements in reference specs; see the
-incremental-specs skill.
+number. Codes tag behavior statements in reference specs; see
+/incremental-specs.
 """
 
 from __future__ import annotations

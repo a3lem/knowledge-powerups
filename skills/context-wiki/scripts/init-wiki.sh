@@ -8,7 +8,7 @@
 # Idempotent: creates only what is missing, never overwrites an existing
 # file. Safe to re-run. README.md and the root INDEX.md are not created
 # here: README.md needs the wiki's scope, which only the human knows, and
-# INDEX.md comes from the index-md skill. Nothing is committed, and nothing
+# INDEX.md comes from /index-md. Nothing is committed, and nothing
 # already in the folder is moved.
 set -euo pipefail
 
@@ -86,12 +86,12 @@ make_link .agents/skills ../agent-skills
 make_link .claude/skills ../agent-skills
 
 make_file AGENTS.md "$(cat <<'EOF'
-This folder is a context wiki. Load the context-wiki skill before you read
+This folder is a context wiki. Load /context-wiki before you read
 or change it. Start at the README.md next to this file.
 
 ## Conventions
 
-This wiki follows these defaults from the context-wiki skill:
+This wiki follows these defaults from /context-wiki:
 
 - `agent-skills/`
 EOF

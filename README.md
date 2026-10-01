@@ -31,18 +31,18 @@ knowledge store they serve.
 **[code-docs](skills/code-docs/)** -- a repository's `docs/`. A docs file is
 wrong when it disagrees with the code.
 
-- `docs-folder` -- a standard layout for `docs/`, where a file's path tells
+- `/docs-folder` -- a standard layout for `docs/`, where a file's path tells
   you its role (spec, decision record, how-to, work item) and its authority
   (whether you can build on it without re-verifying against the code). Also
   how work items under `docs/wip/` are created, resumed and archived, and
   how to adopt the layout in a new or existing repository, with a scaffold
   script for the baseline files.
-- `architecture-md` -- what belongs in `docs/architecture.md`, following
+- `/architecture-md` -- what belongs in `docs/architecture.md`, following
   matklad's ARCHITECTURE.md.
-- `changelog-md` -- maintaining `CHANGELOG.md` per Keep a Changelog 1.1.0.
-- `decision-records` -- when a decision is worth recording, and the minimal
+- `/changelog-md` -- maintaining `CHANGELOG.md` per Keep a Changelog 1.1.0.
+- `/decision-records` -- when a decision is worth recording, and the minimal
   format for `docs/decisions/<NNNN>-<slug>.md`.
-- `incremental-specs` -- spec-driven development for code bases that are
+- `/incremental-specs` -- spec-driven development for code bases that are
   never done. Reference specs in `docs/specs/` describe current behavior;
   spec deltas ride along with a planned change and describe only the
   difference; statement codes such as `[2b342]` link tests and code to the
@@ -50,7 +50,7 @@ wrong when it disagrees with the code.
 
 **[tools](skills/tools/)** -- skills the others lean on.
 
-- `index-md` -- per-directory `INDEX.md` tables of contents that make a file
+- `/index-md` -- per-directory `INDEX.md` tables of contents that make a file
   tree discoverable without opening every file. The title and description
   are written by hand; the list is generated and merged additively, so
   hand-written labels survive. The generator is stdlib-only Python and ships

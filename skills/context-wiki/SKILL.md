@@ -31,7 +31,7 @@ To create a new context wiki, follow [references/init-wiki.md](references/init-w
   ```
 
   Add other fields when the wiki's AGENTS.md asks for them.
-- **INDEX.md files.** An INDEX.md lists the files in its folder, with the `name` and `description` of each, so a reader opens only what is relevant. Generate them with the index-md skill on the wiki root, with `-r --exclude /CLAUDE.md --exclude agent-skills/ --exclude inbox/`, plus an `--exclude` for each folder that the wiki's AGENTS.md says is not indexed. Every contributor then generates the same indexes.
+- **INDEX.md files.** An INDEX.md lists the files in its folder, with the `name` and `description` of each, so a reader opens only what is relevant. Generate them with /index-md on the wiki root, with `-r --exclude /CLAUDE.md --exclude agent-skills/ --exclude inbox/`, plus an `--exclude` for each folder that the wiki's AGENTS.md says is not indexed. Every contributor then generates the same indexes.
 
 ## Reading a Wiki
 

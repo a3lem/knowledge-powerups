@@ -61,7 +61,7 @@ rest: where the wiki lives, what belongs in it, and who shares it.
    one as the skill describes it, and list it under Conventions in
    `AGENTS.md`. If a folder should not be indexed, say so there too.
 
-5. Create the `INDEX.md` files with the index-md skill, as SKILL.md
+5. Create the `INDEX.md` files with /index-md, as SKILL.md
    describes under INDEX.md files. Every folder it indexes gets one, including an
    empty folder such as a new `sources/`. In the root `INDEX.md`, replace the H1
    with the wiki's name and write a one-line description below it. In each
@@ -70,7 +70,7 @@ rest: where the wiki lives, what belongs in it, and who shares it.
    generator gives them a `<!-- to-do -->` placeholder and suggests adding
    frontmatter. Instead, replace each placeholder with a short description
    in the root `INDEX.md` itself. The generator keeps descriptions written
-   there. Run the index-md skill again, so that the root index picks up the
+   there. Run /index-md again, so that the root index picks up the
    descriptions of the folders below it.
 
 6. Commit everything.

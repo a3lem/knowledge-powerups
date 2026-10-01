@@ -18,7 +18,7 @@ example `~/.claude/CLAUDE.md` for Claude Code:
 ```markdown
 Context wikis may exist in the folders named in `$CONTEXT_WIKI_DIRS` (a
 colon-separated list). Read the variable when you need context beyond this
-project. Load the context-wiki skill, then start at each wiki's README.md.
+project. Load /context-wiki, then start at each wiki's README.md.
 ```
 
 This works with any agent that can run a shell command. The agent can read
