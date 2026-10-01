@@ -22,8 +22,8 @@ rest: where the wiki lives, what belongs in it, and who shares it.
      tracks the folder before it holds a skill,
    - creates `.agents/skills` and `.claude/skills` as symlinks to
      `agent-skills/`. They are relative, so they work in every clone.
-   - writes into `AGENTS.md` the command that generates the wiki's
-     `INDEX.md` files.
+   - writes into `AGENTS.md` the options for generating the wiki's
+     `INDEX.md` files with the index-md skill.
    - creates a `.gitignore` so that personal Claude Code settings are not
      tracked by git.
 
@@ -61,18 +61,18 @@ rest: where the wiki lives, what belongs in it, and who shares it.
 4. Ask the human which of the skill's other defaults the wiki adopts, such
    as `sources/`, `inbox/`, rooted links, a glossary or tags. Set up each
    one, list it under Conventions in `AGENTS.md`, and add any folder that
-   should not be indexed to the index command there.
+   should not be indexed to the index options there.
 
-5. Create the `INDEX.md` files by running the index command in
-   `AGENTS.md`. It creates one in every folder it indexes, including empty
-   ones such as a new `sources/`. In the root `INDEX.md`, replace the H1
+5. Create the `INDEX.md` files with the index-md skill, using the
+   options in `AGENTS.md`. Every folder it indexes gets one, including an
+   empty folder such as a new `sources/`. In the root `INDEX.md`, replace the H1
    with the wiki's name and write a one-line description below it. In each
    other new `INDEX.md`, write a description that says what belongs in that
    folder. `README.md` and `AGENTS.md` have no frontmatter, so the
    generator gives them a `<!-- to-do -->` placeholder and suggests adding
    frontmatter. Instead, replace each placeholder with a short description
    in the root `INDEX.md` itself. The generator keeps descriptions written
-   there. Run the command again, so that the root index picks up the
+   there. Run the index-md skill again, so that the root index picks up the
    descriptions of the folders below it.
 
 6. Commit everything.
