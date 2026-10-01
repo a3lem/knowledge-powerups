@@ -1,6 +1,6 @@
 ---
 name: context-wiki
-description: Read, write and set up context wikis, the markdown knowledge bases that people and their agents share across projects. Load whenever the user mentions context wikis, including questions about which wikis exist or what they hold; before opening any file in a wiki; when $CONTEXT_WIKI_DIRS appears in instructions or a folder's AGENTS.md says it is a context wiki; and when setting up context wikis for an agent.
+description: Consult, contribute to, and manage context wikis, the markdown knowledge bases that people and their agents share across projects. Load whenever the user mentions context wikis, including questions about which wikis exist or what they hold; before opening any file in a wiki; when $CONTEXT_WIKI_DIRS appears in instructions or a folder's AGENTS.md says it is a context wiki; and when setting up context wikis for an agent.
 ---
 
 # Context Wiki
@@ -20,7 +20,7 @@ To create a new context wiki, follow [references/init-wiki.md](references/init-w
 ## What Every Wiki Has
 
 - **README.md** at the root. Its Scope section says what belongs in the wiki and what does not.
-- **AGENTS.md** at the root, with an optional CLAUDE.md symlink to it. It says that the folder is a context wiki and that agents should load this skill. It also says which conventions the wiki follows, such as the defaults below that it adopted. Keep it short, and do not repeat README.md.
+- **AGENTS.md** at the root, with an optional CLAUDE.md symlink to it. It says that the folder is a context wiki and that agents should load this skill. It also says which conventions the wiki follows, such as the defaults below that it adopted. It names conventions and leaves out mechanics, such as how to generate indexes or what git ignores: this skill and the skills it refers to cover those. Keep it short, and do not repeat README.md.
 - **Notes.** A note is a markdown file about one thing. Every markdown file except README.md, AGENTS.md, CLAUDE.md, the INDEX.md files and the skills is a note. The wiki's folders are free: organize notes however suits the knowledge. Every note starts with this frontmatter:
 
   ```markdown
@@ -31,7 +31,7 @@ To create a new context wiki, follow [references/init-wiki.md](references/init-w
   ```
 
   Add other fields when the wiki's AGENTS.md asks for them.
-- **INDEX.md files.** An INDEX.md lists the files in its folder, with the `name` and `description` of each, so a reader opens only what is relevant. Generate them with the index-md skill, using the options in the wiki's AGENTS.md, so that every contributor generates the same indexes. The options are `-r` for the whole tree and `--exclude` for what should not be indexed.
+- **INDEX.md files.** An INDEX.md lists the files in its folder, with the `name` and `description` of each, so a reader opens only what is relevant. Generate them with the index-md skill on the wiki root, with `-r --exclude /CLAUDE.md --exclude agent-skills/ --exclude inbox/`, plus an `--exclude` for each folder that the wiki's AGENTS.md says is not indexed. Every contributor then generates the same indexes.
 
 ## Reading a Wiki
 
@@ -102,7 +102,7 @@ After you add, rename, move or delete a note, regenerate the INDEX.md in each fo
 When the human asks for a review, or after a large change such as a reorganization or a batch of new notes, check the wiki against this skill and against the conventions in its AGENTS.md. In a large wiki, you may check only the files changed since a given commit (`git diff --name-only <commit>`), and the notes that link to them.
 
 - Collect every finding first, then report them to the human as one list. Fix nothing before you report.
-- To find stale indexes, run the index-md skill with the options from AGENTS.md on a clean working tree. If `git status` then shows changes, an index was stale.
+- To find stale indexes, generate them as described under [What Every Wiki Has](#what-every-wiki-has), on a clean working tree. If `git status` then shows changes, an index was stale.
 - Report a link to a file that does not exist; do not remove it. The human decides whether to write the note or remove the link.
 - After the report, fix mechanical findings yourself, in one commit. Fix the others only after the human agrees. Where two notes contradict each other, or a claim may be wrong, the human decides.
 - A note about a past event is a snapshot. Fix the notes it affected rather than the snapshot itself.
@@ -121,4 +121,4 @@ When a wiki adopts one of these, write it in the wiki's AGENTS.md, so that other
 
 Raw material is information as it arrives, before anyone has distilled it: a journal article, a meeting transcript, an exported chat thread. It is transient. It usually enters the wiki through an inbox, and it is deleted once it has been distilled. Distilling it produces a note about the source, usually in `sources/`, and updates to the notes it concerns.
 
-- **`inbox/`** holds raw material until someone distills it. Create it with an empty `.gitkeep`, and make git ignore the rest of its contents (`inbox/*` and `!inbox/.gitkeep` in `.gitignore`), so that raw material stays on each person's machine and out of git history. Add `--exclude inbox/` to the index options in AGENTS.md. Take one file at a time: distill it into new or existing notes, commit them, then delete the file.
+- **`inbox/`** holds raw material until someone distills it. Create it with an empty `.gitkeep`, and make git ignore the rest of its contents (`inbox/*` and `!inbox/.gitkeep` in `.gitignore`), so that raw material stays on each person's machine and out of git history. Take one file at a time: distill it into new or existing notes, commit them, then delete the file.

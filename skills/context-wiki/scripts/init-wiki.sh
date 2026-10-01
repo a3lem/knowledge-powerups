@@ -91,11 +91,9 @@ or change it. Start at the README.md next to this file.
 
 ## Conventions
 
-- Agent skills live in agent-skills/. .claude/skills and .agents/skills are
-  relative symlinks to it.
-- INDEX.md files are generated with the index-md skill, run on this folder
-  with these options, which leave out the skills and the CLAUDE.md symlink:
-  `-r --exclude agent-skills/ --exclude /CLAUDE.md`
+This wiki follows these defaults from the context-wiki skill:
+
+- `agent-skills/`
 EOF
 )"
 make_link CLAUDE.md AGENTS.md
