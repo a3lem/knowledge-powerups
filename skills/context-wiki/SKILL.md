@@ -139,8 +139,23 @@ When a wiki adopts one of these, write it in the wiki's AGENTS.md, so that other
 - **GLOSSARY.md** at the root: a note whose body is a sorted list of jargon with definitions, in the form `- **<term>**: <definition>`. Jargon includes abbreviations, new terms, and ordinary words used in a narrower meaning.
 - **Tags.** A `tags: [<tag>, ...]` frontmatter field, with every tag defined in a TAGS.md note at the root, in the same form as the glossary. Reuse a tag before you add one, and define a new tag in the same commit.
 
+### Annotations
+
+An annotation is an HTML comment that tells agents to do something about a statement, in the form `<!-- @<key>: <value> -->`. For example, while you check a note with your human, they may not know whether a statement is true, but know that Niels does. You then write:
+
+    Probably only EU customers use the export. <!-- @ask: niels -->
+
+Niels' agent brings this to Niels' attention and updates the note with his answer.
+
+- Put an annotation directly after the statement it is about.
+- Annotations are for work that is not done yet. Information for readers, such as a source or a date, belongs in the visible text.
+- When an annotation names your human, tell them. When the work is done, remove the annotation.
+- Reuse an existing key before you add one. Define each key, and when to remove it, in AGENTS.md or an ANNOTATIONS.md note at the root.
+
 ### Raw Material
 
 Raw material is information as it arrives, before anyone has distilled it: a journal article, a meeting transcript, an exported chat thread. It is transient. It usually enters the wiki through an inbox, and it is deleted once it has been distilled. Distilling it produces a note about the source, usually in `sources/`, and updates to the notes it concerns.
 
 - **`inbox/`** holds raw material until someone distills it. Create it with an empty `.gitkeep`, and make git ignore the rest of its contents (`inbox/*` and `!inbox/.gitkeep` in `.gitignore`), so that raw material stays on each person's machine and out of git history. Take one file at a time: distill it into new or existing notes, commit them, then delete the file.
+
+When the human asks for a fact-checking round, follow [references/rapid-fact-check.md](references/rapid-fact-check.md).

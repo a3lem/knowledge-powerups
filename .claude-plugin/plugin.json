@@ -1,6 +1,6 @@
 {
   "name": "knowledge-powerups",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Knowledge conventions for coding agents: a standard docs/ layout, incremental specs, generated INDEX.md files, and context wikis -- plain markdown in git, where a file's path tells you its role and whether to trust it",
   "author": {
     "name": "a3lem"
