@@ -1,109 +1,58 @@
 # Knowledge Powerups
 
-Skills for storing and organizing what a coding agent learns, so that
-knowledge compounds across sessions instead of being re-derived in each one.
+Every session with an agent should build on past sessions, instead of using
+precious tokens to discover the same information over and over. The fastest
+way to make knowledge compound is to let the agent record and organize it.
+This repo gives your agent the skills to do this in a structured way, so
+that bullshit doesn't accumulate and that you can still see the forest for
+the pile of markdown files.
 
-## Why
+## Plugins
 
-An LLM is a static artifact. It knows what was trained into its weights and
-what fits in the context window, and it forgets a session the moment the
-session ends. Every agent harness answers this with some form of simulated
-memory, and a cottage industry of memory products offers to do it better.
+If you write software, install `code-knowledge` and `context-wikis`. If you
+don't, `context-wikis` is all you need. Install `agent-memory` once you want
+to go further.
 
-What users actually want is narrower than "memory": never onboarding an agent
-onto the same thing twice, never re-explaining a particularity of their
-context, never paying again for exploration already done.
+| Plugin | For | What you get |
+|--------|-----|--------------|
+| [code-knowledge](plugins/code-knowledge/) | software engineers | the knowledge that usually stays in engineers' heads, written down in `docs/`: how the code is organized, why it was built this way, what changed, and what it should do |
+| [context-wikis](plugins/context-wikis/) | anyone who works with an agent | knowledge about you, your team, your customers and your systems, in wikis that you, your colleagues and all your agents share across projects |
+| [agent-memory](extra/agent-memory/) | power users (extension) | your agent's own memory, loaded into every session and kept up by the agent itself |
 
-These skills take a conventions-first approach. Knowledge lives in plain
-markdown in git, and the convention -- where a file sits, what its path
-implies -- carries the meaning that a database schema would otherwise carry.
-Two rules drive the layouts:
+Each plugin's README lists its skills and how to start.
 
-1. For any piece of knowledge, there is exactly one obvious place to put it,
-   so nothing is duplicated.
-2. A file's location says whether it can be trusted without re-checking.
+## Install
 
-## The skills
-
-The skills ship as two core plugins, split by audience. Anyone who works
-with an agent can use context wikis; engineers usually install both.
-
-### [context-wikis](plugins/context-wikis/)
-
-- `/context-wiki` -- a git-tracked folder of markdown notes that gives agents
-  context beyond a single project, kept up by several people and their
-  agents. An agent can read several wikis at once, each with its own scope,
-  such as a company, a team or one person. A note is wrong when it disagrees
-  with the world. The skill requires a small core and suggests the rest;
-  each wiki's `AGENTS.md` says which suggestions it follows.
-- `/index-md` -- per-directory `INDEX.md` tables of contents that make a file
-  tree discoverable without opening every file. The title and description
-  are written by hand; the list is generated and merged additively, so
-  hand-written labels survive. The generator is stdlib-only Python and ships
-  inside the skill. Every context wiki uses it; other plugins use it when it
-  is installed.
-
-### [code-knowledge](plugins/code-knowledge/)
-
-The tacit knowledge that builds up across the software development
-lifecycle, made explicit in a repository's `docs/`. A docs file is wrong
-when it disagrees with the code.
-
-- `/docs-folder` -- a standard layout for `docs/`, where a file's path tells
-  you its role (spec, decision record, how-to, work item) and its authority
-  (whether you can build on it without re-verifying against the code). Also
-  how work items under `docs/wip/` are created, resumed and archived, and
-  how to adopt the layout in a new or existing repository, with a scaffold
-  script for the baseline files.
-- `/architecture-md` -- what belongs in `docs/architecture.md`, following
-  matklad's ARCHITECTURE.md.
-- `/changelog-md` -- maintaining `CHANGELOG.md` per Keep a Changelog 1.1.0.
-- `/decision-records` -- when a decision is worth recording, and the minimal
-  format for `docs/decisions/<NNNN>-<slug>.md`.
-- `/incremental-specs` -- spec-driven development for code bases that are
-  never done. Reference specs in `docs/specs/` describe current behavior;
-  spec deltas ride along with a planned change and describe only the
-  difference; statement codes such as `[2b342]` link tests and code to the
-  statements they enforce. Bundles a generator for the codes.
-
-## Extensions
-
-Plugins for power users that hook into the agent harness, each a separate
-marketplace entry under [extra/](extra/). They build on the core skills and
-lose guidance, never function, when those are absent.
-
-- **[agent-memory](extra/agent-memory/)** -- the agent's own store,
-  compiled into its system prompt each session by hooks and maintained by
-  the agent itself. A memory is wrong when it disagrees with the agent's
-  history or the human's preferences.
-
-## Getting started
-
-As Claude Code plugins:
+In Claude Code:
 
 ```
 /plugin marketplace add a3lem/knowledge-powerups
+/plugin install code-knowledge
 /plugin install context-wikis
-/plugin install code-knowledge    # for software engineers
-/plugin install agent-memory      # optional extension
+/plugin install agent-memory
 ```
 
-Before version 0.2.0, one plugin named `knowledge-powerups` held every
-skill. If you installed it, uninstall it and install the plugins above.
-
-As plain skills, for any agent that reads `SKILL.md` files:
+For any other agent that reads `SKILL.md` files:
 
 ```
 npx skills add a3lem/knowledge-powerups
 ```
 
-## Docs
+Before version 0.2.0, one plugin named `knowledge-powerups` held every
+skill. If you installed it, uninstall it and install the plugins above.
 
-- [docs/architecture.md](docs/architecture.md) -- what this repository holds
-  and how the core plugins, the shared CLIs and the extensions relate.
-- [docs/glossary.md](docs/glossary.md) -- the cross-cutting vocabulary.
-- [docs/specs/](docs/specs/) -- reference specs, e.g. for the index
-  generator.
-- [docs/decisions/](docs/decisions/) -- decision records.
-- [docs/explanation/](docs/explanation/) -- the reasoning behind particular
-  design decisions.
+## How it works
+
+Knowledge lives in plain markdown files in git, and where a file sits says
+what it is. Two rules keep the pile in check:
+
+1. Each piece of knowledge has exactly one obvious place, so nothing gets
+   written down twice.
+2. A file's location says whether you can trust it, so an agent knows when
+   to check before building on it.
+
+## Contributing
+
+[docs/architecture.md](docs/architecture.md) explains how the repository is
+organized. [docs/](docs/) also holds the glossary, specs and decision
+records.
