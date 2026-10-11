@@ -1,0 +1,1 @@
+../../../plugins/context-wikis/skills/index-md/scripts/generate_index.py

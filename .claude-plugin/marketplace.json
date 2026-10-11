@@ -5,17 +5,22 @@
     "name": "Adriaan",
     "email": "a3lem@pm.me"
   },
-  "metadata": {"description": "Knowledge conventions for coding agents, as skills, plus optional companion plugins that hook into the harness"},
+  "metadata": {"description": "Knowledge conventions for agents, as skills, plus extension plugins for power users"},
   "plugins": [
     {
-      "name": "knowledge-powerups",
-      "source": "./",
-      "description": "The base plugin: every knowledge skill -- docs/ layout, incremental specs, INDEX.md generation, context wikis"
+      "name": "context-wikis",
+      "source": "./plugins/context-wikis",
+      "description": "Context wikis shared by people and their agents across projects, and the INDEX.md generator"
+    },
+    {
+      "name": "code-knowledge",
+      "source": "./plugins/code-knowledge",
+      "description": "Knowledge from the software development lifecycle, made explicit: docs/ layout, architecture overview, changelog, decision records, incremental specs"
     },
     {
       "name": "agent-memory",
-      "source": "./extra-plugins/agent-memory",
-      "description": "Companion plugin. Persistent agent memory: storage layout, conventions for what belongs in it, and hooks that compile it into each session"
+      "source": "./extra/agent-memory",
+      "description": "Extension for power users. Persistent agent memory: storage layout, conventions for what belongs in it, and hooks that compile it into each session"
     }
   ]
 }

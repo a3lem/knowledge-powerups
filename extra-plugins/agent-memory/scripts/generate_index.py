@@ -1,1 +1,0 @@
-../../../skills/tools/index-md/scripts/generate_index.py

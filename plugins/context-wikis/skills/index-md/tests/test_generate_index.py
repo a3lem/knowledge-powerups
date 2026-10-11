@@ -4,7 +4,7 @@
 Run from the repository root, with the generator's folder on the import path
 so that `import generate_index` resolves:
 
-    PYTHONPATH=skills/tools/index-md/scripts python3 -m unittest discover -s skills/tools/index-md/tests -v
+    PYTHONPATH=plugins/context-wikis/skills/index-md/scripts python3 -m unittest discover -s plugins/context-wikis/skills/index-md/tests -v
 
 Every test method names the spec statement it encodes on its first line. The
 statements live in docs/specs/directory-index.md.

@@ -25,11 +25,29 @@ Two rules drive the layouts:
 
 ## The skills
 
-One plugin, `knowledge-powerups`, holds every skill. They are grouped by the
-knowledge store they serve.
+The skills ship as two core plugins, split by audience. Anyone who works
+with an agent can use context wikis; engineers usually install both.
 
-**[code-docs](skills/code-docs/)** -- a repository's `docs/`. A docs file is
-wrong when it disagrees with the code.
+### [context-wikis](plugins/context-wikis/)
+
+- `/context-wiki` -- a git-tracked folder of markdown notes that gives agents
+  context beyond a single project, kept up by several people and their
+  agents. An agent can read several wikis at once, each with its own scope,
+  such as a company, a team or one person. A note is wrong when it disagrees
+  with the world. The skill requires a small core and suggests the rest;
+  each wiki's `AGENTS.md` says which suggestions it follows.
+- `/index-md` -- per-directory `INDEX.md` tables of contents that make a file
+  tree discoverable without opening every file. The title and description
+  are written by hand; the list is generated and merged additively, so
+  hand-written labels survive. The generator is stdlib-only Python and ships
+  inside the skill. Every context wiki uses it; other plugins use it when it
+  is installed.
+
+### [code-knowledge](plugins/code-knowledge/)
+
+The tacit knowledge that builds up across the software development
+lifecycle, made explicit in a repository's `docs/`. A docs file is wrong
+when it disagrees with the code.
 
 - `/docs-folder` -- a standard layout for `docs/`, where a file's path tells
   you its role (spec, decision record, how-to, work item) and its authority
@@ -48,41 +66,30 @@ wrong when it disagrees with the code.
   difference; statement codes such as `[2b342]` link tests and code to the
   statements they enforce. Bundles a generator for the codes.
 
-**[tools](skills/tools/)** -- skills the others lean on.
+## Extensions
 
-- `/index-md` -- per-directory `INDEX.md` tables of contents that make a file
-  tree discoverable without opening every file. The title and description
-  are written by hand; the list is generated and merged additively, so
-  hand-written labels survive. The generator is stdlib-only Python and ships
-  inside the skill.
+Plugins for power users that hook into the agent harness, each a separate
+marketplace entry under [extra/](extra/). They build on the core skills and
+lose guidance, never function, when those are absent.
 
-**[context-wiki](skills/context-wiki/)** -- a git-tracked folder of markdown
-notes that gives agents context beyond a single project, kept up by several
-people and their agents. An agent can read several wikis at once, each with
-its own scope, such as a company, a team or one person. A note is wrong when
-it disagrees with the world. The skill requires a small core and suggests
-the rest; each wiki's `AGENTS.md` says which suggestions it follows.
-
-## Companion plugins
-
-Optional plugins that hook into the agent harness, each a separate
-marketplace entry under [extra-plugins/](extra-plugins/). They build on the base skills
-and lose guidance, never function, when those are absent.
-
-- **[agent-memory](extra-plugins/agent-memory/)** -- the agent's own store,
+- **[agent-memory](extra/agent-memory/)** -- the agent's own store,
   compiled into its system prompt each session by hooks and maintained by
   the agent itself. A memory is wrong when it disagrees with the agent's
   history or the human's preferences.
 
 ## Getting started
 
-As a Claude Code plugin:
+As Claude Code plugins:
 
 ```
 /plugin marketplace add a3lem/knowledge-powerups
-/plugin install knowledge-powerups
-/plugin install agent-memory      # optional companion
+/plugin install context-wikis
+/plugin install code-knowledge    # for software engineers
+/plugin install agent-memory      # optional extension
 ```
+
+Before version 0.2.0, one plugin named `knowledge-powerups` held every
+skill. If you installed it, uninstall it and install the plugins above.
 
 As plain skills, for any agent that reads `SKILL.md` files:
 
@@ -93,7 +100,7 @@ npx skills add a3lem/knowledge-powerups
 ## Docs
 
 - [docs/architecture.md](docs/architecture.md) -- what this repository holds
-  and how the base plugin, the shared CLIs and the companions relate.
+  and how the core plugins, the shared CLIs and the extensions relate.
 - [docs/glossary.md](docs/glossary.md) -- the cross-cutting vocabulary.
 - [docs/specs/](docs/specs/) -- reference specs, e.g. for the index
   generator.

@@ -1,0 +1,8 @@
+{
+  "name": "context-wikis",
+  "version": "0.2.0",
+  "description": "Context wikis: git-tracked markdown knowledge bases that people and their agents share across projects, plus the INDEX.md generator that keeps any file tree navigable",
+  "author": {
+    "name": "a3lem"
+  }
+}

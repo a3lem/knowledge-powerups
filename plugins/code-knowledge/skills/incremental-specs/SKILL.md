@@ -5,7 +5,7 @@ description: Load this skill when creating, using, or managing specs for spec-dr
 
 **Prerequisite skills**:
 
--  /knowledge-powerups:docs-folder
+-  /code-knowledge:docs-folder
 
 # Using Incremental Specs
 

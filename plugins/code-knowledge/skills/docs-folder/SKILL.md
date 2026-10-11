@@ -35,7 +35,7 @@ description: What deleting an issue does and doesn't remove
 ---
 ```
 
-They tell a reader what the file is about without opening it, and they make INDEX.md files generatable instead of hand-maintained (see /knowledge-powerups:index-md skill). Deliberately absent: `type` (the path already encodes a file's role) and dates (git records them).
+They tell a reader what the file is about without opening it, and they make INDEX.md files generatable instead of hand-maintained (see /context-wikis:index-md skill). Deliberately absent: `type` (the path already encodes a file's role) and dates (git records them).
 
 ## Standard layout for `docs/`
 
@@ -45,7 +45,7 @@ They tell a reader what the file is about without opening it, and they make INDE
   CONTRIBUTING.md  # how to get started contributing. brief!
   CHANGELOG.md  # all notable changes to the project (see /changelog-md skill)
   docs/
-    INDEX.md  # optional. directory listing; can be generated (see /knowledge-powerups:index-md skill)
+    INDEX.md  # optional. directory listing; can be generated (see /context-wikis:index-md skill)
     glossary.md  # project-specific jargon must be defined here.
     architecture.md  # high-level architecture of the project (see /architecture-md skill)
     philosophy.md  # optional. design principles and high-level goals -- one-line claims, each linking to an explainer (e.g. in explanation/)
@@ -75,7 +75,7 @@ They tell a reader what the file is about without opening it, and they make INDE
         research.md  # what the agent learns from web searches. Record source and date per finding; note how authoritative and current the source is
         gotchas.md  # sharp edges encountered while working
         specs/  # if the work affects reference specs in docs/specs/
-          # Note: load /knowledge-powerups:incremental-specs skill when working with specs.
+          # Note: load /code-knowledge:incremental-specs skill when working with specs.
           <spec-name>.delta.md  # 'delta' because only *difference* w.r.t. spec is described.
         decisions/  # draft decision records, unnumbered until promoted
           <slug>.md

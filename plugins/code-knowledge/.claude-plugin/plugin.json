@@ -1,0 +1,8 @@
+{
+  "name": "code-knowledge",
+  "version": "0.2.0",
+  "description": "Make explicit the tacit knowledge that builds up across the software development lifecycle: a standard docs/ layout where a file's path tells you its role and whether to trust it, architecture overviews, changelogs, decision records and incremental specs",
+  "author": {
+    "name": "a3lem"
+  }
+}

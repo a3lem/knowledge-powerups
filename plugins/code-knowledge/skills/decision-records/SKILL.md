@@ -31,7 +31,7 @@ What usually qualifies:
 - **Constraints invisible in the code** -- a compliance rule, a partner API's latency budget.
 - **Rejected alternatives whose rejection is subtle** -- record why GraphQL lost to REST, or someone proposes GraphQL again in six months.
 
-Dropped work is a common source: "we decided not to do X because Y" outlives the work item it came from, and the item itself gets deleted (see /knowledge-powerups:docs-folder skill).
+Dropped work is a common source: "we decided not to do X because Y" outlives the work item it came from, and the item itself gets deleted (see /code-knowledge:docs-folder skill).
 
 ## Format
 

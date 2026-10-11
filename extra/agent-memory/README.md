@@ -8,12 +8,12 @@ architecture, specs, and glossary.
 
 ## Setup
 
-By default, an agent's memory is stored at `{{ defaults.root }}/<agent-id>/`,
+By default, an agent's memory is stored at `~/.agents/memories/<agent-id>/`,
 which holds exactly two directories: `main/`, the main branch's checkout, and
 `worktrees/`, the per-session checkouts beside it.
 
-- `MEMORY_AGENT_ID` sets `<agent-id>` (default `{{ defaults.agent_id }}`).
-- `MEMORY_ROOT_DIR` moves the root (default `{{ defaults.root }}`).
+- `MEMORY_AGENT_ID` sets `<agent-id>` (default `my-claude`).
+- `MEMORY_ROOT_DIR` moves the root (default `~/.agents/memories`).
 - `MEMORY_ENABLED=0` is the kill switch: every hook becomes a silent no-op
   and the session leaves no memory trace.
 - `MEMORY_SESSION=` (set empty) runs a session without a branch or
@@ -31,19 +31,19 @@ The same configuration can live per project in `<cwd>/.agents/memory.conf`
 No further setup: the first session scaffolds the store, and hooks handle
 injection, validation, and end-of-turn commits from then on.
 
-The index-md skill from the base plugin is a companion: reference
+The index-md skill from the context-wikis plugin is a companion: reference
 directories keep generated `index.md` tables of contents. The hooks refresh
 them at SessionStart and SessionEnd through the bundled
-`scripts/generate_index.py`, a copy of the base plugin's generator, and the
-memory skills invoke the index-md skill for creation and manual
-regeneration.
+`scripts/generate_index.py`, a copy of the context-wikis plugin's
+generator, and the memory skills invoke the index-md skill for creation and
+manual regeneration.
 
 ## Skills
 
 To make the agent's own skills loadable, launch Claude Code with the store
 on `--add-dir`:
 
-    claude --add-dir {{ defaults.root }}/<agent-id>/main
+    claude --add-dir ~/.agents/memories/<agent-id>/main
 
 `main/` carries a tracked `.claude/skills` symlink pointing the harness at
 the `skills/` tier, so the agent's skills load like any others. Only `--add-dir` (or `/add-dir`) loads skills;
